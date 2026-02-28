@@ -5,6 +5,7 @@ import 'package:uu/screens/home/home_screen.dart';
 import 'package:uu/screens/logs/logs_screen.dart';
 import 'package:uu/screens/chat/chat_screen.dart';
 import 'package:uu/screens/me/me_screen.dart';
+import 'package:uu/screens/growth/growth_chart_screen.dart';
 
 final router = GoRouter(
   initialLocation: '/home',
@@ -41,6 +42,12 @@ final router = GoRouter(
           GoRoute(
             path: '/me',
             builder: (context, state) => const MeScreen(),
+            routes: [
+              GoRoute(
+                path: 'growth-charts',
+                builder: (context, state) => const GrowthChartScreen(),
+              ),
+            ],
           ),
         ]),
       ],
