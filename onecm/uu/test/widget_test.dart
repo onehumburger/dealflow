@@ -7,6 +7,7 @@ import 'package:uu/database/app_database.dart';
 import 'package:uu/providers/database_provider.dart';
 import 'package:uu/providers/daily_log_provider.dart';
 import 'package:uu/providers/growth_provider.dart';
+import 'package:uu/providers/onboarding_provider.dart';
 import 'package:uu/services/daily_summary_service.dart';
 
 void main() {
@@ -14,6 +15,7 @@ void main() {
     final db = AppDatabase(NativeDatabase.memory());
     addTearDown(() => db.close());
 
+    final notifier = OnboardingNotifier()..hasCompleted = true;
     await tester.pumpWidget(ProviderScope(
       overrides: [
         databaseProvider.overrideWithValue(db),
@@ -21,6 +23,7 @@ void main() {
         growthRecordsProvider
             .overrideWith((ref) => Stream.value(<GrowthRecord>[])),
         todaySummaryProvider.overrideWith((ref) async => DailySummary()),
+        onboardingNotifierProvider.overrideWithValue(notifier),
       ],
       child: const UUApp(),
     ));

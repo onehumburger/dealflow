@@ -4,3 +4,4 @@ export 'baby_provider.dart';
 export 'growth_provider.dart';
 export 'daily_log_provider.dart';
 export 'timer_provider.dart';
+export 'onboarding_provider.dart';
