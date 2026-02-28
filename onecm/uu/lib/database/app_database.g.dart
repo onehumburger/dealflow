@@ -1638,6 +1638,16 @@ class $NotificationSettingsTable extends NotificationSettings
     requiredDuringInsert: false,
     defaultValue: const Constant(120),
   );
+  static const VerificationMeta _aiSuggestedIntervalMeta =
+      const VerificationMeta('aiSuggestedInterval');
+  @override
+  late final GeneratedColumn<int> aiSuggestedInterval = GeneratedColumn<int>(
+    'ai_suggested_interval',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -1657,6 +1667,7 @@ class $NotificationSettingsTable extends NotificationSettings
     type,
     enabled,
     intervalMinutes,
+    aiSuggestedInterval,
     createdAt,
   ];
   @override
@@ -1705,6 +1716,15 @@ class $NotificationSettingsTable extends NotificationSettings
         ),
       );
     }
+    if (data.containsKey('ai_suggested_interval')) {
+      context.handle(
+        _aiSuggestedIntervalMeta,
+        aiSuggestedInterval.isAcceptableOrUnknown(
+          data['ai_suggested_interval']!,
+          _aiSuggestedIntervalMeta,
+        ),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -1740,6 +1760,10 @@ class $NotificationSettingsTable extends NotificationSettings
         DriftSqlType.int,
         data['${effectivePrefix}interval_minutes'],
       )!,
+      aiSuggestedInterval: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}ai_suggested_interval'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -1760,6 +1784,7 @@ class NotificationSetting extends DataClass
   final String type;
   final bool enabled;
   final int intervalMinutes;
+  final int? aiSuggestedInterval;
   final DateTime createdAt;
   const NotificationSetting({
     required this.id,
@@ -1767,6 +1792,7 @@ class NotificationSetting extends DataClass
     required this.type,
     required this.enabled,
     required this.intervalMinutes,
+    this.aiSuggestedInterval,
     required this.createdAt,
   });
   @override
@@ -1777,6 +1803,9 @@ class NotificationSetting extends DataClass
     map['type'] = Variable<String>(type);
     map['enabled'] = Variable<bool>(enabled);
     map['interval_minutes'] = Variable<int>(intervalMinutes);
+    if (!nullToAbsent || aiSuggestedInterval != null) {
+      map['ai_suggested_interval'] = Variable<int>(aiSuggestedInterval);
+    }
     map['created_at'] = Variable<DateTime>(createdAt);
     return map;
   }
@@ -1788,6 +1817,9 @@ class NotificationSetting extends DataClass
       type: Value(type),
       enabled: Value(enabled),
       intervalMinutes: Value(intervalMinutes),
+      aiSuggestedInterval: aiSuggestedInterval == null && nullToAbsent
+          ? const Value.absent()
+          : Value(aiSuggestedInterval),
       createdAt: Value(createdAt),
     );
   }
@@ -1803,6 +1835,9 @@ class NotificationSetting extends DataClass
       type: serializer.fromJson<String>(json['type']),
       enabled: serializer.fromJson<bool>(json['enabled']),
       intervalMinutes: serializer.fromJson<int>(json['intervalMinutes']),
+      aiSuggestedInterval: serializer.fromJson<int?>(
+        json['aiSuggestedInterval'],
+      ),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
   }
@@ -1815,6 +1850,7 @@ class NotificationSetting extends DataClass
       'type': serializer.toJson<String>(type),
       'enabled': serializer.toJson<bool>(enabled),
       'intervalMinutes': serializer.toJson<int>(intervalMinutes),
+      'aiSuggestedInterval': serializer.toJson<int?>(aiSuggestedInterval),
       'createdAt': serializer.toJson<DateTime>(createdAt),
     };
   }
@@ -1825,6 +1861,7 @@ class NotificationSetting extends DataClass
     String? type,
     bool? enabled,
     int? intervalMinutes,
+    Value<int?> aiSuggestedInterval = const Value.absent(),
     DateTime? createdAt,
   }) => NotificationSetting(
     id: id ?? this.id,
@@ -1832,6 +1869,9 @@ class NotificationSetting extends DataClass
     type: type ?? this.type,
     enabled: enabled ?? this.enabled,
     intervalMinutes: intervalMinutes ?? this.intervalMinutes,
+    aiSuggestedInterval: aiSuggestedInterval.present
+        ? aiSuggestedInterval.value
+        : this.aiSuggestedInterval,
     createdAt: createdAt ?? this.createdAt,
   );
   NotificationSetting copyWithCompanion(NotificationSettingsCompanion data) {
@@ -1843,6 +1883,9 @@ class NotificationSetting extends DataClass
       intervalMinutes: data.intervalMinutes.present
           ? data.intervalMinutes.value
           : this.intervalMinutes,
+      aiSuggestedInterval: data.aiSuggestedInterval.present
+          ? data.aiSuggestedInterval.value
+          : this.aiSuggestedInterval,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
@@ -1855,14 +1898,22 @@ class NotificationSetting extends DataClass
           ..write('type: $type, ')
           ..write('enabled: $enabled, ')
           ..write('intervalMinutes: $intervalMinutes, ')
+          ..write('aiSuggestedInterval: $aiSuggestedInterval, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, babyId, type, enabled, intervalMinutes, createdAt);
+  int get hashCode => Object.hash(
+    id,
+    babyId,
+    type,
+    enabled,
+    intervalMinutes,
+    aiSuggestedInterval,
+    createdAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1872,6 +1923,7 @@ class NotificationSetting extends DataClass
           other.type == this.type &&
           other.enabled == this.enabled &&
           other.intervalMinutes == this.intervalMinutes &&
+          other.aiSuggestedInterval == this.aiSuggestedInterval &&
           other.createdAt == this.createdAt);
 }
 
@@ -1882,6 +1934,7 @@ class NotificationSettingsCompanion
   final Value<String> type;
   final Value<bool> enabled;
   final Value<int> intervalMinutes;
+  final Value<int?> aiSuggestedInterval;
   final Value<DateTime> createdAt;
   const NotificationSettingsCompanion({
     this.id = const Value.absent(),
@@ -1889,6 +1942,7 @@ class NotificationSettingsCompanion
     this.type = const Value.absent(),
     this.enabled = const Value.absent(),
     this.intervalMinutes = const Value.absent(),
+    this.aiSuggestedInterval = const Value.absent(),
     this.createdAt = const Value.absent(),
   });
   NotificationSettingsCompanion.insert({
@@ -1897,6 +1951,7 @@ class NotificationSettingsCompanion
     required String type,
     this.enabled = const Value.absent(),
     this.intervalMinutes = const Value.absent(),
+    this.aiSuggestedInterval = const Value.absent(),
     this.createdAt = const Value.absent(),
   }) : babyId = Value(babyId),
        type = Value(type);
@@ -1906,6 +1961,7 @@ class NotificationSettingsCompanion
     Expression<String>? type,
     Expression<bool>? enabled,
     Expression<int>? intervalMinutes,
+    Expression<int>? aiSuggestedInterval,
     Expression<DateTime>? createdAt,
   }) {
     return RawValuesInsertable({
@@ -1914,6 +1970,8 @@ class NotificationSettingsCompanion
       if (type != null) 'type': type,
       if (enabled != null) 'enabled': enabled,
       if (intervalMinutes != null) 'interval_minutes': intervalMinutes,
+      if (aiSuggestedInterval != null)
+        'ai_suggested_interval': aiSuggestedInterval,
       if (createdAt != null) 'created_at': createdAt,
     });
   }
@@ -1924,6 +1982,7 @@ class NotificationSettingsCompanion
     Value<String>? type,
     Value<bool>? enabled,
     Value<int>? intervalMinutes,
+    Value<int?>? aiSuggestedInterval,
     Value<DateTime>? createdAt,
   }) {
     return NotificationSettingsCompanion(
@@ -1932,6 +1991,7 @@ class NotificationSettingsCompanion
       type: type ?? this.type,
       enabled: enabled ?? this.enabled,
       intervalMinutes: intervalMinutes ?? this.intervalMinutes,
+      aiSuggestedInterval: aiSuggestedInterval ?? this.aiSuggestedInterval,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -1954,6 +2014,9 @@ class NotificationSettingsCompanion
     if (intervalMinutes.present) {
       map['interval_minutes'] = Variable<int>(intervalMinutes.value);
     }
+    if (aiSuggestedInterval.present) {
+      map['ai_suggested_interval'] = Variable<int>(aiSuggestedInterval.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -1968,6 +2031,7 @@ class NotificationSettingsCompanion
           ..write('type: $type, ')
           ..write('enabled: $enabled, ')
           ..write('intervalMinutes: $intervalMinutes, ')
+          ..write('aiSuggestedInterval: $aiSuggestedInterval, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
@@ -6444,6 +6508,7 @@ typedef $$NotificationSettingsTableCreateCompanionBuilder =
       required String type,
       Value<bool> enabled,
       Value<int> intervalMinutes,
+      Value<int?> aiSuggestedInterval,
       Value<DateTime> createdAt,
     });
 typedef $$NotificationSettingsTableUpdateCompanionBuilder =
@@ -6453,6 +6518,7 @@ typedef $$NotificationSettingsTableUpdateCompanionBuilder =
       Value<String> type,
       Value<bool> enabled,
       Value<int> intervalMinutes,
+      Value<int?> aiSuggestedInterval,
       Value<DateTime> createdAt,
     });
 
@@ -6487,6 +6553,11 @@ class $$NotificationSettingsTableFilterComposer
 
   ColumnFilters<int> get intervalMinutes => $composableBuilder(
     column: $table.intervalMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get aiSuggestedInterval => $composableBuilder(
+    column: $table.aiSuggestedInterval,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6530,6 +6601,11 @@ class $$NotificationSettingsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get aiSuggestedInterval => $composableBuilder(
+    column: $table.aiSuggestedInterval,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -6559,6 +6635,11 @@ class $$NotificationSettingsTableAnnotationComposer
 
   GeneratedColumn<int> get intervalMinutes => $composableBuilder(
     column: $table.intervalMinutes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get aiSuggestedInterval => $composableBuilder(
+    column: $table.aiSuggestedInterval,
     builder: (column) => column,
   );
 
@@ -6614,6 +6695,7 @@ class $$NotificationSettingsTableTableManager
                 Value<String> type = const Value.absent(),
                 Value<bool> enabled = const Value.absent(),
                 Value<int> intervalMinutes = const Value.absent(),
+                Value<int?> aiSuggestedInterval = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => NotificationSettingsCompanion(
                 id: id,
@@ -6621,6 +6703,7 @@ class $$NotificationSettingsTableTableManager
                 type: type,
                 enabled: enabled,
                 intervalMinutes: intervalMinutes,
+                aiSuggestedInterval: aiSuggestedInterval,
                 createdAt: createdAt,
               ),
           createCompanionCallback:
@@ -6630,6 +6713,7 @@ class $$NotificationSettingsTableTableManager
                 required String type,
                 Value<bool> enabled = const Value.absent(),
                 Value<int> intervalMinutes = const Value.absent(),
+                Value<int?> aiSuggestedInterval = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => NotificationSettingsCompanion.insert(
                 id: id,
@@ -6637,6 +6721,7 @@ class $$NotificationSettingsTableTableManager
                 type: type,
                 enabled: enabled,
                 intervalMinutes: intervalMinutes,
+                aiSuggestedInterval: aiSuggestedInterval,
                 createdAt: createdAt,
               ),
           withReferenceMapper: (p0) => p0

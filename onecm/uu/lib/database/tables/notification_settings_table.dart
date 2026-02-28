@@ -7,6 +7,7 @@ class NotificationSettings extends Table {
   BoolColumn get enabled => boolean().withDefault(const Constant(true))();
   IntColumn get intervalMinutes =>
       integer().withDefault(const Constant(120))();
+  IntColumn get aiSuggestedInterval => integer().nullable()();
   DateTimeColumn get createdAt =>
       dateTime().withDefault(currentDateAndTime)();
 }

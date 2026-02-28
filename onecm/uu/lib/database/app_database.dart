@@ -30,7 +30,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(QueryExecutor e) : super(e);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -47,6 +47,10 @@ class AppDatabase extends _$AppDatabase {
             await m.createTable(teethRecords);
             await m.createTable(chatMessages);
             await m.createTable(mediaEntries);
+          }
+          if (from < 4) {
+            await m.addColumn(
+                notificationSettings, notificationSettings.aiSuggestedInterval);
           }
         },
       );
