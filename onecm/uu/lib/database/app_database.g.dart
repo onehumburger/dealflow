@@ -1574,12 +1574,414 @@ class DailyLogsCompanion extends UpdateCompanion<DailyLog> {
   }
 }
 
+class $NotificationSettingsTable extends NotificationSettings
+    with TableInfo<$NotificationSettingsTable, NotificationSetting> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $NotificationSettingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _babyIdMeta = const VerificationMeta('babyId');
+  @override
+  late final GeneratedColumn<int> babyId = GeneratedColumn<int>(
+    'baby_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _enabledMeta = const VerificationMeta(
+    'enabled',
+  );
+  @override
+  late final GeneratedColumn<bool> enabled = GeneratedColumn<bool>(
+    'enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _intervalMinutesMeta = const VerificationMeta(
+    'intervalMinutes',
+  );
+  @override
+  late final GeneratedColumn<int> intervalMinutes = GeneratedColumn<int>(
+    'interval_minutes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(120),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    babyId,
+    type,
+    enabled,
+    intervalMinutes,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'notification_settings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<NotificationSetting> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('baby_id')) {
+      context.handle(
+        _babyIdMeta,
+        babyId.isAcceptableOrUnknown(data['baby_id']!, _babyIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_babyIdMeta);
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+        _typeMeta,
+        type.isAcceptableOrUnknown(data['type']!, _typeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_typeMeta);
+    }
+    if (data.containsKey('enabled')) {
+      context.handle(
+        _enabledMeta,
+        enabled.isAcceptableOrUnknown(data['enabled']!, _enabledMeta),
+      );
+    }
+    if (data.containsKey('interval_minutes')) {
+      context.handle(
+        _intervalMinutesMeta,
+        intervalMinutes.isAcceptableOrUnknown(
+          data['interval_minutes']!,
+          _intervalMinutesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  NotificationSetting map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return NotificationSetting(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      babyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}baby_id'],
+      )!,
+      type: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}type'],
+      )!,
+      enabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}enabled'],
+      )!,
+      intervalMinutes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}interval_minutes'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $NotificationSettingsTable createAlias(String alias) {
+    return $NotificationSettingsTable(attachedDatabase, alias);
+  }
+}
+
+class NotificationSetting extends DataClass
+    implements Insertable<NotificationSetting> {
+  final int id;
+  final int babyId;
+  final String type;
+  final bool enabled;
+  final int intervalMinutes;
+  final DateTime createdAt;
+  const NotificationSetting({
+    required this.id,
+    required this.babyId,
+    required this.type,
+    required this.enabled,
+    required this.intervalMinutes,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['baby_id'] = Variable<int>(babyId);
+    map['type'] = Variable<String>(type);
+    map['enabled'] = Variable<bool>(enabled);
+    map['interval_minutes'] = Variable<int>(intervalMinutes);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  NotificationSettingsCompanion toCompanion(bool nullToAbsent) {
+    return NotificationSettingsCompanion(
+      id: Value(id),
+      babyId: Value(babyId),
+      type: Value(type),
+      enabled: Value(enabled),
+      intervalMinutes: Value(intervalMinutes),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory NotificationSetting.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return NotificationSetting(
+      id: serializer.fromJson<int>(json['id']),
+      babyId: serializer.fromJson<int>(json['babyId']),
+      type: serializer.fromJson<String>(json['type']),
+      enabled: serializer.fromJson<bool>(json['enabled']),
+      intervalMinutes: serializer.fromJson<int>(json['intervalMinutes']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'babyId': serializer.toJson<int>(babyId),
+      'type': serializer.toJson<String>(type),
+      'enabled': serializer.toJson<bool>(enabled),
+      'intervalMinutes': serializer.toJson<int>(intervalMinutes),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  NotificationSetting copyWith({
+    int? id,
+    int? babyId,
+    String? type,
+    bool? enabled,
+    int? intervalMinutes,
+    DateTime? createdAt,
+  }) => NotificationSetting(
+    id: id ?? this.id,
+    babyId: babyId ?? this.babyId,
+    type: type ?? this.type,
+    enabled: enabled ?? this.enabled,
+    intervalMinutes: intervalMinutes ?? this.intervalMinutes,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  NotificationSetting copyWithCompanion(NotificationSettingsCompanion data) {
+    return NotificationSetting(
+      id: data.id.present ? data.id.value : this.id,
+      babyId: data.babyId.present ? data.babyId.value : this.babyId,
+      type: data.type.present ? data.type.value : this.type,
+      enabled: data.enabled.present ? data.enabled.value : this.enabled,
+      intervalMinutes: data.intervalMinutes.present
+          ? data.intervalMinutes.value
+          : this.intervalMinutes,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NotificationSetting(')
+          ..write('id: $id, ')
+          ..write('babyId: $babyId, ')
+          ..write('type: $type, ')
+          ..write('enabled: $enabled, ')
+          ..write('intervalMinutes: $intervalMinutes, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, babyId, type, enabled, intervalMinutes, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is NotificationSetting &&
+          other.id == this.id &&
+          other.babyId == this.babyId &&
+          other.type == this.type &&
+          other.enabled == this.enabled &&
+          other.intervalMinutes == this.intervalMinutes &&
+          other.createdAt == this.createdAt);
+}
+
+class NotificationSettingsCompanion
+    extends UpdateCompanion<NotificationSetting> {
+  final Value<int> id;
+  final Value<int> babyId;
+  final Value<String> type;
+  final Value<bool> enabled;
+  final Value<int> intervalMinutes;
+  final Value<DateTime> createdAt;
+  const NotificationSettingsCompanion({
+    this.id = const Value.absent(),
+    this.babyId = const Value.absent(),
+    this.type = const Value.absent(),
+    this.enabled = const Value.absent(),
+    this.intervalMinutes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  });
+  NotificationSettingsCompanion.insert({
+    this.id = const Value.absent(),
+    required int babyId,
+    required String type,
+    this.enabled = const Value.absent(),
+    this.intervalMinutes = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  }) : babyId = Value(babyId),
+       type = Value(type);
+  static Insertable<NotificationSetting> custom({
+    Expression<int>? id,
+    Expression<int>? babyId,
+    Expression<String>? type,
+    Expression<bool>? enabled,
+    Expression<int>? intervalMinutes,
+    Expression<DateTime>? createdAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (babyId != null) 'baby_id': babyId,
+      if (type != null) 'type': type,
+      if (enabled != null) 'enabled': enabled,
+      if (intervalMinutes != null) 'interval_minutes': intervalMinutes,
+      if (createdAt != null) 'created_at': createdAt,
+    });
+  }
+
+  NotificationSettingsCompanion copyWith({
+    Value<int>? id,
+    Value<int>? babyId,
+    Value<String>? type,
+    Value<bool>? enabled,
+    Value<int>? intervalMinutes,
+    Value<DateTime>? createdAt,
+  }) {
+    return NotificationSettingsCompanion(
+      id: id ?? this.id,
+      babyId: babyId ?? this.babyId,
+      type: type ?? this.type,
+      enabled: enabled ?? this.enabled,
+      intervalMinutes: intervalMinutes ?? this.intervalMinutes,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (babyId.present) {
+      map['baby_id'] = Variable<int>(babyId.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    if (enabled.present) {
+      map['enabled'] = Variable<bool>(enabled.value);
+    }
+    if (intervalMinutes.present) {
+      map['interval_minutes'] = Variable<int>(intervalMinutes.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NotificationSettingsCompanion(')
+          ..write('id: $id, ')
+          ..write('babyId: $babyId, ')
+          ..write('type: $type, ')
+          ..write('enabled: $enabled, ')
+          ..write('intervalMinutes: $intervalMinutes, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $BabiesTable babies = $BabiesTable(this);
   late final $GrowthRecordsTable growthRecords = $GrowthRecordsTable(this);
   late final $DailyLogsTable dailyLogs = $DailyLogsTable(this);
+  late final $NotificationSettingsTable notificationSettings =
+      $NotificationSettingsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1588,6 +1990,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     babies,
     growthRecords,
     dailyLogs,
+    notificationSettings,
   ];
 }
 
@@ -2357,6 +2760,237 @@ typedef $$DailyLogsTableProcessedTableManager =
       DailyLog,
       PrefetchHooks Function()
     >;
+typedef $$NotificationSettingsTableCreateCompanionBuilder =
+    NotificationSettingsCompanion Function({
+      Value<int> id,
+      required int babyId,
+      required String type,
+      Value<bool> enabled,
+      Value<int> intervalMinutes,
+      Value<DateTime> createdAt,
+    });
+typedef $$NotificationSettingsTableUpdateCompanionBuilder =
+    NotificationSettingsCompanion Function({
+      Value<int> id,
+      Value<int> babyId,
+      Value<String> type,
+      Value<bool> enabled,
+      Value<int> intervalMinutes,
+      Value<DateTime> createdAt,
+    });
+
+class $$NotificationSettingsTableFilterComposer
+    extends Composer<_$AppDatabase, $NotificationSettingsTable> {
+  $$NotificationSettingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get babyId => $composableBuilder(
+    column: $table.babyId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get enabled => $composableBuilder(
+    column: $table.enabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get intervalMinutes => $composableBuilder(
+    column: $table.intervalMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$NotificationSettingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $NotificationSettingsTable> {
+  $$NotificationSettingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get babyId => $composableBuilder(
+    column: $table.babyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get enabled => $composableBuilder(
+    column: $table.enabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get intervalMinutes => $composableBuilder(
+    column: $table.intervalMinutes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$NotificationSettingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $NotificationSettingsTable> {
+  $$NotificationSettingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get babyId =>
+      $composableBuilder(column: $table.babyId, builder: (column) => column);
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<bool> get enabled =>
+      $composableBuilder(column: $table.enabled, builder: (column) => column);
+
+  GeneratedColumn<int> get intervalMinutes => $composableBuilder(
+    column: $table.intervalMinutes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$NotificationSettingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $NotificationSettingsTable,
+          NotificationSetting,
+          $$NotificationSettingsTableFilterComposer,
+          $$NotificationSettingsTableOrderingComposer,
+          $$NotificationSettingsTableAnnotationComposer,
+          $$NotificationSettingsTableCreateCompanionBuilder,
+          $$NotificationSettingsTableUpdateCompanionBuilder,
+          (
+            NotificationSetting,
+            BaseReferences<
+              _$AppDatabase,
+              $NotificationSettingsTable,
+              NotificationSetting
+            >,
+          ),
+          NotificationSetting,
+          PrefetchHooks Function()
+        > {
+  $$NotificationSettingsTableTableManager(
+    _$AppDatabase db,
+    $NotificationSettingsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$NotificationSettingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$NotificationSettingsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$NotificationSettingsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> babyId = const Value.absent(),
+                Value<String> type = const Value.absent(),
+                Value<bool> enabled = const Value.absent(),
+                Value<int> intervalMinutes = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+              }) => NotificationSettingsCompanion(
+                id: id,
+                babyId: babyId,
+                type: type,
+                enabled: enabled,
+                intervalMinutes: intervalMinutes,
+                createdAt: createdAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int babyId,
+                required String type,
+                Value<bool> enabled = const Value.absent(),
+                Value<int> intervalMinutes = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+              }) => NotificationSettingsCompanion.insert(
+                id: id,
+                babyId: babyId,
+                type: type,
+                enabled: enabled,
+                intervalMinutes: intervalMinutes,
+                createdAt: createdAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$NotificationSettingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $NotificationSettingsTable,
+      NotificationSetting,
+      $$NotificationSettingsTableFilterComposer,
+      $$NotificationSettingsTableOrderingComposer,
+      $$NotificationSettingsTableAnnotationComposer,
+      $$NotificationSettingsTableCreateCompanionBuilder,
+      $$NotificationSettingsTableUpdateCompanionBuilder,
+      (
+        NotificationSetting,
+        BaseReferences<
+          _$AppDatabase,
+          $NotificationSettingsTable,
+          NotificationSetting
+        >,
+      ),
+      NotificationSetting,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -2367,4 +3001,6 @@ class $AppDatabaseManager {
       $$GrowthRecordsTableTableManager(_db, _db.growthRecords);
   $$DailyLogsTableTableManager get dailyLogs =>
       $$DailyLogsTableTableManager(_db, _db.dailyLogs);
+  $$NotificationSettingsTableTableManager get notificationSettings =>
+      $$NotificationSettingsTableTableManager(_db, _db.notificationSettings);
 }

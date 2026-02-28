@@ -9,6 +9,7 @@ import 'package:uu/screens/logs/logs_screen.dart';
 import 'package:uu/screens/chat/chat_screen.dart';
 import 'package:uu/screens/me/me_screen.dart';
 import 'package:uu/screens/growth/growth_chart_screen.dart';
+import 'package:uu/screens/settings/notification_settings_screen.dart';
 
 GoRouter createRouter({OnboardingNotifier? onboardingNotifier}) {
   final notifier = onboardingNotifier ?? OnboardingNotifier();
@@ -70,6 +71,11 @@ GoRouter createRouter({OnboardingNotifier? onboardingNotifier}) {
                 GoRoute(
                   path: 'growth-charts',
                   builder: (context, state) => const GrowthChartScreen(),
+                ),
+                GoRoute(
+                  path: 'notification-settings',
+                  builder: (context, state) =>
+                      const NotificationSettingsScreen(),
                 ),
               ],
             ),
