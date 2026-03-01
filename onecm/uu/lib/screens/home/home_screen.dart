@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uu/providers/baby_provider.dart';
+import 'package:uu/screens/home/widgets/memories_card.dart';
 import 'package:uu/screens/home/widgets/quick_log_buttons.dart';
+import 'package:uu/screens/home/widgets/quick_status_widget.dart';
 import 'package:uu/screens/home/widgets/today_summary_card.dart';
 import 'package:uu/screens/home/widgets/growth_snapshot_card.dart';
 
@@ -70,7 +72,12 @@ class HomeScreen extends ConsumerWidget {
           // Quick-log buttons
           const QuickLogButtons(),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
+
+          // Quick Status card (time since last feed/diaper, next nap)
+          const QuickStatusWidget(),
+
+          const SizedBox(height: 12),
 
           // Today's Summary card
           const TodaySummaryCard(),
@@ -79,6 +86,11 @@ class HomeScreen extends ConsumerWidget {
 
           // Growth Snapshot card
           const GrowthSnapshotCard(),
+
+          const SizedBox(height: 12),
+
+          // "On This Day" memories card
+          const MemoriesCard(),
         ],
       ),
     );
