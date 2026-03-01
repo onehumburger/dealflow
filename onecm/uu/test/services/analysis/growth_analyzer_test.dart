@@ -15,6 +15,7 @@ void main() {
       dateOfBirth: dateOfBirth ?? DateTime(2025, 1, 1),
       gender: gender,
       createdAt: DateTime(2025, 1, 1),
+      updatedAt: DateTime(2025, 1, 1),
     );
   }
 
@@ -34,6 +35,7 @@ void main() {
       heightCm: heightCm,
       headCircumferenceCm: headCircumferenceCm,
       createdAt: date,
+      updatedAt: date,
     );
   }
 
@@ -381,6 +383,7 @@ void main() {
           name: 'Test',
           dateOfBirth: DateTime(2025, 1, 1),
           createdAt: DateTime(2025, 1, 1),
+          updatedAt: DateTime(2025, 1, 1),
         );
         final records = [
           _makeRecord(date: DateTime(2025, 1, 1), weightKg: 3.3, id: 1),
