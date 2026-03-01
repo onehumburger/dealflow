@@ -34,6 +34,13 @@ class MeScreen extends ConsumerWidget {
             onTap: () => context.go('/me/notification-settings'),
           ),
           ListTile(
+            leading: const Icon(Icons.dark_mode_outlined),
+            title: const Text('Display Settings'),
+            subtitle: const Text('Theme & auto dark mode'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.go('/me/display-settings'),
+          ),
+          ListTile(
             leading: const Icon(Icons.family_restroom),
             title: const Text('Family Sharing'),
             subtitle: const Text('Invite family members'),

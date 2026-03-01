@@ -4,7 +4,7 @@ import 'package:uu/config/router.dart';
 import 'package:uu/config/theme.dart';
 import 'package:uu/providers/baby_provider.dart';
 import 'package:uu/providers/onboarding_provider.dart';
-import 'package:uu/providers/theme_provider.dart';
+import 'package:uu/providers/auto_dark_mode_provider.dart';
 
 class UUApp extends ConsumerStatefulWidget {
   const UUApp({super.key});
@@ -40,7 +40,7 @@ class _UUAppState extends ConsumerState<UUApp> {
 
   @override
   Widget build(BuildContext context) {
-    final themeMode = ref.watch(themeModeProvider);
+    final themeMode = ref.watch(effectiveThemeModeProvider);
 
     if (!_initialized) {
       return MaterialApp(
