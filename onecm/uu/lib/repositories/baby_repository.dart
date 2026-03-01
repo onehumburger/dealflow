@@ -36,6 +36,7 @@ class BabyRepository {
         name: name != null ? Value(name) : const Value.absent(),
         gender: gender != null ? Value(gender) : const Value.absent(),
         photoUrl: photoUrl != null ? Value(photoUrl) : const Value.absent(),
+        updatedAt: Value(DateTime.now()),
       ),
     );
   }

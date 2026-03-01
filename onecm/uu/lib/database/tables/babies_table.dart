@@ -8,4 +8,5 @@ class Babies extends Table {
   TextColumn get bloodType => text().nullable()();
   TextColumn get photoUrl => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 }

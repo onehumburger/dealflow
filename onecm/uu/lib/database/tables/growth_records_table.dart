@@ -10,4 +10,5 @@ class GrowthRecords extends Table {
   TextColumn get notes => text().nullable()();
   TextColumn get photoUrl => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 }

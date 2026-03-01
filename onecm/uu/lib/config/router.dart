@@ -9,7 +9,10 @@ import 'package:uu/screens/logs/logs_screen.dart';
 import 'package:uu/screens/chat/chat_screen.dart';
 import 'package:uu/screens/me/me_screen.dart';
 import 'package:uu/screens/growth/growth_chart_screen.dart';
+import 'package:uu/screens/auth/profile_screen.dart';
+import 'package:uu/screens/auth/sign_in_screen.dart';
 import 'package:uu/screens/settings/notification_settings_screen.dart';
+import 'package:uu/screens/family/family_screen.dart';
 
 GoRouter createRouter({OnboardingNotifier? onboardingNotifier}) {
   final notifier = onboardingNotifier ?? OnboardingNotifier();
@@ -76,6 +79,18 @@ GoRouter createRouter({OnboardingNotifier? onboardingNotifier}) {
                   path: 'notification-settings',
                   builder: (context, state) =>
                       const NotificationSettingsScreen(),
+                ),
+                GoRoute(
+                  path: 'sign-in',
+                  builder: (context, state) => const SignInScreen(),
+                ),
+                GoRoute(
+                  path: 'profile',
+                  builder: (context, state) => const ProfileScreen(),
+                ),
+                GoRoute(
+                  path: 'family',
+                  builder: (context, state) => const FamilyScreen(),
                 ),
               ],
             ),

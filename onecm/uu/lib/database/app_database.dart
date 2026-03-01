@@ -10,6 +10,9 @@ import 'tables/food_introductions_table.dart';
 import 'tables/teeth_records_table.dart';
 import 'tables/chat_messages_table.dart';
 import 'tables/media_table.dart';
+import 'tables/sync_queue_table.dart';
+import 'tables/families_table.dart';
+import 'tables/family_members_table.dart';
 
 part 'app_database.g.dart';
 
@@ -25,12 +28,15 @@ part 'app_database.g.dart';
   TeethRecords,
   ChatMessages,
   MediaEntries,
+  SyncQueue,
+  Families,
+  FamilyMembers,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(QueryExecutor e) : super(e);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -51,6 +57,17 @@ class AppDatabase extends _$AppDatabase {
           if (from < 4) {
             await m.addColumn(
                 notificationSettings, notificationSettings.aiSuggestedInterval);
+          }
+          if (from < 5) {
+            await m.createTable(syncQueue);
+          }
+          if (from < 6) {
+            await m.addColumn(babies, babies.updatedAt);
+            await m.addColumn(growthRecords, growthRecords.updatedAt);
+          }
+          if (from < 7) {
+            await m.createTable(families);
+            await m.createTable(familyMembers);
           }
         },
       );
