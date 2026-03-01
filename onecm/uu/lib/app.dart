@@ -29,8 +29,26 @@ class _UUAppState extends ConsumerState<UUApp> {
       try {
         final babies = await ref.read(allBabiesProvider.future);
         notifier.hasCompleted = babies.isNotEmpty;
+        // Auto-select first baby if none selected
+        if (babies.isNotEmpty &&
+            ref.read(selectedBabyIdProvider) == null) {
+          ref.read(selectedBabyIdProvider.notifier).state = babies.first.id;
+        }
       } catch (_) {
         // If DB isn't ready yet, leave as not completed (will show onboarding)
+      }
+    } else {
+      // Onboarding already done -- make sure a baby is selected
+      try {
+        final selectedId = ref.read(selectedBabyIdProvider);
+        if (selectedId == null) {
+          final babies = await ref.read(allBabiesProvider.future);
+          if (babies.isNotEmpty) {
+            ref.read(selectedBabyIdProvider.notifier).state = babies.first.id;
+          }
+        }
+      } catch (_) {
+        // Ignore -- will resolve when provider loads
       }
     }
     if (mounted) {

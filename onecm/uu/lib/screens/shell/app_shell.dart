@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uu/screens/baby/child_selector.dart';
 import 'package:uu/widgets/timer_mini_bar.dart';
 
 class AppShell extends StatelessWidget {
@@ -10,6 +11,10 @@ class AppShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const ChildSelector(),
+        centerTitle: false,
+      ),
       body: Column(
         children: [
           Expanded(child: navigationShell),
