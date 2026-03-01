@@ -33,6 +33,13 @@ class MeScreen extends ConsumerWidget {
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.go('/me/notification-settings'),
           ),
+          ListTile(
+            leading: const Icon(Icons.family_restroom),
+            title: const Text('Family Sharing'),
+            subtitle: const Text('Invite family members'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.go('/me/family'),
+          ),
         ],
       ),
     );

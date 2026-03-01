@@ -10,3 +10,5 @@ export 'teeth_records_table.dart';
 export 'chat_messages_table.dart';
 export 'media_table.dart';
 export 'sync_queue_table.dart';
+export 'families_table.dart';
+export 'family_members_table.dart';
