@@ -20,7 +20,7 @@ def build_prompt(article_markdown: str) -> str:
   "key_data_points": ["data point 1", "data point 2"],
   "actionable_takeaways": ["takeaway 1", "takeaway 2"],
   "tickers": [
-    {{"symbol": "AAPL", "context": "why this ticker is mentioned"}}
+    {{"symbol": "AAPL", "focus": true, "context": "why this ticker is mentioned"}}
   ]
 }}
 
@@ -29,6 +29,8 @@ For tickers: use Yahoo Finance format. US tickers have no suffix (e.g. AAPL). In
 IMPORTANT: Include tickers where the article discusses the company with some substance - even a brief analysis, comparison, or data point counts. Do NOT include tickers that are:
 - Used purely as a one-word analogy (e.g. "companies like Coca-Cola")
 - Mentioned only in a link to another article
+
+Set "focus": true for tickers that are a primary subject of the article (deep analysis, investment thesis). Set "focus": false for tickers that are mentioned with some substance but are not the main focus.
 
 Article:
 {article_markdown}"""
@@ -80,7 +82,16 @@ def get_valuation_comment(tickers_data: list[dict], model: str = "sonnet") -> st
         )
     ticker_summary = "\n".join(lines)
 
-    prompt = f"""Given these stock valuation multiples, provide a brief 1-2 sentence comment per ticker on whether the valuation looks cheap, fair, or expensive relative to sector norms. Be concise. No headers or formatting, just one line per ticker.
+    prompt = f"""Given these stock valuation multiples, for each ticker provide:
+1. The sector average range (Low / Mid / High) for EV/EBITDA, P/E, and EV/Revenue
+2. A brief 1-2 sentence comment on whether the valuation looks cheap, fair, or expensive
+
+Use this format per ticker (plain text, no markdown):
+$SYMBOL (Name) - Sector
+  Sector EV/EBITDA: Low X / Mid X / High X
+  Sector P/E: Low X / Mid X / High X
+  Sector EV/Rev: Low X / Mid X / High X
+  Comment: [your assessment]
 
 {ticker_summary}"""
 

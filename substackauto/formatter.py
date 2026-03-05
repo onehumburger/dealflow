@@ -2,9 +2,10 @@
 from enricher import format_number
 
 
-def format_ticker_card(ticker: dict) -> str:
+def format_ticker_card(ticker: dict, focus: bool = False) -> str:
+    marker = "[FOCUS] " if focus else ""
     lines = [
-        f"${ticker['symbol']} - {ticker['name']}",
+        f"{marker}${ticker['symbol']} - {ticker['name']}",
         f"{ticker['sector']} | {ticker['currency']}",
         f"Price: {ticker['price']} | MCap: {format_number(ticker['market_cap'])} | EV: {format_number(ticker['enterprise_value'])}",
     ]

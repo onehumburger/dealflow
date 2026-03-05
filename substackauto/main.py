@@ -59,10 +59,11 @@ def process_article(pub: dict, slug: str, url: str, config: dict, db: ArticleDB)
     for ticker_info in summary.get("tickers", []):
         symbol = ticker_info["symbol"]
         log.info(f"Enriching ticker: {symbol}")
+        focus = ticker_info.get("focus", False)
         data = enrich_ticker(symbol)
         if data:
             tickers_data.append(data)
-            ticker_cards.append(format_ticker_card(data))
+            ticker_cards.append(format_ticker_card(data, focus=focus))
         else:
             ticker_cards.append(f"${symbol} - data not available")
 
