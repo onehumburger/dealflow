@@ -112,6 +112,24 @@ def poll_all(config: dict, db: ArticleDB):
     log.info("Polling complete.")
 
 
+def startup_test(config: dict, db: ArticleDB):
+    """Process the latest article from each feed to verify the bot is working."""
+    log.info("Startup test: processing latest article from each feed...")
+    for pub in config["publications"]:
+        try:
+            articles = parse_feed(pub["feed_url"])
+            if articles:
+                latest = articles[0]
+                log.info(f"Startup test: {pub['name']} -> {latest['title']}")
+                if not db.is_seen(latest["url"]):
+                    process_article(pub, latest["slug"], latest["url"], config, db)
+                else:
+                    log.info(f"  Already seen, skipping")
+        except Exception as e:
+            log.error(f"Startup test failed for {pub['name']}: {e}")
+    log.info("Startup test complete.")
+
+
 def main():
     config = load_config()
     os.makedirs("data", exist_ok=True)
@@ -120,7 +138,10 @@ def main():
     interval = config.get("polling", {}).get("interval_minutes", 15)
     log.info(f"Starting SubstackAuto. Polling every {interval} minutes.")
 
-    # Run once immediately
+    # Startup test: process latest article from each feed
+    startup_test(config, db)
+
+    # Then poll all for any remaining new articles
     poll_all(config, db)
 
     # Schedule recurring
