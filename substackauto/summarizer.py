@@ -1,7 +1,15 @@
 # summarizer.py
 import json
+import os
 import re
 import subprocess
+
+
+def _clean_env() -> dict:
+    """Strip CLAUDECODE env var to allow running inside a Claude Code session."""
+    env = os.environ.copy()
+    env.pop("CLAUDECODE", None)
+    return env
 
 
 def build_prompt(article_markdown: str) -> str:
@@ -46,6 +54,7 @@ def summarize_article(article_markdown: str, model: str = "sonnet") -> dict | No
             capture_output=True,
             text=True,
             timeout=120,
+            env=_clean_env(),
         )
         if result.returncode != 0:
             return None
@@ -79,6 +88,7 @@ def get_valuation_comment(tickers_data: list[dict], model: str = "sonnet") -> st
             capture_output=True,
             text=True,
             timeout=60,
+            env=_clean_env(),
         )
         if result.returncode != 0:
             return None
