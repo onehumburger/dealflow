@@ -29,7 +29,6 @@ For tickers: use Yahoo Finance format. US tickers have no suffix (e.g. AAPL). In
 IMPORTANT: Include tickers where the article discusses the company with some substance - even a brief analysis, comparison, or data point counts. Do NOT include tickers that are:
 - Used purely as a one-word analogy (e.g. "companies like Coca-Cola")
 - Mentioned only in a link to another article
-- Mentioned in a sponsorship or advertisement
 
 Article:
 {article_markdown}"""
