@@ -1,0 +1,17 @@
+# substackauto.service
+# Copy to /etc/systemd/system/substackauto.service on VPS
+[Unit]
+Description=SubstackAuto - Substack article monitor and summarizer
+After=network.target
+
+[Service]
+Type=simple
+User=deploy
+WorkingDirectory=/home/deploy/substackauto
+ExecStart=/home/deploy/substackauto/.venv/bin/python main.py
+Restart=always
+RestartSec=60
+Environment=PATH=/home/deploy/.local/bin:/usr/local/bin:/usr/bin
+
+[Install]
+WantedBy=multi-user.target
