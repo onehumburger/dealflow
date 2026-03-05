@@ -26,7 +26,13 @@ def build_prompt(article_markdown: str) -> str:
 
 For tickers: use Yahoo Finance format. US tickers have no suffix (e.g. AAPL). International tickers need exchange suffix (e.g. 4063.T for Tokyo, BETS-B.ST for Stockholm, 0700.HK for Hong Kong, ASML.AS for Amsterdam).
 
-Only include tickers that are actually discussed in the article, not just casually mentioned.
+IMPORTANT: Only include tickers where the article provides substantive analysis, investment thesis, or financial data about that specific company. Do NOT include tickers that are:
+- Used as a passing example or analogy (e.g. "companies like Coca-Cola")
+- Mentioned only in a link to another article
+- Used to illustrate a general concept without deep analysis
+- Mentioned in a sponsorship or advertisement
+
+If the article is a general/educational piece with no deep-dive on any specific stock, return an empty tickers list.
 
 Article:
 {article_markdown}"""
