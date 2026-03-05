@@ -1,0 +1,29 @@
+publications:
+  - name: "The Finance Corner"
+    feed_url: "https://thefinancecorner.substack.com/feed"
+    api_base: "https://thefinancecorner.substack.com"
+    cookie_type: "substack.sid"
+  - name: "Archetype Capital"
+    feed_url: "https://www.archetype-research.com/feed"
+    api_base: "https://www.archetype-research.com"
+    cookie_type: "connect.sid"
+  - name: "Yet Another Value Blog"
+    feed_url: "https://www.yetanothervalueblog.com/feed"
+    api_base: "https://www.yetanothervalueblog.com"
+    cookie_type: "connect.sid"
+
+auth:
+  substack_sid: "YOUR_SUBSTACK_SID_HERE"
+  connect_sids:
+    www.archetype-research.com: "YOUR_CONNECT_SID_HERE"
+    www.yetanothervalueblog.com: "YOUR_CONNECT_SID_HERE"
+
+telegram:
+  bot_token: "YOUR_BOT_TOKEN"
+  chat_id: "YOUR_CHAT_ID"
+
+polling:
+  interval_minutes: 15
+
+claude:
+  model: "sonnet"
