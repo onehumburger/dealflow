@@ -425,6 +425,231 @@
       </aside>
     </section>
 
+    <!-- ============================================================ -->
+    <!-- ====== PART 2 DIVIDER ====== -->
+    <!-- ============================================================ -->
+    <section class="center section-divider">
+      <h2>Part 2</h2>
+      <p style="opacity:0.7; font-size:1.2em;">实操 + 互动</p>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ====== Section 5: 律师工作场景实战 (6 slides) ====== -->
+    <!-- ============================================================ -->
+
+    <!-- S5-1: 五大场景 -->
+    <section>
+      <h2>五大场景</h2>
+      <ol>
+        <li><strong>合同审查</strong> — 风险标注 + 修改建议</li>
+        <li><strong>法律研究</strong> — 判例检索 + 研究备忘录</li>
+        <li><strong>文书起草</strong> — 诉状、意见书初稿</li>
+        <li><strong>尽职调查</strong> — 批量文档提取关键信息</li>
+        <li><strong>客户沟通</strong> — 专业分析转化为通俗表达</li>
+      </ol>
+      <p style="margin-top:20px; opacity:0.7;">接下来逐一演示核心场景</p>
+      <aside class="notes">
+        过渡页，快速过一下五大场景
+      </aside>
+    </section>
+
+    <!-- S5-2: LIVE DEMO — 合同审查 -->
+    <section class="demo-slide">
+      <div class="demo-badge">LIVE DEMO</div>
+      <h2>场景一：合同审查</h2>
+      <p>上传合同 → AI标注风险条款 → 生成审查意见</p>
+      <aside class="notes">
+        Demo步骤：
+        1. 准备一份样本合同（带常见风险条款：竞业禁止、违约金、管辖权等）
+        2. 上传到Claude或OpenClaw
+        3. 指令："审查这份合同，标注所有对我方不利的条款，给出修改建议"
+        4. 展示输出：逐条标注 + 修改建议
+        5. 强调：这是初稿，律师需要复核
+      </aside>
+    </section>
+
+    <!-- S5-3: LIVE DEMO — 法律研究 -->
+    <section class="demo-slide">
+      <div class="demo-badge">LIVE DEMO</div>
+      <h2>场景二：法律研究</h2>
+      <p>输入案情 → AI检索判例+法规 → 生成研究备忘录</p>
+      <aside class="notes">
+        Demo步骤：
+        1. 描述一个案情（如：劳动争议中的竞业禁止纠纷）
+        2. 让AI检索相关法规和判例
+        3. 生成研究备忘录
+        4. 重要提醒：判例引用必须人工校验（AI幻觉风险）
+      </aside>
+    </section>
+
+    <!-- S5-4: LIVE DEMO — 文书起草 -->
+    <section class="demo-slide">
+      <div class="demo-badge">LIVE DEMO</div>
+      <h2>场景三：文书起草</h2>
+      <p>给定要点 → AI生成法律文书初稿</p>
+      <aside class="notes">
+        Demo步骤：
+        1. 给出案件基本事实和诉求要点
+        2. 让AI生成起诉状或法律意见书初稿
+        3. 展示输出格式和内容质量
+        4. 演示如何通过追问迭代修改
+      </aside>
+    </section>
+
+    <!-- S5-5: 更多场景 -->
+    <section>
+      <h2>更多场景</h2>
+      <div class="tool-card">
+        <h3>尽职调查</h3>
+        <p>批量文档 → 提取关键信息 → 报告摘要</p>
+      </div>
+      <div class="tool-card">
+        <h3>客户沟通</h3>
+        <p>专业法律分析 → 转化为客户能理解的邮件/备忘录</p>
+      </div>
+      <aside class="notes">
+        简述思路即可，不做完整demo，让律师知道这些场景也可以用AI
+      </aside>
+    </section>
+
+    <!-- S5-6: 场景小结 -->
+    <section>
+      <h2>场景小结</h2>
+      <ul>
+        <li>所有场景的共同点：AI做<span class="highlight">初稿</span>，律师做<span class="highlight">终审</span></li>
+        <li>效率提升：重复性工作节省 50-80% 时间</li>
+        <li>质量保障：人机协作 > 纯人工 或 纯AI</li>
+      </ul>
+      <aside class="notes">
+        强调人机协作的定位，AI不是替代而是加速
+      </aside>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ====== Section 6: 提示词技巧 + Skill (3 slides) ====== -->
+    <!-- ============================================================ -->
+
+    <!-- S6-1: 提示词决定输出质量 -->
+    <section>
+      <h2>提示词决定输出质量</h2>
+      <ol>
+        <li><strong>角色设定</strong>："你是一名中国执业律师，专注于劳动法…"</li>
+        <li><strong>结构化指令</strong>：明确输出格式（分条列出、先结论后分析）</li>
+        <li><strong>分步拆解</strong>：复杂任务拆成多步，逐步推进</li>
+      </ol>
+      <p style="margin-top:20px; font-size:0.85em; opacity:0.7;">
+        模糊指令："帮我看看这个合同" →
+        <span class="highlight">精确指令</span>："你是一名资深商事律师，请审查以下合同，重点关注违约金、竞业禁止和管辖权条款，逐条列出风险并给出修改建议"
+      </p>
+      <aside class="notes">
+        给一个模糊指令vs精确指令的例子，效果差异很大
+      </aside>
+    </section>
+
+    <!-- S6-2: LIVE DEMO — 裸Prompt vs Skill -->
+    <section class="demo-slide">
+      <div class="demo-badge">LIVE DEMO</div>
+      <h2>裸 Prompt vs <span class="term">Skill</span></h2>
+      <p>同一个任务，看看输出差距有多大</p>
+      <aside class="notes">
+        Demo步骤：
+        1. 裸prompt：直接说"帮我审查这份合同"
+        2. 用Skill/结构化prompt：设定角色+审查步骤+输出格式+关注要点
+        3. 对比两个输出的质量差异
+        4. 结论：你不需要成为prompt专家，选对工具和Skill就行
+      </aside>
+    </section>
+
+    <!-- S6-3: 常见误区 -->
+    <section>
+      <h2>常见误区</h2>
+      <ul>
+        <li>指令太模糊："帮我看看这个合同" &#10060;</li>
+        <li>不给上下文：不说你代表哪方、什么目的 &#10060;</li>
+        <li>不校验输出：AI说什么信什么 &#10060;</li>
+        <li>一次性丢太多：应该分步骤来 &#10060;</li>
+      </ul>
+      <p style="margin-top:20px; opacity:0.7;">每一条都有 &#10004; 的正确做法——翻转过来就是</p>
+      <aside class="notes">
+        用错误示例和正确示例对比展示，效果更直观
+      </aside>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ====== Section 7: 互动讨论 (1 slide) ====== -->
+    <!-- ============================================================ -->
+
+    <!-- S7-1: 互动讨论 -->
+    <section class="center">
+      <h2>你最耗时的工作是什么？</h2>
+      <p style="font-size:0.9em; opacity:0.7; margin-top:30px;">
+        说出来，我们现场帮你匹配最合适的AI工具
+      </p>
+      <aside class="notes">
+        引导方式：
+        - 先让每人简短说一个最耗时的工作任务
+        - 现场分析哪个AI工具最适合
+        - 给出具体建议：用什么工具、怎么开始
+        - 预留时间答疑
+        - 如果冷场：可以先分享几个其他律所的使用案例
+      </aside>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ====== CLOSING DIVIDER ====== -->
+    <!-- ============================================================ -->
+    <section class="center section-divider">
+      <h2>写在最后</h2>
+      <p style="opacity:0.7; font-size:1.2em;">边界、风险、下一步</p>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ====== Section 8: 数据隐私 (1 slide) ====== -->
+    <!-- ============================================================ -->
+
+    <!-- S8-1: 使用AI的注意事项 -->
+    <section>
+      <h2>使用AI的注意事项</h2>
+      <ul>
+        <li><strong>数据隐私</strong>：客户数据上传需考虑合规（数据出境、保密义务）</li>
+        <li><strong>AI幻觉</strong>：判例引用<span class="highlight">必须校验</span>，AI会编造不存在的案例</li>
+        <li><strong>责任归属</strong>：AI输出仅作参考，最终责任在律师</li>
+      </ul>
+      <p style="margin-top:20px; opacity:0.7;">讨论：你们觉得客户数据上传AI有什么合规考量？</p>
+      <aside class="notes">
+        轻量处理，让律师自己讨论，他们更专业。重点是提醒意识，不是给答案。
+      </aside>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ====== Section 9: 下一步行动 (2 slides) ====== -->
+    <!-- ============================================================ -->
+
+    <!-- S9-1: 推荐行动路径 -->
+    <section>
+      <h2>推荐行动路径</h2>
+      <ol>
+        <li><strong>第一步</strong>：试试 <span class="highlight">NotebookLM</span>（免费、最简单）</li>
+        <li><strong>第二步</strong>：用 Kimi 或 Claude 处理长文档</li>
+        <li><strong>第三步</strong>：探索 OpenClaw 等法律专用工具</li>
+      </ol>
+      <p style="margin-top:20px; opacity:0.7;">不需要一步到位，从最简单的开始</p>
+      <aside class="notes">
+        给律师一个清晰的入门路径，不要让他们觉得无从下手
+      </aside>
+    </section>
+
+    <!-- S9-2: 结尾 -->
+    <section class="center">
+      <h2 style="margin-bottom:0.3em;">AI 不会取代律师</h2>
+      <h3 style="color:#ffd700;">但用 AI 的律师会取代不用的</h3>
+      <p style="opacity:0.5; margin-top:60px; font-size:0.8em;">谢谢 · Q&A</p>
+      <aside class="notes">
+        结束语：AI是工具，律师的判断力和专业经验不可替代。但效率差距会越来越大。
+        今天只是开始，欢迎随时交流。
+      </aside>
+    </section>
+
   </div>
 </div>
 
