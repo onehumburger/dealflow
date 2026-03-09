@@ -1,0 +1,14 @@
+---
+import { getLangFromUrl, getLanguageToggleUrl, languages } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const toggleUrl = getLanguageToggleUrl(Astro.url);
+const targetLang = lang === 'zh' ? 'en' : 'zh';
+const label = languages[targetLang];
+---
+<a
+  href={toggleUrl}
+  class="inline-flex items-center px-3 py-1 text-sm font-medium border border-gold/30 rounded-full text-gold hover:bg-gold hover:text-white transition-all duration-300"
+>
+  {label}
+</a>
