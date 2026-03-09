@@ -8,6 +8,7 @@
   <!-- reveal.js 5.x CDN -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/night.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css">
 
   <style>
     /* ── Base overrides on night theme ── */
@@ -124,6 +125,117 @@
       margin-bottom: 0.45em;
       line-height: 1.5;
     }
+
+    /* ── Flow diagram ── */
+    .flow-diagram {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    .flow-step {
+      background: rgba(0, 212, 255, 0.15);
+      border: 1px solid rgba(0, 212, 255, 0.4);
+      border-radius: 8px;
+      padding: 12px 18px;
+      font-size: 0.75em;
+      text-align: center;
+      min-width: 100px;
+    }
+    .flow-arrow {
+      color: #00d4ff;
+      font-size: 1.2em;
+    }
+    .flow-step.highlight-step {
+      background: rgba(255, 215, 0, 0.2);
+      border-color: rgba(255, 215, 0, 0.5);
+    }
+
+    /* ── Comparison layout ── */
+    .compare-container {
+      display: flex;
+      gap: 30px;
+      margin-top: 20px;
+    }
+    .compare-side {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .compare-side.chat-side {
+      border-top: 3px solid #ff6b6b;
+    }
+    .compare-side.agent-side {
+      border-top: 3px solid #00d4ff;
+    }
+    .compare-side h3 {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .compare-side ul {
+      font-size: 0.8em;
+    }
+
+    /* ── Screenshot placeholder ── */
+    .screenshot-placeholder {
+      background: rgba(255,255,255,0.03);
+      border: 2px dashed rgba(255,255,255,0.2);
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      color: rgba(255,255,255,0.4);
+      font-size: 0.8em;
+      margin: 20px 0;
+    }
+
+    /* ── Evolution stages ── */
+    .evolution {
+      display: flex;
+      align-items: stretch;
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .evo-stage {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+    .evo-stage.current {
+      background: rgba(0, 212, 255, 0.12);
+      border: 1px solid rgba(0, 212, 255, 0.4);
+    }
+    .evo-stage h3 { font-size: 0.9em; margin-bottom: 8px; }
+    .evo-stage p { font-size: 0.7em; opacity: 0.8; }
+    .evo-arrow {
+      display: flex;
+      align-items: center;
+      color: #ffd700;
+      font-size: 1.5em;
+    }
+
+    /* ── Icon style ── */
+    .slide-icon {
+      font-size: 2em;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    /* ── Price tag ── */
+    .price-tag {
+      display: inline-block;
+      background: rgba(0, 212, 255, 0.2);
+      color: #00d4ff;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75em;
+      margin-left: 8px;
+    }
   </style>
 </head>
 <body>
@@ -145,14 +257,14 @@
     <!-- ====== Slide 2: Table of Contents ====== -->
     <section>
       <h2>今天聊什么</h2>
-      <ol style="font-size:0.9em;">
+      <ol style="font-size:0.85em;">
         <li><strong>AI现在能做什么了</strong> — 你可能不知道的变化</li>
         <li><strong>Chat vs Agent</strong> — 为什么聊天只是起点</li>
-        <li><strong>工具生态</strong> — Plugin / Skill / MCP</li>
-        <li><strong>法律AI工具版图</strong> — 选对工具很重要</li>
-        <li><strong>实战演示</strong> — 合同审查、法律研究、文书起草</li>
+        <li><strong>工具生态与工具版图</strong> — Plugin / Skill / MCP + 选对工具</li>
+        <li><strong>AI助力律师工作</strong> — 方法论与实践建议</li>
+        <li><strong>实战演示</strong> — 案件文件夹分析、合同审查</li>
         <li><strong>提示词技巧 + Skill</strong> — 让AI输出质量翻倍</li>
-        <li><strong>你的场景匹配</strong> — 互动讨论</li>
+        <li><strong>互动交流</strong> — 你的场景匹配</li>
       </ol>
 
       <aside class="notes">
@@ -232,7 +344,7 @@
     </section>
 
     <!-- ============================================================ -->
-    <!-- ====== Section 2: Chat vs Agent (4 slides) ====== -->
+    <!-- ====== Section 2: Chat vs Agent (5 slides) ====== -->
     <!-- ============================================================ -->
 
     <!-- S2-1: 你现在用的AI是这样的 -->
@@ -263,25 +375,70 @@
       </aside>
     </section>
 
-    <!-- S2-3: 一个类比 -->
+    <!-- S2-3: Chat vs Agent 对比 (visual comparison) -->
     <section>
-      <h2>一个类比</h2>
-      <div style="display:flex; gap:40px; margin-top:20px;">
-        <div style="flex:1; padding:24px; background:rgba(255,255,255,0.06); border-radius:10px; text-align:center;">
-          <h3><span class="term">Chat</span> = 实习生</h3>
-          <p>你说一步，他做一步</p>
+      <h2>Chat vs Agent 对比</h2>
+      <div class="compare-container">
+        <div class="compare-side chat-side">
+          <h3 style="color:#ff6b6b;"><i class="fa-regular fa-comment-dots"></i> Chat</h3>
+          <div class="flow-diagram" style="flex-direction:column;">
+            <div class="flow-step">你：这段条款有风险吗？</div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step">AI：有，建议修改</div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step">你：那第二段呢？</div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step">AI：这段也有问题</div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step" style="opacity:0.5;">...重复N次...</div>
+          </div>
         </div>
-        <div style="flex:1; padding:24px; background:rgba(255,255,255,0.06); border-radius:10px; text-align:center;">
-          <h3><span class="term">Agent</span> = 资深助理</h3>
-          <p>你说目标，他安排整个流程</p>
+        <div class="compare-side agent-side">
+          <h3 style="color:#00d4ff;"><i class="fa-solid fa-robot"></i> Agent</h3>
+          <div class="flow-diagram" style="flex-direction:column;">
+            <div class="flow-step">你：审查这份合同所有风险</div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step" style="border-color:rgba(0,212,255,0.6);">Agent 自动执行 ↓</div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content:center;">
+              <div class="flow-step" style="min-width:60px; padding:8px 10px; font-size:0.65em;">通读全文</div>
+              <div class="flow-step" style="min-width:60px; padding:8px 10px; font-size:0.65em;">识别条款</div>
+              <div class="flow-step" style="min-width:60px; padding:8px 10px; font-size:0.65em;">分析风险</div>
+              <div class="flow-step" style="min-width:60px; padding:8px 10px; font-size:0.65em;">生成报告</div>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step highlight-step">完整审查报告</div>
+          </div>
         </div>
       </div>
       <aside class="notes">
-        这个类比是今天最重要的takeaway之一
+        左右对比一目了然。Chat需要人工驱动每一步，Agent只需要一个目标就自动完成。
       </aside>
     </section>
 
-    <!-- S2-4: LIVE DEMO — Chat vs Agent -->
+    <!-- Agent 工作流 -->
+    <section>
+      <h2>Agent 是怎么工作的？</h2>
+      <div class="flow-diagram" style="margin-top:30px;">
+        <div class="flow-step highlight-step"><i class="fa-solid fa-user"></i><br>用户给出目标</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><i class="fa-solid fa-brain"></i><br>理解 + 规划</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><i class="fa-solid fa-gears"></i><br>调用工具</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><i class="fa-solid fa-magnifying-glass"></i><br>分析 + 校验</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step highlight-step"><i class="fa-solid fa-file-lines"></i><br>输出结果</div>
+      </div>
+      <p style="text-align:center; margin-top:20px; opacity:0.7; font-size:0.85em;">
+        关键区别：Agent会<span class="highlight">自主循环</span>——如果发现问题，会自动回去重新分析
+      </p>
+      <aside class="notes">
+        强调Agent的自主性：它不只是执行一次，而是会自己检查、修正、迭代。
+        这就是为什么Agent的输出质量通常比Chat高很多。
+      </aside>
+    </section>
+
+    <!-- S2-5: LIVE DEMO — Chat vs Agent -->
     <section class="demo-slide">
       <div class="demo-badge">LIVE DEMO</div>
       <h2>同一个任务，两种方式</h2>
@@ -290,6 +447,9 @@
         <li><span class="term">Chat</span> 方式：逐段粘贴，手动追问</li>
         <li><span class="term">Agent</span> 方式：上传合同，一句话指令，自动完成</li>
       </ul>
+      <div class="screenshot-placeholder">
+        📷 此处插入：Chat界面 vs Agent界面 对比截图
+      </div>
       <aside class="notes">
         Demo步骤：
         1. 先用豆包/ChatGPT网页版，手动粘贴合同段落，问"这个条款有什么风险"
@@ -299,26 +459,14 @@
     </section>
 
     <!-- ============================================================ -->
-    <!-- ====== Section 3: 工具生态 Plugin/Skill/MCP (4 slides) ====== -->
+    <!-- ====== Section 3: 工具生态 Plugin/Skill/MCP (3 slides) ====== -->
     <!-- ============================================================ -->
 
-    <!-- S3-1: 手机 vs 手机 + APP -->
-    <section>
-      <h2>手机 vs 手机 + APP</h2>
-      <ul>
-        <li>裸机AI = 通用能力</li>
-        <li>AI + 工具 = 专业能力</li>
-        <li>三个关键概念：<span class="term">Plugin</span> / <span class="term">Skill</span> / <span class="term">MCP</span></li>
-      </ul>
-      <aside class="notes">
-        用手机APP类比，律师马上就懂了
-      </aside>
-    </section>
-
-    <!-- S3-2: Plugin（插件） -->
+    <!-- S3-1: Plugin（插件） — merged with 手机 vs APP concept -->
     <section>
       <h2>Plugin（插件）</h2>
       <ul>
+        <li>裸机AI = 通用能力，AI + 工具 = 专业能力。三个关键概念：</li>
         <li>给AI接上专业数据源和能力</li>
         <li>举例：Claude 装上法律插件后，可以直接检索法规数据库</li>
         <li>举例：装上翻译插件，可以一边审查英文合同一边输出中文分析</li>
@@ -330,7 +478,7 @@
       </aside>
     </section>
 
-    <!-- S3-3: Skill（预设技能模板） -->
+    <!-- S3-2: Skill（预设技能模板） -->
     <section>
       <h2>Skill（预设技能模板）</h2>
       <ul>
@@ -345,7 +493,7 @@
       </aside>
     </section>
 
-    <!-- S3-4: MCP（Model Context Protocol） -->
+    <!-- S3-3: MCP（Model Context Protocol） -->
     <section>
       <h2>MCP（Model Context Protocol）</h2>
       <ul>
@@ -361,35 +509,24 @@
     </section>
 
     <!-- ============================================================ -->
-    <!-- ====== Section 4: 法律AI工具版图 (5 slides) ====== -->
+    <!-- ====== Section 4: 法律AI工具版图 (4 slides) ====== -->
     <!-- ============================================================ -->
 
-    <!-- S4-1: 工具太多，怎么选？ -->
-    <section>
-      <h2>工具太多，怎么选？</h2>
-      <ul>
-        <li>先分清类别：通用 vs 法律专用</li>
-        <li>不需要全部会，选1-2个深度用</li>
-      </ul>
-      <aside class="notes">
-        帮律师降低选择焦虑
-      </aside>
-    </section>
-
-    <!-- S4-2: 通用AI工具对比 -->
+    <!-- S4-1: 通用AI工具对比 — merged with "工具太多怎么选" -->
     <section>
       <h2>通用AI工具对比</h2>
+      <p style="opacity:0.7; font-size:0.8em; margin-bottom:16px;">不需要全部会，选1-2个深度用</p>
       <div class="tool-card">
-        <strong>豆包</strong>：字节跳动出品。中文理解能力强，完全免费，适合日常问答和简单文本处理。<br><span style="font-size:0.8em; opacity:0.7;">限制：上下文窗口较短，复杂任务容易"忘记"前面的内容。</span>
+        <strong>豆包</strong> <span class="price-tag">免费</span>：字节跳动出品。中文理解能力强，完全免费，适合日常问答和简单文本处理。<br><span style="font-size:0.8em; opacity:0.7;">限制：上下文窗口较短，复杂任务容易"忘记"前面的内容。</span>
       </div>
       <div class="tool-card">
-        <strong>Kimi</strong>：月之暗面出品。最大特点是超长文档处理能力，可以一次性读取整本书。<br><span style="font-size:0.8em; opacity:0.7;">适合：上传长合同、案卷、研究报告，让AI做摘要和分析。</span>
+        <strong>Kimi</strong> <span class="price-tag">免费 / Pro付费</span>：月之暗面出品。最大特点是超长文档处理能力，可以一次性读取整本书。<br><span style="font-size:0.8em; opacity:0.7;">适合：上传长合同、案卷、研究报告，让AI做摘要和分析。</span>
       </div>
       <div class="tool-card">
-        <strong>Claude</strong>：Anthropic出品。推理能力最强，擅长复杂分析和长文档理解。支持 Agent 模式和 Plugin 扩展。<br><span style="font-size:0.8em; opacity:0.7;">适合：合同审查、法律分析等需要深度思考的任务。</span>
+        <strong>Claude</strong> <span class="price-tag">免费 / Pro $20/月</span>：Anthropic出品。推理能力最强，擅长复杂分析和长文档理解。支持 Agent 模式和 Plugin 扩展。<br><span style="font-size:0.8em; opacity:0.7;">适合：合同审查、法律分析等需要深度思考的任务。</span>
       </div>
       <div class="tool-card">
-        <strong>ChatGPT</strong>：OpenAI出品。用户最多，插件生态最丰富。GPT-4o支持多模态（图片、语音）。<br><span style="font-size:0.8em; opacity:0.7;">适合：通用任务、需要联网搜索的场景。</span>
+        <strong>ChatGPT</strong> <span class="price-tag">免费 / Plus $20/月</span>：OpenAI出品。用户最多，插件生态最丰富。GPT-4o支持多模态（图片、语音）。<br><span style="font-size:0.8em; opacity:0.7;">适合：通用任务、需要联网搜索的场景。</span>
       </div>
       <aside class="notes">
         不需要记住所有，重点推荐Kimi和Claude。
@@ -397,7 +534,7 @@
       </aside>
     </section>
 
-    <!-- S4-3: 法律领域的AI应用趋势 -->
+    <!-- S4-2: 法律领域的AI应用趋势 -->
     <section>
       <h2>法律领域的AI应用趋势</h2>
       <ul>
@@ -412,7 +549,7 @@
       </aside>
     </section>
 
-    <!-- S4-4: NotebookLM -->
+    <!-- S4-3: NotebookLM -->
     <section>
       <h2>NotebookLM</h2>
       <ul>
@@ -428,11 +565,14 @@
       </aside>
     </section>
 
-    <!-- S4-5: LIVE DEMO — NotebookLM -->
+    <!-- S4-4: LIVE DEMO — NotebookLM -->
     <section class="demo-slide">
       <div class="demo-badge">LIVE DEMO</div>
       <h2>NotebookLM 实战</h2>
       <p>上传一份法律文书，现场看AI生成摘要和问答</p>
+      <div class="screenshot-placeholder">
+        📷 此处插入：NotebookLM 界面截图
+      </div>
       <aside class="notes">
         Demo步骤：
         1. 打开 NotebookLM
@@ -444,103 +584,247 @@
     </section>
 
     <!-- ============================================================ -->
-    <!-- ====== PART 2 DIVIDER ====== -->
+    <!-- ====== AI助力律师工作 DIVIDER ====== -->
     <!-- ============================================================ -->
     <section class="center section-divider">
-      <h2>Part 2</h2>
-      <p style="opacity:0.7; font-size:1.2em;">实操 + 互动</p>
+      <h2>AI 助力律师工作</h2>
+      <p style="opacity:0.7; font-size:1.2em;">方法论与实践建议</p>
+      <aside class="notes">核心章节，从方法论角度讲AI如何融入律师日常工作</aside>
+    </section>
+
+    <!-- A1: 哪些工作适合交给AI？ -->
+    <section>
+      <h2><i class="fa-solid fa-filter" style="color:#00d4ff;"></i> 哪些工作适合交给AI？</h2>
+      <div class="compare-container">
+        <div class="compare-side" style="border-top:3px solid #00d4ff;">
+          <h3 style="color:#00d4ff;">适合 AI</h3>
+          <ul>
+            <li>重复性高的工作</li>
+            <li>有明确标准和流程的</li>
+            <li>信息量大需要梳理的</li>
+            <li>初稿 / 草稿类工作</li>
+          </ul>
+        </div>
+        <div class="compare-side" style="border-top:3px solid #ff6b6b;">
+          <h3 style="color:#ff6b6b;">不适合 AI</h3>
+          <ul>
+            <li>需要人情世故的沟通</li>
+            <li>需要创造性法律策略的</li>
+            <li>涉及敏感谈判策略的</li>
+            <li>最终拍板决策</li>
+          </ul>
+        </div>
+      </div>
+      <p style="text-align:center; margin-top:20px;"><span class="highlight">AI做80%的体力活，律师做20%的脑力活</span></p>
+      <aside class="notes">
+        帮律师建立判断框架：不是所有工作都丢给AI，而是识别哪些环节可以AI化。
+        80/20法则：AI处理大量重复性的初步工作，律师集中精力做判断和决策。
+      </aside>
+    </section>
+
+    <!-- A2: 批量处理思维 -->
+    <section>
+      <h2><i class="fa-solid fa-layer-group" style="color:#00d4ff;"></i> 批量处理思维</h2>
+      <p>从"一次处理一份"到"一次处理一批"</p>
+      <div class="compare-container" style="margin-top:20px;">
+        <div class="compare-side" style="border-top:3px solid #ff6b6b;">
+          <h3 style="color:#ff6b6b;">传统方式</h3>
+          <p style="font-size:0.8em;">100份供应商合同<br>→ 一份份打开、逐份检查<br>→ <span class="highlight">2天</span></p>
+        </div>
+        <div class="compare-side" style="border-top:3px solid #00d4ff;">
+          <h3 style="color:#00d4ff;">AI方式</h3>
+          <p style="font-size:0.8em;">100份供应商合同<br>→ 全部上传，一句指令<br>→ <span class="highlight">30分钟</span></p>
+        </div>
+      </div>
+      <p style="font-size:0.8em; opacity:0.7; margin-top:16px;">指令示例："检查每份合同的争议解决条款，列出哪些缺少仲裁条款"</p>
+      <aside class="notes">
+        这是思维方式的转变。很多律师还是一份一份处理文件，没想过可以批量操作。
+        尽调中批量提取公司关键信息（注册资本、股东结构、诉讼记录）也是同理。
+      </aside>
+    </section>
+
+    <!-- A3: 多语言工作 -->
+    <section>
+      <h2><i class="fa-solid fa-language" style="color:#00d4ff;"></i> AI辅助多语言工作</h2>
+      <p>跨境交易场景：审查 + 翻译 + 分析，一步完成</p>
+      <div class="tool-card" style="margin-top:20px;">
+        <p><strong>场景</strong>：收到一份英文 SPA（股权购买协议）</p>
+        <p style="font-size:0.85em; margin-top:12px;"><strong>以前</strong>：先翻译成中文 → 再审查分析 → 两步走，耗时长</p>
+        <p style="font-size:0.85em;"><strong>现在</strong>：一个指令，AI同时完成 →</p>
+        <ul style="font-size:0.8em;">
+          <li>用英文标注合同风险条款</li>
+          <li>用中文输出给国内客户的风险提示备忘录</li>
+        </ul>
+      </div>
+      <aside class="notes">
+        跨境业务的律师会特别有感触。以前翻译和分析是两个步骤，现在合并为一步。
+        而且AI的翻译质量在法律语境下已经相当好了。
+      </aside>
+    </section>
+
+    <!-- A4: AI辅助新人培养 -->
+    <section>
+      <h2><i class="fa-solid fa-graduation-cap" style="color:#00d4ff;"></i> AI辅助新人培养</h2>
+      <p>Junior律师的AI导师</p>
+      <ul>
+        <li><strong>做完审查，让AI复查</strong>：做完一份合同审查 → 让AI指出遗漏的风险点</li>
+        <li><strong>写完文书，让AI校对</strong>：写完法律意见书 → 让AI检查逻辑漏洞和表述问题</li>
+        <li><strong>遇到新领域，让AI梳理</strong>：不熟悉的法律领域 → 让AI做背景知识整理</li>
+      </ul>
+      <p style="margin-top:16px; font-size:0.85em;">核心价值：加速新人成长，<span class="highlight">不占用 Senior 律师的时间</span></p>
+      <aside class="notes">
+        这个话题合伙人会特别感兴趣——降低带新人的时间成本。
+        AI不能替代senior的指导，但可以承担大量"基础问题解答"和"初步审查反馈"的工作。
+      </aside>
+    </section>
+
+    <!-- A5: 工作环境的进化 -->
+    <section>
+      <h2><i class="fa-solid fa-laptop-code" style="color:#00d4ff;"></i> 工作环境的进化</h2>
+      <div class="evolution">
+        <div class="evo-stage">
+          <h3>Word 时代</h3>
+          <p>手动写、改、标红线<br>所有操作都是人工</p>
+        </div>
+        <div class="evo-arrow">→</div>
+        <div class="evo-stage">
+          <h3>Chat 时代</h3>
+          <p>网页对话框<br>一问一答，复制粘贴</p>
+        </div>
+        <div class="evo-arrow">→</div>
+        <div class="evo-stage current">
+          <h3>CLI / Agent 时代</h3>
+          <p>终端命令行<br>自然语言指挥AI工作</p>
+        </div>
+      </div>
+      <p style="text-align:center; margin-top:16px; font-size:0.85em;">
+        Word不会消失，它从<span class="highlight">"工作台"</span>变成了<span class="highlight">"交付格式"</span>
+      </p>
+      <aside class="notes">
+        这页可能会让律师意外——CLI/终端？那是程序员用的啊？
+        但事实是，CLI是Agent模式的最佳界面：可以连续指令、直接操作文件、调用工具。
+        重点：最终交付给客户的仍然是Word/PDF，但你生产它的过程完全不同了。
+      </aside>
+    </section>
+
+    <!-- A6: 知识沉淀与复用 -->
+    <section>
+      <h2><i class="fa-solid fa-database" style="color:#00d4ff;"></i> 知识沉淀与复用</h2>
+      <p>做完一个项目，经验去哪了？</p>
+      <div class="flow-diagram" style="margin:24px 0;">
+        <div class="flow-step"><i class="fa-solid fa-briefcase"></i><br>完成并购案</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><i class="fa-solid fa-lightbulb"></i><br>总结审查框架</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step highlight-step"><i class="fa-solid fa-bolt"></i><br>封装为 Skill</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><i class="fa-solid fa-rotate"></i><br>下次一键复用</div>
+      </div>
+      <ul style="font-size:0.85em;">
+        <li><strong>传统方式</strong>：经验在律师脑子里，换个人就没了</li>
+        <li><strong>AI方式</strong>：经验变成 <span class="term">Skill</span>，新人也能达到 Senior 的审查水平</li>
+        <li><strong>团队效果</strong>：用 Skill 统一团队输出质量，不再依赖个人经验差异</li>
+      </ul>
+      <aside class="notes">
+        这是知识管理的革命。律所最大的资产是律师的经验，但这些经验以前很难系统化传承。
+        Skill化就是把经验变成可复用的AI工作流。
+      </aside>
+    </section>
+
+    <!-- A7: 律所AI知识管理系统（愿景） -->
+    <section>
+      <h2><i class="fa-solid fa-building" style="color:#00d4ff;"></i> 律所AI知识管理系统</h2>
+      <p style="font-size:0.85em; opacity:0.7;">技术已成熟，早布局 = 竞争优势</p>
+      <div class="flow-diagram" style="margin:24px 0; flex-wrap:nowrap;">
+        <div class="flow-step" style="min-width:130px;">
+          <i class="fa-solid fa-robot" style="font-size:1.3em; color:#00d4ff;"></i><br>
+          <strong>Agent 梳理</strong><br>
+          <span style="font-size:0.75em;">分析复杂案件<br>识别关键节点</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" style="min-width:130px;">
+          <i class="fa-solid fa-bolt" style="font-size:1.3em; color:#ffd700;"></i><br>
+          <strong>Skill 化</strong><br>
+          <span style="font-size:0.75em;">沉淀审查框架<br>固化分析模板</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" style="min-width:130px;">
+          <i class="fa-solid fa-plug" style="font-size:1.3em; color:#00d4ff;"></i><br>
+          <strong>Plugin 连接</strong><br>
+          <span style="font-size:0.75em;">对接案件系统<br>连接判例库</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step highlight-step" style="min-width:130px;">
+          <i class="fa-solid fa-arrow-trend-up" style="font-size:1.3em; color:#ffd700;"></i><br>
+          <strong>持续积累</strong><br>
+          <span style="font-size:0.75em;">越用越强<br>经验永不流失</span>
+        </div>
+      </div>
+      <p style="text-align:center; font-size:0.85em;">
+        每一个项目都让律所的AI能力变得更强 — <span class="highlight">这不是科幻，技术栈已经成熟</span>
+      </p>
+      <aside class="notes">
+        这是整个分享的愿景页。Agent + Skill + MCP/Plugin 的技术栈已经成熟，
+        关键是谁先开始积累。早布局的律所，未来会形成不可逆的效率优势。
+      </aside>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ====== PART 3 DIVIDER ====== -->
+    <!-- ============================================================ -->
+    <section class="center section-divider">
+      <h2>Part 3</h2>
+      <p style="opacity:0.7; font-size:1.2em;">实战演示 + 互动</p>
       <aside class="notes">进入实操环节，节奏加快</aside>
     </section>
 
     <!-- ============================================================ -->
-    <!-- ====== Section 5: 律师工作场景实战 (6 slides) ====== -->
+    <!-- ====== Section 5: 实战演示 (2 slides) ====== -->
     <!-- ============================================================ -->
 
-    <!-- S5-1: 五大场景 -->
-    <section>
-      <h2>五大场景</h2>
-      <ol>
-        <li><strong>合同审查</strong> — 风险标注 + 修改建议</li>
-        <li><strong>法律研究</strong> — 判例检索 + 研究备忘录</li>
-        <li><strong>文书起草</strong> — 诉状、意见书初稿</li>
-        <li><strong>尽职调查</strong> — 批量文档提取关键信息</li>
-        <li><strong>客户沟通</strong> — 专业分析转化为通俗表达</li>
-      </ol>
-      <p style="margin-top:20px; opacity:0.7;">接下来逐一演示核心场景</p>
-      <aside class="notes">
-        过渡页，快速过一下五大场景
-      </aside>
-    </section>
-
-    <!-- S5-2: LIVE DEMO — 合同审查 -->
+    <!-- S5-1: LIVE DEMO — 案件文件夹分析 -->
     <section class="demo-slide">
       <div class="demo-badge">LIVE DEMO</div>
-      <h2>场景一：合同审查</h2>
-      <p>上传合同 → AI标注风险条款 → 生成审查意见</p>
-      <aside class="notes">
-        Demo步骤：
-        1. 准备一份样本合同（带常见风险条款：竞业禁止、违约金、管辖权等）
-        2. 上传到Claude或Kimi
-        3. 指令："审查这份合同，标注所有对我方不利的条款，给出修改建议"
-        4. 展示输出：逐条标注 + 修改建议
-        5. 强调：这是初稿，律师需要复核
-      </aside>
-    </section>
-
-    <!-- S5-3: LIVE DEMO — 法律研究 -->
-    <section class="demo-slide">
-      <div class="demo-badge">LIVE DEMO</div>
-      <h2>场景二：法律研究</h2>
-      <p>输入案情 → AI检索判例+法规 → 生成研究备忘录</p>
-      <aside class="notes">
-        Demo步骤：
-        1. 描述一个案情（如：劳动争议中的竞业禁止纠纷）
-        2. 让AI检索相关法规和判例
-        3. 生成研究备忘录
-        4. 重要提醒：判例引用必须人工校验（AI幻觉风险）
-      </aside>
-    </section>
-
-    <!-- S5-4: LIVE DEMO — 文书起草 -->
-    <section class="demo-slide">
-      <div class="demo-badge">LIVE DEMO</div>
-      <h2>场景三：文书起草</h2>
-      <p>给定要点 → AI生成法律文书初稿</p>
-      <aside class="notes">
-        Demo步骤：
-        1. 给出案件基本事实和诉求要点
-        2. 让AI生成起诉状或法律意见书初稿
-        3. 展示输出格式和内容质量
-        4. 演示如何通过追问迭代修改
-      </aside>
-    </section>
-
-    <!-- S5-5: 更多场景 -->
-    <section>
-      <h2>更多场景</h2>
-      <div class="tool-card">
-        <h3>尽职调查</h3>
-        <p>批量文档 → 提取关键信息 → 报告摘要</p>
-      </div>
-      <div class="tool-card">
-        <h3>客户沟通</h3>
-        <p>专业法律分析 → 转化为客户能理解的邮件/备忘录</p>
+      <h2>Agent 实战：读取整个案件文件夹</h2>
+      <p>让AI读完起诉状、证据、聊天记录，自动生成代理意见初稿</p>
+      <div class="screenshot-placeholder">
+        📷 此处插入：案件文件夹截图（文件列表）
       </div>
       <aside class="notes">
-        简述思路即可，不做完整demo，让律师知道这些场景也可以用AI
+        Demo步骤：
+        1. 展示案件文件夹结构（起诉状、证据材料、微信聊天记录、来往函件）
+        2. 用Claude Agent模式/CLI，指令："读取这个文件夹中的所有文件，分析案情，生成庭后代理意见初稿"
+        3. Agent自动读取每份文件、识别关键事实、整理争议焦点
+        4. 展示生成的代理意见初稿——结构化、引用具体证据
+        5. 强调：这就是Agent的威力——不是处理一份文件，而是处理整个项目
+        备用方案：如果现场文件太多处理慢，准备一个预处理好的输出结果展示
       </aside>
     </section>
 
-    <!-- S5-6: 场景小结 -->
+    <!-- S5-2: 更多AI工作场景 -->
     <section>
-      <h2>场景小结</h2>
-      <ul>
-        <li>所有场景的共同点：AI做<span class="highlight">初稿</span>，律师做<span class="highlight">终审</span></li>
-        <li>效率提升：重复性工作节省 50-80% 时间</li>
-        <li>质量保障：人机协作 > 纯人工 或 纯AI</li>
-      </ul>
+      <h2>更多AI工作场景</h2>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;">
+        <div class="tool-card">
+          <h3><i class="fa-solid fa-scale-balanced" style="color:#00d4ff;"></i> 法律研究</h3>
+          <p style="font-size:0.8em;">输入案情 → AI检索判例+法规<br>→ 生成研究备忘录</p>
+        </div>
+        <div class="tool-card">
+          <h3><i class="fa-solid fa-file-pen" style="color:#00d4ff;"></i> 文书起草</h3>
+          <p style="font-size:0.8em;">给定要点 → AI生成起诉状<br>/法律意见书初稿</p>
+        </div>
+        <div class="tool-card">
+          <h3><i class="fa-solid fa-magnifying-glass-chart" style="color:#00d4ff;"></i> 尽职调查</h3>
+          <p style="font-size:0.8em;">批量文档 → 提取关键信息<br>→ 报告摘要</p>
+        </div>
+        <div class="tool-card">
+          <h3><i class="fa-solid fa-envelope-open-text" style="color:#00d4ff;"></i> 客户沟通</h3>
+          <p style="font-size:0.8em;">专业法律分析 → 转化为<br>客户能理解的邮件</p>
+        </div>
+      </div>
       <aside class="notes">
-        强调人机协作的定位，AI不是替代而是加速
+        这些场景不做完整demo，快速带过。让律师知道AI的应用范围很广，不只是合同审查。
+        每个场景的思路都一样：AI做初稿，律师做终审。
       </aside>
     </section>
 
@@ -570,6 +854,9 @@
       <div class="demo-badge">LIVE DEMO</div>
       <h2>裸 Prompt vs <span class="term">Skill</span></h2>
       <p>同一个任务，看看输出差距有多大</p>
+      <div class="screenshot-placeholder">
+        📷 此处插入：裸Prompt vs Skill 输出对比截图
+      </div>
       <aside class="notes">
         Demo步骤：
         1. 裸prompt：直接说"帮我审查这份合同"
