@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 赋能法律实务</title>
+
+  <!-- reveal.js 5.x CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/night.css">
+
+  <style>
+    /* ── Base overrides on night theme ── */
+    :root {
+      --r-background-color: #1a1a2e;
+      --r-main-font: "PingFang SC", "Microsoft YaHei", sans-serif;
+      --r-heading-font: "PingFang SC", "Microsoft YaHei", sans-serif;
+      --r-main-font-size: 32px;
+    }
+
+    .reveal {
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    .reveal .slides {
+      text-align: left;
+    }
+
+    .reveal .slides section {
+      padding: 40px 60px;
+      box-sizing: border-box;
+    }
+
+    /* ── Centered slide ── */
+    .reveal .slides section.center {
+      text-align: center;
+      padding: 40px;
+    }
+
+    /* ── Term highlight — bright cyan for English terms ── */
+    .reveal .term {
+      color: #00d4ff;
+      font-weight: bold;
+    }
+
+    /* ── Yellow highlight ── */
+    .reveal .highlight {
+      color: #ffd700;
+      font-weight: bold;
+    }
+
+    /* ── Demo slide — yellow left border + badge ── */
+    .reveal .slides section.demo-slide {
+      border-left: 6px solid #ffd700;
+      padding-left: 54px;
+      position: relative;
+    }
+
+    .reveal .demo-badge {
+      display: inline-block;
+      background: #ffd700;
+      color: #1a1a2e;
+      font-size: 0.55em;
+      font-weight: bold;
+      padding: 4px 14px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    /* ── Tool card ── */
+    .reveal .tool-card {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      padding: 24px 28px;
+      margin: 16px 0;
+      transition: background 0.2s;
+    }
+
+    .reveal .tool-card:hover {
+      background: rgba(255, 255, 255, 0.10);
+    }
+
+    /* ── Section divider ── */
+    .reveal .slides section.section-divider {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .reveal .slides section.section-divider h2 {
+      font-size: 2em;
+      border-bottom: 3px solid #00d4ff;
+      padding-bottom: 16px;
+      display: inline-block;
+    }
+
+    /* ── Heading tweaks ── */
+    .reveal h1 {
+      font-size: 2.2em;
+      margin-bottom: 0.3em;
+    }
+
+    .reveal h2 {
+      font-size: 1.6em;
+      margin-bottom: 0.5em;
+    }
+
+    .reveal h3 {
+      font-size: 1.2em;
+      margin-bottom: 0.4em;
+    }
+
+    /* ── List spacing ── */
+    .reveal ol, .reveal ul {
+      margin-left: 0.6em;
+    }
+
+    .reveal li {
+      margin-bottom: 0.45em;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+<div class="reveal">
+  <div class="slides">
+
+    <!-- ====== Slide 1: Cover ====== -->
+    <section class="center">
+      <h1>AI 赋能法律实务</h1>
+      <h3>从 <span class="term">Chat</span> 到 <span class="term">Agent</span></h3>
+      <p style="opacity:0.6; margin-top:40px;">2026 · 律师事务所内部培训</p>
+
+      <aside class="notes">
+        欢迎大家。今天我们聊一聊AI如何真正帮到律师日常工作——不是泛泛而谈，而是落地可用的工具和方法。
+      </aside>
+    </section>
+
+    <!-- ====== Slide 2: Table of Contents ====== -->
+    <section>
+      <h2>今天聊什么</h2>
+      <ol style="font-size:0.9em;">
+        <li><strong>AI现在能做什么了</strong> — 你可能不知道的变化</li>
+        <li><strong>Chat vs Agent</strong> — 为什么聊天只是起点</li>
+        <li><strong>工具生态</strong> — Plugin / Skill / MCP</li>
+        <li><strong>法律AI工具版图</strong> — 选对工具很重要</li>
+        <li><strong>实战演示</strong> — 合同审查、法律研究、文书起草</li>
+        <li><strong>提示词技巧 + Skill</strong> — 让AI输出质量翻倍</li>
+        <li><strong>你的场景匹配</strong> — 互动讨论</li>
+      </ol>
+
+      <aside class="notes">
+        七个模块，由浅入深。中间穿插实操演示，最后留时间讨论大家各自的使用场景。
+      </aside>
+    </section>
+
+  </div>
+</div>
+
+<!-- reveal.js 5.x CDN -->
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/notes/notes.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    width: 1280,
+    height: 720,
+    transition: 'slide',
+    plugins: [ RevealNotes ]
+  });
+</script>
+
+</body>
+</html>
