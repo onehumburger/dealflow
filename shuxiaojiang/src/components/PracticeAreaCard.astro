@@ -1,0 +1,45 @@
+---
+interface Props {
+  title: string;
+  summary: string;
+  icon: string;
+  href?: string;
+}
+
+const { title, summary, icon, href } = Astro.props;
+
+const iconMap: Record<string, string> = {
+  globe: '🌐',
+  diamond: '💎',
+  cloud: '☁️',
+  film: '🎬',
+  building: '🏛️',
+  store: '🏪',
+  gamepad: '🎮',
+};
+
+const emoji = iconMap[icon] || '⚖️';
+---
+<div class="card group cursor-pointer">
+  {href ? (
+    <a href={href} class="block">
+      <div class="text-4xl mb-4">{emoji}</div>
+      <h3 class="text-xl font-bold text-navy mb-3 group-hover:text-gold transition-colors duration-300">
+        {title}
+      </h3>
+      <p class="text-charcoal/70 text-sm leading-relaxed">
+        {summary}
+      </p>
+    </a>
+  ) : (
+    <>
+      <div class="text-4xl mb-4">{emoji}</div>
+      <h3 class="text-xl font-bold text-navy mb-3 group-hover:text-gold transition-colors duration-300">
+        {title}
+      </h3>
+      <p class="text-charcoal/70 text-sm leading-relaxed">
+        {summary}
+      </p>
+    </>
+  )}
+</div>
