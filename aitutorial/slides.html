@@ -353,10 +353,13 @@
       <ul>
         <li>你问一句，它答一句</li>
         <li>像微信聊天</li>
-        <li>这叫 <span class="term">Chat</span>（对话模式）</li>
+        <li>需要查案例？你自己去查，粘贴给AI</li>
+        <li>需要看文件？你自己打开，复制给AI</li>
+        <li>这叫 <span class="term">Chat</span>（对话模式）— AI只能处理你喂给它的内容</li>
       </ul>
       <aside class="notes">
-        大多数律师停留在这个阶段，包括用豆包
+        大多数律师停留在这个阶段，包括用豆包。
+        关键痛点：AI是被动的，你喂什么它才看什么。需要的外部信息全靠你手动搬运。
       </aside>
     </section>
 
@@ -365,13 +368,18 @@
       <h2>但AI可以是这样的</h2>
       <ul>
         <li>你给一个目标："帮我审查这份合同的所有风险点"</li>
-        <li><span class="term">Agent</span> 自己会：先通读全文 → 识别关键条款 → 逐条分析风险 → 生成结构化报告</li>
-        <li>中间不需要你做任何操作</li>
-        <li>这叫 <span class="term">Agent</span>（智能代理）— AI从"回答问题"升级为"完成任务"</li>
+        <li><span class="term">Agent</span> 自己会：通读全文 → 识别条款 → <span class="highlight">按需调取案例库</span> → 逐条分析 → 生成报告</li>
+        <li>需要查判例？Agent 通过 <span class="term">API</span> 自动检索案例库</li>
+        <li>需要读文件？Agent 通过 <span class="term">MCP</span> 直接访问你的文件系统</li>
+        <li>这叫 <span class="term">Agent</span>（智能代理）— AI从"回答问题"升级为"<span class="highlight">自主完成任务</span>"</li>
       </ul>
       <aside class="notes">
         Agent是今天最重要的概念——从工具到助手的转变。
-        关键区别：Chat是你问一句它答一句，Agent是你给目标它自己完成整个任务。
+        关键区别不只是自动化，而是Agent可以按需调用外部资源：
+        - 通过API连接案例数据库，自动检索相关判例
+        - 通过MCP直接读取你电脑上的文件
+        - 甚至可以调用翻译、计算等多种工具
+        Chat只能处理你粘贴给它的内容，Agent能自己去找需要的信息。
       </aside>
     </section>
 
@@ -402,6 +410,7 @@
             <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content:center;">
               <div class="flow-step" style="min-width:60px; padding:8px 10px; font-size:0.65em;">通读全文</div>
               <div class="flow-step" style="min-width:60px; padding:8px 10px; font-size:0.65em;">识别条款</div>
+              <div class="flow-step" style="min-width:60px; padding:8px 10px; font-size:0.65em; background:rgba(255,215,0,0.15); border-color:rgba(255,215,0,0.4);">调取案例库</div>
               <div class="flow-step" style="min-width:60px; padding:8px 10px; font-size:0.65em;">分析风险</div>
               <div class="flow-step" style="min-width:60px; padding:8px 10px; font-size:0.65em;">生成报告</div>
             </div>
@@ -423,7 +432,7 @@
         <div class="flow-arrow">→</div>
         <div class="flow-step"><i class="fa-solid fa-brain"></i><br>理解 + 规划</div>
         <div class="flow-arrow">→</div>
-        <div class="flow-step"><i class="fa-solid fa-gears"></i><br>调用工具</div>
+        <div class="flow-step"><i class="fa-solid fa-gears"></i><br>调用工具<br><span style="font-size:0.7em; opacity:0.7;">API · MCP · 案例库</span></div>
         <div class="flow-arrow">→</div>
         <div class="flow-step"><i class="fa-solid fa-magnifying-glass"></i><br>分析 + 校验</div>
         <div class="flow-arrow">→</div>
