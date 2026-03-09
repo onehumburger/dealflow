@@ -160,6 +160,271 @@
       </aside>
     </section>
 
+    <!-- ============================================================ -->
+    <!-- ====== PART 1 DIVIDER ====== -->
+    <!-- ============================================================ -->
+    <section class="center section-divider">
+      <h2>Part 1</h2>
+      <p style="opacity:0.7; font-size:1.2em;">认知升级</p>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ====== Section 1: AI现在能做什么了 (4 slides) ====== -->
+    <!-- ============================================================ -->
+
+    <!-- S1-1: 两年发生了什么 -->
+    <section>
+      <h2>两年发生了什么</h2>
+      <ul>
+        <li>2024年初：大多数人刚开始用ChatGPT聊天</li>
+        <li>2026年初：AI可以自主完成复杂任务、调用工具、读取整本合同</li>
+        <li>变化速度比你想象的快</li>
+      </ul>
+      <aside class="notes">
+        用2024到2026的时间线，让律师感受到变化的加速度
+      </aside>
+    </section>
+
+    <!-- S1-2: 上下文窗口的飞跃 -->
+    <section>
+      <h2>上下文窗口的飞跃</h2>
+      <ul>
+        <li><span class="highlight">4K</span> tokens → <span class="highlight">200K</span> tokens</li>
+        <li><span class="highlight">4K</span> ≈ 3页A4纸 / <span class="highlight">200K</span> ≈ 一整本书（约500页）</li>
+        <li>意味着：整份合同、整套案卷可以一次性丢给AI</li>
+      </ul>
+      <aside class="notes">
+        这是最直观的进步——以前AI只能看几页，现在能看整本书
+      </aside>
+    </section>
+
+    <!-- S1-3: 多模态：不只是文字 -->
+    <section>
+      <h2>多模态：不只是文字</h2>
+      <ul>
+        <li>读图片：合同扫描件、证据照片</li>
+        <li>读PDF：直接解析排版复杂的法律文书</li>
+        <li>读表格：财务报表、股权结构图</li>
+      </ul>
+      <aside class="notes">
+        以前必须把文字一段段粘贴给AI，现在直接丢文件
+      </aside>
+    </section>
+
+    <!-- S1-4: 推理能力的突破 -->
+    <section>
+      <h2>推理能力的突破</h2>
+      <ul>
+        <li>不是"背答案" → 而是能"想问题"</li>
+        <li>能分析利弊、发现矛盾、提出反驳</li>
+        <li>对律师意味着：AI可以做初步的法律分析，不只是搜索</li>
+      </ul>
+      <aside class="notes">
+        这是质变——从信息检索到逻辑推理
+      </aside>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ====== Section 2: Chat vs Agent (4 slides) ====== -->
+    <!-- ============================================================ -->
+
+    <!-- S2-1: 你现在用的AI是这样的 -->
+    <section>
+      <h2>你现在用的AI是这样的</h2>
+      <ul>
+        <li>你问一句，它答一句</li>
+        <li>像微信聊天</li>
+        <li>这叫 <span class="term">Chat</span>（对话模式）</li>
+      </ul>
+      <aside class="notes">
+        大多数律师停留在这个阶段，包括用豆包
+      </aside>
+    </section>
+
+    <!-- S2-2: 但AI可以是这样的 -->
+    <section>
+      <h2>但AI可以是这样的</h2>
+      <ul>
+        <li>你给一个目标，它自己规划步骤</li>
+        <li>自动调用搜索、读取文件、生成文档</li>
+        <li>这叫 <span class="term">Agent</span>（智能代理）</li>
+      </ul>
+      <aside class="notes">
+        Agent是今天最重要的概念——从工具到助手的转变
+      </aside>
+    </section>
+
+    <!-- S2-3: 一个类比 -->
+    <section>
+      <h2>一个类比</h2>
+      <div style="display:flex; gap:40px; margin-top:20px;">
+        <div style="flex:1; padding:24px; background:rgba(255,255,255,0.06); border-radius:10px; text-align:center;">
+          <h3><span class="term">Chat</span> = 实习生</h3>
+          <p>你说一步，他做一步</p>
+        </div>
+        <div style="flex:1; padding:24px; background:rgba(255,255,255,0.06); border-radius:10px; text-align:center;">
+          <h3><span class="term">Agent</span> = 资深助理</h3>
+          <p>你说目标，他安排整个流程</p>
+        </div>
+      </div>
+      <aside class="notes">
+        这个类比是今天最重要的takeaway之一
+      </aside>
+    </section>
+
+    <!-- S2-4: LIVE DEMO — Chat vs Agent -->
+    <section class="demo-slide">
+      <div class="demo-badge">LIVE DEMO</div>
+      <h2>同一个任务，两种方式</h2>
+      <p>任务：审查一份合同中的竞业禁止条款</p>
+      <ul>
+        <li><span class="term">Chat</span> 方式：逐段粘贴，手动追问</li>
+        <li><span class="term">Agent</span> 方式：上传合同，一句话指令，自动完成</li>
+      </ul>
+      <aside class="notes">
+        Demo步骤：
+        1. 先用豆包/ChatGPT网页版，手动粘贴合同段落，问"这个条款有什么风险"
+        2. 再用Claude Agent模式，上传整份合同，说"审查这份合同的竞业禁止条款，标注风险点"
+        3. 对比两者的效率和输出质量
+      </aside>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ====== Section 3: 工具生态 Plugin/Skill/MCP (4 slides) ====== -->
+    <!-- ============================================================ -->
+
+    <!-- S3-1: 手机 vs 手机 + APP -->
+    <section>
+      <h2>手机 vs 手机 + APP</h2>
+      <ul>
+        <li>裸机AI = 通用能力</li>
+        <li>AI + 工具 = 专业能力</li>
+        <li>三个关键概念：<span class="term">Plugin</span> / <span class="term">Skill</span> / <span class="term">MCP</span></li>
+      </ul>
+      <aside class="notes">
+        用手机APP类比，律师马上就懂了
+      </aside>
+    </section>
+
+    <!-- S3-2: Plugin（插件） -->
+    <section>
+      <h2>Plugin（插件）</h2>
+      <ul>
+        <li>给AI接上专业数据源</li>
+        <li>例：法律数据库插件 → AI能搜判例</li>
+        <li>例：财务插件 → AI能读财报</li>
+        <li>你不需要自己做，装上就行</li>
+      </ul>
+      <aside class="notes">
+        Plugin是最好理解的——就像手机装APP
+      </aside>
+    </section>
+
+    <!-- S3-3: Skill（预设技能模板） -->
+    <section>
+      <h2>Skill（预设技能模板）</h2>
+      <ul>
+        <li>= 专家级提示词 + 预设工作流</li>
+        <li>例：一个"合同审查 Skill" 预设了审查步骤、关注要点、输出格式</li>
+        <li>你不需要成为 prompt 专家</li>
+      </ul>
+      <aside class="notes">
+        Skill解决了"不会写prompt"的问题
+      </aside>
+    </section>
+
+    <!-- S3-4: MCP（Model Context Protocol） -->
+    <section>
+      <h2>MCP（Model Context Protocol）</h2>
+      <ul>
+        <li>让AI连接你的本地文件和系统</li>
+        <li>例：连接律所的案件管理系统</li>
+        <li>例：读取本地文件夹里的所有合同</li>
+        <li>技术在快速成熟，未来潜力巨大</li>
+      </ul>
+      <aside class="notes">
+        MCP比较技术，点到为止，让他们知道存在就行
+      </aside>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ====== Section 4: 法律AI工具版图 (5 slides) ====== -->
+    <!-- ============================================================ -->
+
+    <!-- S4-1: 工具太多，怎么选？ -->
+    <section>
+      <h2>工具太多，怎么选？</h2>
+      <ul>
+        <li>先分清类别：通用 vs 法律专用</li>
+        <li>不需要全部会，选1-2个深度用</li>
+      </ul>
+      <aside class="notes">
+        帮律师降低选择焦虑
+      </aside>
+    </section>
+
+    <!-- S4-2: 通用AI工具对比 -->
+    <section>
+      <h2>通用AI工具对比</h2>
+      <div class="tool-card">
+        <strong>豆包</strong>：中文好，免费，大家已经在用
+      </div>
+      <div class="tool-card">
+        <strong>Kimi</strong>：长文档能力强，适合读合同
+      </div>
+      <div class="tool-card">
+        <strong>Claude</strong>：推理强、上下文长、有法律 Plugin
+      </div>
+      <div class="tool-card">
+        <strong>ChatGPT</strong>：生态最大，Plugin 最多
+      </div>
+      <aside class="notes">
+        不需要记住所有，重点推荐Kimi和Claude
+      </aside>
+    </section>
+
+    <!-- S4-3: 法律专用工具 -->
+    <section>
+      <h2>法律专用工具</h2>
+      <ul>
+        <li><strong>OpenClaw</strong>：开源法律AI</li>
+        <li><strong>Harvey AI / CoCounsel</strong>：国际大所在用</li>
+        <li><strong>Claude Legal Plugin</strong>：Claude的法律专业扩展</li>
+      </ul>
+      <aside class="notes">
+        法律专用工具是趋势，虽然国内生态还在早期
+      </aside>
+    </section>
+
+    <!-- S4-4: NotebookLM -->
+    <section>
+      <h2>NotebookLM</h2>
+      <ul>
+        <li>Google出品，<span class="highlight">免费</span></li>
+        <li>上传文档 → 自动生成摘要、问答、播客式讲解</li>
+        <li>律师场景：100页案卷 → 案情摘要 → 播客给客户听</li>
+        <li><span class="highlight">门槛极低</span>，推荐作为入门第一个AI工具</li>
+      </ul>
+      <aside class="notes">
+        这是今天最推荐的入门工具，现场演示
+      </aside>
+    </section>
+
+    <!-- S4-5: LIVE DEMO — NotebookLM -->
+    <section class="demo-slide">
+      <div class="demo-badge">LIVE DEMO</div>
+      <h2>NotebookLM 实战</h2>
+      <p>上传一份法律文书，现场看AI生成摘要和问答</p>
+      <aside class="notes">
+        Demo步骤：
+        1. 打开 NotebookLM
+        2. 上传预准备的法律文书（判决书或合同）
+        3. 展示自动生成的摘要
+        4. 播放自动生成的播客片段
+        5. 展示问答功能：问一个关于文档内容的问题
+      </aside>
+    </section>
+
   </div>
 </div>
 
