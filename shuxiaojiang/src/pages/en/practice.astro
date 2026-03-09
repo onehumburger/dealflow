@@ -1,6 +1,14 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection, render } from 'astro:content';
+import GlobeIcon from '../../components/icons/GlobeIcon.astro';
+import DiamondIcon from '../../components/icons/DiamondIcon.astro';
+import CloudIcon from '../../components/icons/CloudIcon.astro';
+import FilmIcon from '../../components/icons/FilmIcon.astro';
+import BuildingIcon from '../../components/icons/BuildingIcon.astro';
+import StoreIcon from '../../components/icons/StoreIcon.astro';
+import GamepadIcon from '../../components/icons/GamepadIcon.astro';
+import ScaleIcon from '../../components/icons/ScaleIcon.astro';
 
 const lang = 'en';
 
@@ -16,14 +24,14 @@ const renderedItems = await Promise.all(
   })
 );
 
-const iconMap: Record<string, string> = {
-  globe: '\u{1F310}',
-  diamond: '\u{1F48E}',
-  cloud: '\u2601\uFE0F',
-  film: '\u{1F3AC}',
-  building: '\u{1F3DB}\uFE0F',
-  store: '\u{1F3EA}',
-  gamepad: '\u{1F3AE}',
+const iconComponents: Record<string, any> = {
+  globe: GlobeIcon,
+  diamond: DiamondIcon,
+  cloud: CloudIcon,
+  film: FilmIcon,
+  building: BuildingIcon,
+  store: StoreIcon,
+  gamepad: GamepadIcon,
 };
 ---
 <BaseLayout title="Practice Areas | Arthur Cang">
@@ -38,16 +46,21 @@ const iconMap: Record<string, string> = {
   <!-- Practice Areas Grid -->
   <section class="section-container">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-      {renderedItems.map((item) => (
-        <div class="card fade-in">
-          <div class="text-3xl mb-3">{iconMap[item.data.icon] || '\u2696\uFE0F'}</div>
-          <h3 class="text-xl font-bold text-navy mb-2">{item.data.title}</h3>
-          <p class="text-charcoal/60 text-sm mb-4">{item.data.summary}</p>
-          <div class="prose prose-sm max-w-none text-charcoal/70">
-            <item.Content />
+      {renderedItems.map((item) => {
+        const IconComponent = iconComponents[item.data.icon] || ScaleIcon;
+        return (
+          <div class="card fade-in">
+            <div class="mb-3">
+              <IconComponent />
+            </div>
+            <h3 class="text-xl font-bold text-navy mb-2">{item.data.title}</h3>
+            <p class="text-charcoal/60 text-sm mb-4">{item.data.summary}</p>
+            <div class="prose prose-sm max-w-none text-charcoal/70">
+              <item.Content />
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   </section>
 </BaseLayout>

@@ -1,6 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { useTranslations } from '../../i18n/utils';
+import EnvelopeIcon from '../../components/icons/EnvelopeIcon.astro';
+import PhoneIcon from '../../components/icons/PhoneIcon.astro';
+import OfficeIcon from '../../components/icons/OfficeIcon.astro';
+import ChatIcon from '../../components/icons/ChatIcon.astro';
 
 const lang = 'zh';
 const t = useTranslations(lang);
@@ -18,7 +22,9 @@ const t = useTranslations(lang);
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <!-- Email -->
         <div class="card fade-in text-center">
-          <div class="text-4xl mb-4">✉️</div>
+          <div class="flex justify-center mb-4">
+            <EnvelopeIcon />
+          </div>
           <h3 class="text-lg font-bold text-navy mb-2">{t('contact.email')}</h3>
           <a href="mailto:arhur.cang@jingtian.com" class="text-gold hover:underline">
             arhur.cang@jingtian.com
@@ -27,7 +33,9 @@ const t = useTranslations(lang);
 
         <!-- Phone -->
         <div class="card fade-in text-center">
-          <div class="text-4xl mb-4">📞</div>
+          <div class="flex justify-center mb-4">
+            <PhoneIcon />
+          </div>
           <h3 class="text-lg font-bold text-navy mb-2">{t('contact.phone')}</h3>
           <a href="tel:+8613764513451" class="text-gold hover:underline">
             (86) 137.6451.3451
@@ -36,7 +44,9 @@ const t = useTranslations(lang);
 
         <!-- Office -->
         <div class="card fade-in text-center">
-          <div class="text-4xl mb-4">🏢</div>
+          <div class="flex justify-center mb-4">
+            <OfficeIcon />
+          </div>
           <h3 class="text-lg font-bold text-navy mb-2">{t('contact.office')}</h3>
           <p class="text-charcoal/70">
             {t('footer.address')}
@@ -45,7 +55,9 @@ const t = useTranslations(lang);
 
         <!-- WeChat -->
         <div class="card fade-in text-center">
-          <div class="text-4xl mb-4">💬</div>
+          <div class="flex justify-center mb-4">
+            <ChatIcon />
+          </div>
           <h3 class="text-lg font-bold text-navy mb-2">{t('contact.wechat')}</h3>
           <div class="w-32 h-32 mx-auto bg-lightgray rounded-lg flex items-center justify-center text-charcoal/30 text-sm border-2 border-dashed border-gray-300">
             微信二维码

@@ -1,4 +1,13 @@
 ---
+import GlobeIcon from './icons/GlobeIcon.astro';
+import DiamondIcon from './icons/DiamondIcon.astro';
+import CloudIcon from './icons/CloudIcon.astro';
+import FilmIcon from './icons/FilmIcon.astro';
+import BuildingIcon from './icons/BuildingIcon.astro';
+import StoreIcon from './icons/StoreIcon.astro';
+import GamepadIcon from './icons/GamepadIcon.astro';
+import ScaleIcon from './icons/ScaleIcon.astro';
+
 interface Props {
   title: string;
   summary: string;
@@ -8,22 +17,24 @@ interface Props {
 
 const { title, summary, icon, href } = Astro.props;
 
-const iconMap: Record<string, string> = {
-  globe: '🌐',
-  diamond: '💎',
-  cloud: '☁️',
-  film: '🎬',
-  building: '🏛️',
-  store: '🏪',
-  gamepad: '🎮',
+const iconComponents: Record<string, any> = {
+  globe: GlobeIcon,
+  diamond: DiamondIcon,
+  cloud: CloudIcon,
+  film: FilmIcon,
+  building: BuildingIcon,
+  store: StoreIcon,
+  gamepad: GamepadIcon,
 };
 
-const emoji = iconMap[icon] || '⚖️';
+const IconComponent = iconComponents[icon] || ScaleIcon;
 ---
 <div class="card group cursor-pointer">
   {href ? (
     <a href={href} class="block">
-      <div class="text-4xl mb-4">{emoji}</div>
+      <div class="mb-4">
+        <IconComponent />
+      </div>
       <h3 class="text-xl font-bold text-navy mb-3 group-hover:text-gold transition-colors duration-300">
         {title}
       </h3>
@@ -33,7 +44,9 @@ const emoji = iconMap[icon] || '⚖️';
     </a>
   ) : (
     <>
-      <div class="text-4xl mb-4">{emoji}</div>
+      <div class="mb-4">
+        <IconComponent />
+      </div>
       <h3 class="text-xl font-bold text-navy mb-3 group-hover:text-gold transition-colors duration-300">
         {title}
       </h3>
