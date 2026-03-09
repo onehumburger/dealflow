@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EducationTimeline from '../../components/EducationTimeline.astro';
+import { getCollection, render } from 'astro:content';
+import { useTranslations } from '../../i18n/utils';
+
+const lang = 'zh';
+const t = useTranslations(lang);
+
+const aboutEntries = await getCollection('about');
+const aboutEntry = aboutEntries.find((e) => e.data.lang === lang);
+const { Content } = aboutEntry ? await render(aboutEntry) : { Content: null };
+
+const publications = [
+  '参与撰写亚洲云计算协会《医疗产业云计算应用法律规范的研究报告》（2016）',
+  '参与撰写亚洲云计算协会《为云计算做好准备：关于影响亚太市场云计算的FSI规则的研究报告》（2015）',
+  '参与撰写亚洲云计算协会《亚洲云计算数据主权的影响》（2013）',
+];
+
+const memberships = [
+  '执业律师，上海律师协会成员',
+  '中国民主建国会成员',
+];
+---
+<BaseLayout title="关于仓晨阳 | 竞天公诚律师事务所">
+  <!-- Page Header -->
+  <section class="bg-gradient-to-br from-navy to-[#243656] py-16 md:py-20">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">关于仓晨阳</h1>
+      <p class="text-gold text-lg">竞天公诚律师事务所 · 合伙人 · 上海办公室</p>
+    </div>
+  </section>
+
+  <!-- Bio -->
+  <section class="section-container">
+    <div class="max-w-3xl mx-auto">
+      <div class="prose prose-lg prose-navy max-w-none text-charcoal/80 leading-relaxed fade-in">
+        {Content && <Content />}
+      </div>
+    </div>
+  </section>
+
+  <!-- Education -->
+  <section class="bg-lightgray">
+    <div class="section-container">
+      <h2 class="section-title fade-in">{t('about.education')}</h2>
+      <div class="fade-in">
+        <EducationTimeline />
+      </div>
+    </div>
+  </section>
+
+  <!-- Publications -->
+  <section class="section-container">
+    <h2 class="section-title fade-in">{t('about.publications')}</h2>
+    <div class="max-w-3xl mx-auto fade-in">
+      <ul class="space-y-4">
+        {publications.map((pub) => (
+          <li class="flex items-start gap-3 p-4 bg-white rounded-lg shadow-sm border border-gray-100">
+            <span class="text-gold mt-1 flex-shrink-0">📄</span>
+            <span class="text-charcoal/80">{pub}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Memberships -->
+  <section class="bg-lightgray">
+    <div class="section-container">
+      <h2 class="section-title fade-in">{t('about.memberships')}</h2>
+      <div class="max-w-3xl mx-auto fade-in">
+        <ul class="space-y-4">
+          {memberships.map((m) => (
+            <li class="flex items-start gap-3 p-4 bg-white rounded-lg shadow-sm border border-gray-100">
+              <span class="text-gold mt-1 flex-shrink-0">•</span>
+              <span class="text-charcoal/80">{m}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
