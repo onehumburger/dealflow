@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+const lang = 'en';
+
+const expEntries = await getCollection('experience');
+const expEntry = expEntries.find((e) => e.data.lang === lang);
+const { Content } = expEntry ? await render(expEntry) : { Content: null };
+---
+<BaseLayout title="Representative Experience | Arthur Cang">
+  <!-- Page Header -->
+  <section class="bg-gradient-to-br from-navy via-navy/95 to-navy/90">
+    <div class="max-w-6xl mx-auto px-6 py-20 md:py-28 text-center">
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Representative Experience</h1>
+      <p class="text-white/70 text-lg md:text-xl">Selected cross-border investment and M&A cases</p>
+    </div>
+  </section>
+
+  <!-- Experience Content -->
+  <section class="section-container">
+    <div class="card fade-in p-8 md:p-12">
+      {Content && (
+        <div class="prose prose-lg max-w-none prose-headings:text-navy prose-headings:border-b prose-headings:border-gold/20 prose-headings:pb-3 prose-headings:mb-6 prose-li:text-charcoal/80">
+          <Content />
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
