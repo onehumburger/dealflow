@@ -475,15 +475,22 @@
     <section>
       <h2>Plugin（插件）</h2>
       <ul>
-        <li>裸机AI = 通用能力，AI + 工具 = 专业能力。三个关键概念：</li>
-        <li>给AI接上专业数据源和能力</li>
-        <li>举例：Claude 装上法律插件后，可以直接检索法规数据库</li>
-        <li>举例：装上翻译插件，可以一边审查英文合同一边输出中文分析</li>
+        <li>裸机AI = 通用能力，AI + 工具 = <span class="highlight">专业能力</span>。三个关键概念：</li>
+        <li>给AI接上专业数据源和工作流</li>
+        <li>举例：<span class="term">Claude Legal Plugin</span> — 自动逐条审查合同、分类NDA、生成法律简报</li>
+        <li>举例：<span class="term">LexisNexis</span> 已将Claude Legal Plugin集成到其法律数据库，AI+判例检索</li>
+        <li>举例：装上翻译插件，一边审查英文合同一边输出中文分析</li>
         <li>类比：就像手机装了高德地图，手机本身不认路，装上APP就会导航</li>
       </ul>
       <aside class="notes">
         Plugin是最好理解的——就像手机装APP。
-        手机本身不会导航，但装了高德地图就能导航。AI本身不连数据库，装了插件就能检索法规。
+        Claude Legal Plugin是2026年2月Anthropic发布的，核心功能：
+        - /review-contract：逐条审查合同，按谈判手册标注红绿灯
+        - /triage-nda：NDA快速分类
+        - /brief：生成法律简报
+        本质上是高质量的结构化prompt + 工作流模板，开源在GitHub上。
+        LexisNexis已经集成了这个插件，所以可以连接专业法律数据库。
+        关键信息：AI能力 + 专业数据 = 真正有用的法律AI工具。
       </aside>
     </section>
 
