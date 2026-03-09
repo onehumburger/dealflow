@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+const lang = 'en';
+
+const allPractice = await getCollection('practiceAreas');
+const practiceItems = allPractice
+  .filter((p) => p.data.lang === lang)
+  .sort((a, b) => a.data.order - b.data.order);
+
+const renderedItems = await Promise.all(
+  practiceItems.map(async (item) => {
+    const { Content } = await render(item);
+    return { ...item, Content };
+  })
+);
+
+const iconMap: Record<string, string> = {
+  globe: '\u{1F310}',
+  diamond: '\u{1F48E}',
+  cloud: '\u2601\uFE0F',
+  film: '\u{1F3AC}',
+  building: '\u{1F3DB}\uFE0F',
+  store: '\u{1F3EA}',
+  gamepad: '\u{1F3AE}',
+};
+---
+<BaseLayout title="Practice Areas | Arthur Cang">
+  <!-- Page Header -->
+  <section class="bg-gradient-to-br from-navy via-navy/95 to-navy/90">
+    <div class="max-w-6xl mx-auto px-6 py-20 md:py-28 text-center">
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Practice Areas</h1>
+      <p class="text-white/70 text-lg md:text-xl">Comprehensive cross-border legal services</p>
+    </div>
+  </section>
+
+  <!-- Practice Areas Grid -->
+  <section class="section-container">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {renderedItems.map((item) => (
+        <div class="card fade-in">
+          <div class="text-3xl mb-3">{iconMap[item.data.icon] || '\u2696\uFE0F'}</div>
+          <h3 class="text-xl font-bold text-navy mb-2">{item.data.title}</h3>
+          <p class="text-charcoal/60 text-sm mb-4">{item.data.summary}</p>
+          <div class="prose prose-sm max-w-none text-charcoal/70">
+            <item.Content />
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
