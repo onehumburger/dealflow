@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { useTranslations } from '../../i18n/utils';
+
+const lang = 'zh';
+const t = useTranslations(lang);
+---
+<BaseLayout title="联系方式 | 仓晨阳">
+  <section class="bg-gradient-to-br from-navy to-[#243656] py-16 md:py-20">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">联系方式</h1>
+      <p class="text-gold text-lg">欢迎联系仓律师，获取专业法律建议</p>
+    </div>
+  </section>
+
+  <section class="section-container">
+    <div class="max-w-4xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Email -->
+        <div class="card fade-in text-center">
+          <div class="text-4xl mb-4">✉️</div>
+          <h3 class="text-lg font-bold text-navy mb-2">{t('contact.email')}</h3>
+          <a href="mailto:arhur.cang@jingtian.com" class="text-gold hover:underline">
+            arhur.cang@jingtian.com
+          </a>
+        </div>
+
+        <!-- Phone -->
+        <div class="card fade-in text-center">
+          <div class="text-4xl mb-4">📞</div>
+          <h3 class="text-lg font-bold text-navy mb-2">{t('contact.phone')}</h3>
+          <a href="tel:+8613764513451" class="text-gold hover:underline">
+            (86) 137.6451.3451
+          </a>
+        </div>
+
+        <!-- Office -->
+        <div class="card fade-in text-center">
+          <div class="text-4xl mb-4">🏢</div>
+          <h3 class="text-lg font-bold text-navy mb-2">{t('contact.office')}</h3>
+          <p class="text-charcoal/70">
+            {t('footer.address')}
+          </p>
+        </div>
+
+        <!-- WeChat -->
+        <div class="card fade-in text-center">
+          <div class="text-4xl mb-4">💬</div>
+          <h3 class="text-lg font-bold text-navy mb-2">{t('contact.wechat')}</h3>
+          <div class="w-32 h-32 mx-auto bg-lightgray rounded-lg flex items-center justify-center text-charcoal/30 text-sm border-2 border-dashed border-gray-300">
+            微信二维码
+          </div>
+        </div>
+      </div>
+
+      <!-- Firm link -->
+      <div class="text-center mt-12 fade-in">
+        <p class="text-charcoal/60 mb-4">了解更多关于竞天公诚律师事务所</p>
+        <a href="https://www.jingtian.com" target="_blank" rel="noopener noreferrer" class="btn-outline">
+          访问竞天公诚官网 ↗
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
