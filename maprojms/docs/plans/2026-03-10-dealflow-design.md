@@ -106,6 +106,7 @@ Deal
 | reminders | JSON | Array of reminder offsets (e.g., 7d, 3d, 1d) |
 | dealId | Relation → Deal | |
 | sortOrder | Int | Position on timeline |
+| linkedTasks | Relation → Task[] | Tasks that must complete before this milestone (via join table) |
 
 **Workstream**
 
@@ -219,12 +220,14 @@ Deal
 | Field | Type | Notes |
 |-------|------|-------|
 | name | Text | File name |
-| filePath | Text | Storage path |
+| filePath | Text | Storage path (non-public, served via authenticated API route) |
 | dealId | Relation → Deal | |
 | workstreamId | Relation → Workstream | Optional |
 | taskId | Relation → Task | Optional |
 | uploadedById | Relation → User | |
 | createdAt | Timestamp | |
+
+> **Security note**: Documents are stored in a non-public directory (e.g., `storage/uploads/`) and served through an authenticated API route (`/api/documents/[id]/download`), not from `public/`. Legal documents contain privileged material.
 
 **AuditLog**
 
@@ -273,6 +276,7 @@ Task 1──n Document (attachments)
 Task n──m Task (via TaskDependency)
 Decision 1──n DecisionOption
 Decision n──m Task (via link table, cross-references)
+Milestone n──m Task (via MilestoneTask join table — tasks that block a milestone)
 ```
 
 ---

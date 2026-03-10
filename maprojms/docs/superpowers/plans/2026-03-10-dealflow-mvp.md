@@ -47,11 +47,18 @@ dealflow/
 │   │   │   │   └── page.tsx             # Global contacts
 │   │   │   └── search/
 │   │   │       └── page.tsx             # Global search
+│   │   │   ├── admin/
+│   │   │   │   └── users/
+│   │   │   │       └── page.tsx         # User management (admin only)
 │   │   └── api/
-│   │       └── auth/[...nextauth]/
-│   │           └── route.ts             # Auth.js route handler
+│   │       ├── auth/[...nextauth]/
+│   │       │   └── route.ts             # Auth.js route handler
+│   │       └── documents/[id]/
+│   │           └── download/
+│   │               └── route.ts         # Authenticated document download
 │   ├── actions/
 │   │   ├── deals.ts                     # Deal CRUD server actions
+│   │   ├── users.ts                     # User management actions
 │   │   ├── workstreams.ts               # Workstream CRUD
 │   │   ├── tasks.ts                     # Task CRUD, dependencies, comments
 │   │   ├── milestones.ts                # Milestone CRUD
@@ -132,8 +139,9 @@ dealflow/
 │   ├── actions/                         # Server action tests
 │   ├── components/                      # Component tests
 │   └── lib/                             # Utility tests
+├── storage/
+│   └── uploads/                         # Document storage (non-public, served via authenticated API)
 ├── public/
-│   └── uploads/                         # Document storage (local)
 ├── docker-compose.yml                   # PostgreSQL for dev
 ├── Dockerfile                           # Production build
 ├── .env.example                         # Environment template
@@ -424,7 +432,18 @@ model Milestone {
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
 
+  linkedTasks MilestoneTask[]
+
   @@index([dealId])
+}
+
+model MilestoneTask {
+  milestoneId String
+  taskId      String
+  milestone   Milestone @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+  task        Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@id([milestoneId, taskId])
 }
 
 model Workstream {
@@ -470,6 +489,7 @@ model Task {
 
   // Cross-links to decisions
   linkedDecisions DecisionTaskLink[]
+  linkedMilestones MilestoneTask[]
 
   @@index([workstreamId])
   @@index([assigneeId])
@@ -2273,9 +2293,13 @@ export async function createDeal(formData: FormData) {
 }
 ```
 
-- [ ] **Step 2: Create deal form component**
+- [ ] **Step 2: Add updateDeal server action**
 
-A client component form with fields matching the design spec (name, codeName, dealType, ourRole, clientName, targetCompany, jurisdictions, dealLead, teamMembers, summary). DealType and OurRole selections auto-match a template. Form submits via the `createDeal` server action.
+Add `updateDeal` to `src/actions/deals.ts`. Accepts dealId + partial data (name, codeName, clientName, targetCompany, jurisdictions, summary, status, dealLeadId). On status change, auto-creates activity entry: "Deal status changed from X to Y". Revalidates `/deals` and `/deals/${dealId}`.
+
+- [ ] **Step 3: Create deal form component**
+
+A client component form with fields matching the design spec (name, codeName, dealType, ourRole, clientName, targetCompany, jurisdictions, dealLead, teamMembers, summary). DealType and OurRole selections auto-match a template. Form submits via the `createDeal` server action. The same form component should support edit mode (pre-filled with existing deal data, submits via `updateDeal`).
 
 - [ ] **Step 3: Create the new deal page**
 
@@ -2815,7 +2839,7 @@ git commit -m "feat: add contact management (global + per-deal)"
 
 - [ ] **Step 1: Create document server actions**
 
-`uploadDocument` (handles file upload to `public/uploads/`, creates DB record), `deleteDocument`. Auto-creates activity entry on upload.
+`uploadDocument` (handles file upload to `storage/uploads/`, creates DB record), `deleteDocument`. Auto-creates activity entry on upload. IMPORTANT: Files must be stored in `storage/uploads/` (NOT `public/`), and served through an authenticated API route at `/api/documents/[id]/download` that checks the user's session before streaming the file. Legal documents contain privileged material.
 
 - [ ] **Step 2: Create document upload component**
 
@@ -3007,7 +3031,94 @@ git commit -m "feat: add save deal as template"
 
 ## Chunk 7: Polish & Production Readiness
 
-### Task 27: Protect routes with auth middleware
+### Task 27: User management (admin only)
+
+**Files:**
+- Create: `dealflow/src/actions/users.ts`
+- Create: `dealflow/src/app/[locale]/admin/users/page.tsx`
+- Create: `dealflow/src/components/users/user-list.tsx`
+- Create: `dealflow/src/components/users/user-form.tsx`
+
+- [ ] **Step 1: Create user server actions**
+
+`createUser` (admin only — creates user with hashed password), `updateUser` (name, email, role, locale), `resetPassword` (admin sets new password). All check that the current user has Admin role.
+
+- [ ] **Step 2: Create user list component**
+
+Table: name, email, role, locale. Edit and reset password actions.
+
+- [ ] **Step 3: Create user form (dialog)**
+
+Name, email, password (for create), role (Admin/Member), locale (zh/en).
+
+- [ ] **Step 4: Create user management page**
+
+Admin-only page at `/admin/users`. Shows user list + [+ Add User] button. If non-admin accesses, redirect to dashboard.
+
+- [ ] **Step 5: Verify create user, edit user, reset password**
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add src/actions/users.ts src/app/\[locale\]/admin/ src/components/users/
+git commit -m "feat: add user management (admin only)"
+```
+
+### Task 28: Authenticated document download API route
+
+**Files:**
+- Create: `dealflow/src/app/api/documents/[id]/download/route.ts`
+
+- [ ] **Step 1: Create download route**
+
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { readFile } from "fs/promises";
+import path from "path";
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id } = await params;
+  const doc = await prisma.document.findUnique({ where: { id } });
+  if (!doc) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  const filePath = path.join(process.cwd(), doc.filePath);
+  const fileBuffer = await readFile(filePath);
+
+  return new NextResponse(fileBuffer, {
+    headers: {
+      "Content-Disposition": `attachment; filename="${doc.name}"`,
+      "Content-Type": "application/octet-stream",
+    },
+  });
+}
+```
+
+- [ ] **Step 2: Update document list to use authenticated download URL**
+
+Download links should point to `/api/documents/[id]/download` instead of direct file paths.
+
+- [ ] **Step 3: Verify download works only when authenticated**
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add src/app/api/documents/
+git commit -m "feat: add authenticated document download route"
+```
+
+### Task 29: Protect routes with auth middleware
 
 - [ ] **Step 1: Update middleware to check auth**
 
@@ -3017,7 +3128,7 @@ Redirect unauthenticated users to /login for all routes except /login and /api/a
 
 - [ ] **Step 3: Commit**
 
-### Task 28: Error handling and loading states
+### Task 30: Error handling and loading states
 
 - [ ] **Step 1: Add loading.tsx files**
 
@@ -3029,7 +3140,7 @@ Add `error.tsx` to key route segments with user-friendly error messages.
 
 - [ ] **Step 3: Commit**
 
-### Task 29: Dockerfile for production
+### Task 31: Dockerfile for production
 
 **Files:**
 - Create: `dealflow/Dockerfile`
@@ -3082,7 +3193,7 @@ git add Dockerfile docker-compose.yml next.config.ts
 git commit -m "infra: add Dockerfile and production Docker Compose"
 ```
 
-### Task 30: Final smoke test
+### Task 32: Final smoke test
 
 - [ ] **Step 1: Start fresh database**
 
@@ -3107,6 +3218,8 @@ npx prisma db seed
 10. Check dashboard shows data
 11. Search for the deal name
 12. Switch locale zh → en
+13. Create a new user via admin panel
+14. Verify document download requires authentication
 
 - [ ] **Step 3: Run test suite**
 
