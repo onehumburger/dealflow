@@ -159,7 +159,18 @@ model Milestone {
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
 
+  linkedTasks MilestoneTask[]
+
   @@index([dealId])
+}
+
+model MilestoneTask {
+  milestoneId String
+  taskId      String
+  milestone   Milestone @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+  task        Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@id([milestoneId, taskId])
 }
 
 model Workstream {
@@ -200,7 +211,8 @@ model Task {
   blockedBy    TaskDependency[] @relation("DependentTask")
   blocks       TaskDependency[] @relation("DependencyTask")
 
-  linkedDecisions DecisionTaskLink[]
+  linkedDecisions  DecisionTaskLink[]
+  linkedMilestones MilestoneTask[]
 
   @@index([workstreamId])
   @@index([assigneeId])
