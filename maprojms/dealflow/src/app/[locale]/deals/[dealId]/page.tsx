@@ -21,8 +21,16 @@ export default async function DealDetailPage({
   const session = await auth();
   const locale = await getLocale();
 
-  if (!session) {
+  if (!session?.user?.id) {
     redirect(`/${locale}/login`);
+  }
+
+  // Verify user is a member of this deal
+  const isMember = await prisma.dealMember.findUnique({
+    where: { dealId_userId: { dealId, userId: session.user.id } },
+  });
+  if (!isMember) {
+    notFound();
   }
 
   const deal = await prisma.deal.findUnique({

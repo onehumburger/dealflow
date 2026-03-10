@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getLocale } from "next-intl/server";
 import { logAudit } from "@/lib/audit";
+import { assertDealMember } from "@/actions/_helpers";
 import type { DealType, DealRole, DealStatus, MilestoneType } from "@/generated/prisma/client";
 
 interface TemplateDefinition {
@@ -144,6 +145,8 @@ export async function updateDeal(
   if (!session?.user?.id) {
     throw new Error("Unauthorized");
   }
+
+  await assertDealMember(dealId, session.user.id);
 
   const locale = await getLocale();
 

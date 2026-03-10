@@ -11,7 +11,7 @@ export default async function DealsPage() {
   const session = await auth();
   const locale = await getLocale();
 
-  if (!session) {
+  if (!session?.user?.id) {
     redirect(`/${locale}/login`);
   }
 
@@ -19,7 +19,15 @@ export default async function DealsPage() {
   const tNav = await getTranslations("nav");
   const tTask = await getTranslations("task");
 
+  // Scope to deals where user is a member
+  const memberships = await prisma.dealMember.findMany({
+    where: { userId: session.user.id },
+    select: { dealId: true },
+  });
+  const dealIds = memberships.map((m) => m.dealId);
+
   const deals = await prisma.deal.findMany({
+    where: { id: { in: dealIds } },
     orderBy: { updatedAt: "desc" },
     include: {
       dealLead: { select: { name: true } },
