@@ -47,7 +47,10 @@
     "buySide": "Buy-Side",
     "sellSide": "Sell-Side",
     "leadParty": "Lead Party",
-    "participatingParty": "Participating Party"
+    "participatingParty": "Participating Party",
+    "template": "Template",
+    "selectTemplate": "Select template",
+    "backToDeals": "Deals"
   },
   "task": {
     "toDo": "To Do",
@@ -57,6 +60,7 @@
     "normal": "Normal",
     "assignee": "Assignee",
     "dueDate": "Due Date",
+    "tasks": "Tasks",
     "addTask": "Add Task",
     "addComment": "Add Comment"
   },
