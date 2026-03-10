@@ -16,7 +16,8 @@
     "deals": "项目",
     "myTasks": "我的任务",
     "contacts": "通讯录",
-    "admin": "管理"
+    "admin": "管理",
+    "calendar": "日历"
   },
   "auth": {
     "login": "登录",
@@ -170,7 +171,9 @@
     "roleFA": "财务顾问",
     "roleAccountant": "会计师",
     "roleRegulator": "监管机构",
-    "roleOther": "其他"
+    "roleOther": "其他",
+    "unlinkedContacts": "未关联项目",
+    "linkedToDeals": "关联{count}个项目"
   },
   "document": {
     "documents": "文件管理",
@@ -215,6 +218,22 @@
     "newPassword": "新密码",
     "newPasswordPlaceholder": "至少6个字符",
     "passwordPlaceholder": "至少6个字符"
+  },
+  "calendar": {
+    "calendar": "日历",
+    "today": "今天",
+    "showMilestones": "节点",
+    "showTasks": "任务",
+    "showActivity": "动态",
+    "more": "还有{count}项",
+    "viewDetails": "查看详情",
+    "noEvents": "本月无事件",
+    "allDeals": "全部项目",
+    "milestone": "节点",
+    "task": "任务",
+    "activity": "动态",
+    "overdue": "已逾期",
+    "done": "已完成"
   },
   "error": {
     "title": "出现错误",

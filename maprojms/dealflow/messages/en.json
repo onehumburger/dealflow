@@ -16,7 +16,8 @@
     "deals": "Deals",
     "myTasks": "My Tasks",
     "contacts": "Contacts",
-    "admin": "Admin"
+    "admin": "Admin",
+    "calendar": "Calendar"
   },
   "auth": {
     "login": "Log In",
@@ -170,7 +171,9 @@
     "roleFA": "Financial Advisor",
     "roleAccountant": "Accountant",
     "roleRegulator": "Regulator",
-    "roleOther": "Other"
+    "roleOther": "Other",
+    "unlinkedContacts": "Not linked to any deal",
+    "linkedToDeals": "Linked to {count} deals"
   },
   "document": {
     "documents": "Documents",
@@ -215,6 +218,22 @@
     "newPassword": "New Password",
     "newPasswordPlaceholder": "At least 6 characters",
     "passwordPlaceholder": "At least 6 characters"
+  },
+  "calendar": {
+    "calendar": "Calendar",
+    "today": "Today",
+    "showMilestones": "Milestones",
+    "showTasks": "Tasks",
+    "showActivity": "Activity",
+    "more": "+{count} more",
+    "viewDetails": "View Details",
+    "noEvents": "No events this month",
+    "allDeals": "All Deals",
+    "milestone": "Milestone",
+    "task": "Task",
+    "activity": "Activity",
+    "overdue": "Overdue",
+    "done": "Done"
   },
   "error": {
     "title": "Something went wrong",
