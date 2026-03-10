@@ -3,8 +3,16 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowLeft, ChevronDown, Settings } from "lucide-react";
+import { ArrowLeft, ChevronDown, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DealStatusBadge } from "./deal-status-badge";
 import { updateDeal } from "@/actions/deals";
+import { saveDealAsTemplate } from "@/actions/templates";
 import type { DealStatus } from "@/generated/prisma/client";
 
 interface DealHeaderProps {
@@ -32,12 +41,31 @@ const ALL_STATUSES: DealStatus[] = ["Active", "OnHold", "Completed"];
 export function DealHeader({ deal }: DealHeaderProps) {
   const locale = useLocale();
   const t = useTranslations("deal");
+  const tTemplate = useTranslations("template");
+  const tCommon = useTranslations("common");
   const [expanded, setExpanded] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [templateOpen, setTemplateOpen] = useState(false);
+  const [templateName, setTemplateName] = useState("");
+  const [templateSaving, startTemplateSave] = useTransition();
+  const [templateSaved, setTemplateSaved] = useState(false);
 
   function handleStatusChange(newStatus: DealStatus) {
     startTransition(async () => {
       await updateDeal(deal.id, { status: newStatus });
+    });
+  }
+
+  function handleSaveTemplate() {
+    if (!templateName.trim()) return;
+    startTemplateSave(async () => {
+      await saveDealAsTemplate(deal.id, templateName.trim());
+      setTemplateSaved(true);
+      setTimeout(() => {
+        setTemplateOpen(false);
+        setTemplateSaved(false);
+        setTemplateName("");
+      }, 1200);
     });
   }
 
@@ -76,9 +104,57 @@ export function DealHeader({ deal }: DealHeaderProps) {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <Button variant="ghost" size="icon" className="ml-auto">
-          <Settings className="size-4" />
-        </Button>
+        <div className="ml-auto">
+          <Dialog open={templateOpen} onOpenChange={setTemplateOpen}>
+            <DialogTrigger
+              render={
+                <Button variant="outline" size="sm">
+                  <Copy className="mr-1.5 size-3.5" />
+                  {tTemplate("saveAsTemplate")}
+                </Button>
+              }
+            />
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{tTemplate("saveAsTemplate")}</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 pt-2">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium">
+                    {tTemplate("templateName")}
+                  </label>
+                  <Input
+                    value={templateName}
+                    onChange={(e) => setTemplateName(e.target.value)}
+                    placeholder={tTemplate("templateNamePlaceholder")}
+                    disabled={templateSaving}
+                  />
+                </div>
+                {templateSaved ? (
+                  <p className="text-sm font-medium text-emerald-600">
+                    {tTemplate("saved")}
+                  </p>
+                ) : (
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setTemplateOpen(false)}
+                      disabled={templateSaving}
+                    >
+                      {tCommon("cancel")}
+                    </Button>
+                    <Button
+                      onClick={handleSaveTemplate}
+                      disabled={templateSaving || !templateName.trim()}
+                    >
+                      {tCommon("save")}
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       <div className="flex items-center gap-4 text-sm text-muted-foreground">

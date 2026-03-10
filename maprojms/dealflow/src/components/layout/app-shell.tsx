@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { getLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";
+import { Search } from "lucide-react";
 import { LocaleSwitcher } from "./locale-switcher";
 import { LogoutButton } from "./logout-button";
 
@@ -8,6 +9,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
   const session = await auth();
   const locale = await getLocale();
   const t = await getTranslations("nav");
+  const tCommon = await getTranslations("common");
 
   if (!session) {
     return <>{children}</>;
@@ -44,6 +46,13 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
           </nav>
 
           <div className="ml-auto flex items-center gap-2">
+            <Link
+              href={`/${locale}/search`}
+              className="flex items-center gap-1.5 rounded-md border bg-muted/50 px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted"
+            >
+              <Search className="size-3.5" />
+              <span className="hidden sm:inline">{tCommon("search")}</span>
+            </Link>
             <LocaleSwitcher />
             <span className="hidden text-sm text-muted-foreground sm:inline">
               {session.user?.name}

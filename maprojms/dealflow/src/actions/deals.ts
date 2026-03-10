@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getLocale } from "next-intl/server";
+import { logAudit } from "@/lib/audit";
 import type { DealType, DealRole, DealStatus, MilestoneType } from "@/generated/prisma/client";
 
 interface TemplateDefinition {
@@ -119,6 +120,8 @@ export async function createDeal(formData: FormData) {
       authorId: session.user.id,
     },
   });
+
+  await logAudit(session.user.id, "create_deal", "Deal", deal.id);
 
   revalidatePath(`/${locale}/deals`);
   redirect(`/${locale}/deals/${deal.id}`);

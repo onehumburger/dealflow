@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { assertDealMember, revalidateDeal } from "@/actions/_helpers";
+import { logAudit } from "@/lib/audit";
 import type {
   TaskStatus,
   TaskPriority,
@@ -51,6 +52,10 @@ export async function updateTaskStatus(taskId: string, status: TaskStatus) {
       dealId: existing.workstream.dealId,
       authorId: session.user.id,
     },
+  });
+
+  await logAudit(session.user.id, "update_task_status", "Task", taskId, {
+    status: { from: existing.status, to: status },
   });
 
   await revalidateDeal(existing.workstream.dealId, "/tasks");

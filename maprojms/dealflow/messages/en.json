@@ -189,5 +189,15 @@
     "upcomingMilestones": "Upcoming Milestones",
     "activeDeals": "Active Deals",
     "recentActivity": "Recent Activity"
+  },
+  "search": {
+    "placeholder": "Search deals, tasks, contacts...",
+    "activityResults": "Activity"
+  },
+  "template": {
+    "saveAsTemplate": "Save as Template",
+    "templateName": "Template Name",
+    "templateNamePlaceholder": "e.g. Standard M&A Template",
+    "saved": "Template saved successfully!"
   }
 }

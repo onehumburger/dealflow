@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { assertDealMember, revalidateDeal } from "@/actions/_helpers";
+import { logAudit } from "@/lib/audit";
 import type { MilestoneType } from "@/generated/prisma/client";
 
 // ---------- createMilestone ----------
@@ -47,6 +48,8 @@ export async function createMilestone(formData: FormData) {
       authorId: session.user.id,
     },
   });
+
+  await logAudit(session.user.id, "create_milestone", "Milestone", milestone.id);
 
   await revalidateDeal(dealId);
   return milestone;
@@ -155,6 +158,10 @@ export async function toggleMilestoneDone(milestoneId: string) {
       dealId: milestone.dealId,
       authorId: session.user.id,
     },
+  });
+
+  await logAudit(session.user.id, "toggle_milestone_done", "Milestone", milestoneId, {
+    isDone: { from: milestone.isDone, to: newIsDone },
   });
 
   await revalidateDeal(milestone.dealId);

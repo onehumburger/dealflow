@@ -189,5 +189,15 @@
     "upcomingMilestones": "即将到来的里程碑",
     "activeDeals": "进行中的项目",
     "recentActivity": "最近动态"
+  },
+  "search": {
+    "placeholder": "搜索项目、任务、联系人...",
+    "activityResults": "动态"
+  },
+  "template": {
+    "saveAsTemplate": "保存为模板",
+    "templateName": "模板名称",
+    "templateNamePlaceholder": "例如 标准并购模板",
+    "saved": "模板保存成功！"
   }
 }

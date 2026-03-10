@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { assertDealMember, revalidateDeal } from "@/actions/_helpers";
+import { logAudit } from "@/lib/audit";
 import type {
   DecisionSource,
   DecisionStatus,
@@ -50,6 +51,8 @@ export async function createDecision(formData: FormData) {
     },
   });
 
+  await logAudit(session.user.id, "create_decision", "Decision", decision.id);
+
   await revalidateDeal(dealId, `/deals/${dealId}/decisions`);
   return decision;
 }
@@ -83,6 +86,8 @@ export async function updateDecision(
     where: { id: decisionId },
     data,
   });
+
+  await logAudit(session.user.id, "update_decision", "Decision", decisionId);
 
   await revalidateDeal(decision.dealId, `/deals/${decision.dealId}/decisions`);
 }
