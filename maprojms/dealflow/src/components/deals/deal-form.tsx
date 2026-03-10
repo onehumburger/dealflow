@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { createDeal } from "@/actions/deals";
+import { createDeal, updateDeal } from "@/actions/deals";
 
 interface User {
   id: string;
@@ -25,6 +25,7 @@ interface DealFormProps {
   users: User[];
   templates: Template[];
   mode?: "create" | "edit";
+  dealId?: string;
   defaultValues?: {
     id?: string;
     name?: string;
@@ -47,6 +48,7 @@ export function DealForm({
   users,
   templates,
   mode = "create",
+  dealId,
   defaultValues,
 }: DealFormProps) {
   const t = useTranslations("deal");
@@ -83,9 +85,27 @@ export function DealForm({
   function handleSubmit(formData: FormData) {
     formData.set("memberIds", selectedMembers.join(","));
     formData.set("templateId", templateId);
-    startTransition(() => {
-      createDeal(formData);
-    });
+    if (mode === "edit" && dealId) {
+      const jurisdictionsRaw = formData.get("jurisdictions") as string;
+      const jurisdictions = jurisdictionsRaw
+        ? jurisdictionsRaw.split(",").map((j) => j.trim()).filter(Boolean)
+        : [];
+      startTransition(() => {
+        updateDeal(dealId, {
+          name: formData.get("name") as string,
+          codeName: (formData.get("codeName") as string) || null,
+          clientName: formData.get("clientName") as string,
+          targetCompany: formData.get("targetCompany") as string,
+          jurisdictions,
+          summary: (formData.get("summary") as string) || null,
+          dealLeadId: formData.get("dealLeadId") as string,
+        });
+      });
+    } else {
+      startTransition(() => {
+        createDeal(formData);
+      });
+    }
   }
 
   const dealTypeLabels: Record<string, string> = {
