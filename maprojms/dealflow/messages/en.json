@@ -21,7 +21,9 @@
     "login": "Log In",
     "logout": "Log Out",
     "email": "Email",
-    "password": "Password"
+    "password": "Password",
+    "loginError": "Invalid email or password",
+    "loggingIn": "Logging in..."
   },
   "deal": {
     "newDeal": "New Deal",
