@@ -53,6 +53,7 @@
     "backToDeals": "Deals"
   },
   "task": {
+    "status": "Status",
     "toDo": "To Do",
     "inProgress": "In Progress",
     "done": "Done",
@@ -65,7 +66,17 @@
     "addComment": "Add Comment",
     "today": "Today",
     "tomorrow": "Tomorrow",
-    "daysOverdue": "{days}d overdue"
+    "daysOverdue": "{days}d overdue",
+    "subtasks": "Subtasks",
+    "dependencies": "Dependencies",
+    "blockedBy": "Blocked by",
+    "blocks": "Blocks",
+    "relatedTo": "Related To",
+    "description": "Description",
+    "allStatuses": "All Statuses",
+    "allAssignees": "All Assignees",
+    "overdue": "overdue",
+    "noTasks": "No tasks assigned to you"
   },
   "milestone": {
     "addMilestone": "Add Milestone",

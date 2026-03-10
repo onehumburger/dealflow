@@ -11,6 +11,7 @@ interface WorkstreamTask {
   status: TaskStatus;
   priority: TaskPriority;
   dueDate: Date | null;
+  assigneeId: string | null;
   assignee: { name: string } | null;
 }
 

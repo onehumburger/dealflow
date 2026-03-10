@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { WorkstreamSection } from "./workstream-section";
+import { useTaskFilters } from "@/hooks/use-task-filters";
 import type { TaskPriority, TaskStatus } from "@/generated/prisma/client";
 
 interface WorkstreamTask {
@@ -10,6 +11,7 @@ interface WorkstreamTask {
   status: TaskStatus;
   priority: TaskPriority;
   dueDate: Date | null;
+  assigneeId: string | null;
   assignee: { name: string } | null;
 }
 
@@ -24,19 +26,24 @@ interface WorkstreamListProps {
 }
 
 export function WorkstreamList({ workstreams }: WorkstreamListProps) {
-  const tCommon = useTranslations("common");
   const tWs = useTranslations("workstream");
+  const statusFilter = useTaskFilters((s) => s.statusFilter);
+  const assigneeFilter = useTaskFilters((s) => s.assigneeFilter);
+
+  // Apply filters to tasks within each workstream
+  const filteredWorkstreams = workstreams.map((ws) => ({
+    ...ws,
+    tasks: ws.tasks.filter((task) => {
+      if (statusFilter !== "all" && task.status !== statusFilter) return false;
+      if (assigneeFilter !== "all" && task.assigneeId !== assigneeFilter)
+        return false;
+      return true;
+    }),
+  }));
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Filter bar placeholder */}
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-muted-foreground">
-          {tCommon("filter")}
-        </span>
-      </div>
-
-      {workstreams.map((ws) => (
+      {filteredWorkstreams.map((ws) => (
         <WorkstreamSection key={ws.id} workstream={ws} />
       ))}
 

@@ -8,6 +8,8 @@ import { DealHeader } from "@/components/deals/deal-header";
 import { MilestoneTimeline } from "@/components/milestones/milestone-timeline";
 import { WorkstreamList } from "@/components/workstreams/workstream-list";
 import { ActivityFeed } from "@/components/activity/activity-feed";
+import { TaskPanel } from "@/components/tasks/task-panel";
+import { TaskFilters } from "@/components/tasks/task-filters";
 
 export default async function DealDetailPage({
   params,
@@ -36,7 +38,7 @@ export default async function DealDetailPage({
           tasks: {
             orderBy: { sortOrder: "asc" },
             include: {
-              assignee: { select: { name: true } },
+              assignee: { select: { id: true, name: true } },
             },
           },
         },
@@ -72,8 +74,14 @@ export default async function DealDetailPage({
       status: t.status,
       priority: t.priority,
       dueDate: t.dueDate ? new Date(t.dueDate) : null,
+      assigneeId: t.assigneeId,
       assignee: t.assignee,
     })),
+  }));
+
+  const membersData = deal.members.map((m) => ({
+    id: m.user.id,
+    name: m.user.name,
   }));
 
   const activityData = deal.activityEntries.map((e) => ({
@@ -112,6 +120,9 @@ export default async function DealDetailPage({
       <MilestoneTimeline milestones={milestonesData} locale={locale} />
 
       <Separator className="my-4" />
+
+      {/* Task filter bar */}
+      <TaskFilters members={membersData} />
 
       {/* Main content: Workstreams + Activity Feed */}
       <div className="flex gap-6">
@@ -157,6 +168,9 @@ export default async function DealDetailPage({
           </p>
         </TabsContent>
       </Tabs>
+
+      {/* Task slide-over panel */}
+      <TaskPanel />
     </div>
   );
 }

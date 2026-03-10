@@ -1,8 +1,11 @@
 "use client";
 
+import { useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { updateTaskStatus } from "@/actions/tasks";
+import { useTaskPanel } from "@/hooks/use-task-panel";
 import type { TaskPriority, TaskStatus } from "@/generated/prisma/client";
 
 interface TaskRowProps {
@@ -38,19 +41,42 @@ function formatRelativeDate(
 export function TaskRow({ task }: TaskRowProps) {
   const locale = useLocale();
   const t = useTranslations("task");
+  const [isPending, startTransition] = useTransition();
+  const openPanel = useTaskPanel((s) => s.open);
+
   const isDone = task.status === "Done";
   const isOverdue =
     task.dueDate && !isDone && task.dueDate < new Date();
 
+  function handleToggle(e: React.MouseEvent) {
+    e.stopPropagation();
+    const newStatus = isDone ? "ToDo" : "Done";
+    startTransition(async () => {
+      await updateTaskStatus(task.id, newStatus as TaskStatus);
+    });
+  }
+
+  function handleTitleClick() {
+    openPanel(task.id);
+  }
+
   return (
-    <div className="flex items-center gap-3 rounded-md px-2 py-1.5 hover:bg-muted/50">
-      {/* Checkbox placeholder */}
-      <div
+    <div
+      className={cn(
+        "flex items-center gap-3 rounded-md px-2 py-1.5 hover:bg-muted/50",
+        isPending && "opacity-50"
+      )}
+    >
+      {/* Checkbox */}
+      <button
+        type="button"
+        onClick={handleToggle}
+        disabled={isPending}
         className={cn(
-          "flex size-4 shrink-0 items-center justify-center rounded border",
+          "flex size-4 shrink-0 items-center justify-center rounded border transition-colors",
           isDone
             ? "border-emerald-600 bg-emerald-600 text-white"
-            : "border-input"
+            : "border-input hover:border-emerald-400"
         )}
       >
         {isDone && (
@@ -64,17 +90,19 @@ export function TaskRow({ task }: TaskRowProps) {
             />
           </svg>
         )}
-      </div>
+      </button>
 
-      {/* Title */}
-      <span
+      {/* Title — clickable to open panel */}
+      <button
+        type="button"
+        onClick={handleTitleClick}
         className={cn(
-          "flex-1 truncate text-sm",
+          "flex-1 truncate text-left text-sm hover:underline",
           isDone && "text-muted-foreground line-through"
         )}
       >
         {task.title}
-      </span>
+      </button>
 
       {/* Priority indicator */}
       {task.priority === "High" && (

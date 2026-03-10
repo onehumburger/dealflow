@@ -53,6 +53,7 @@
     "backToDeals": "项目"
   },
   "task": {
+    "status": "状态",
     "toDo": "待办",
     "inProgress": "进行中",
     "done": "已完成",
@@ -65,7 +66,17 @@
     "addComment": "添加评论",
     "today": "今天",
     "tomorrow": "明天",
-    "daysOverdue": "逾期{days}天"
+    "daysOverdue": "逾期{days}天",
+    "subtasks": "子任务",
+    "dependencies": "依赖关系",
+    "blockedBy": "被阻塞",
+    "blocks": "阻塞",
+    "relatedTo": "相关",
+    "description": "描述",
+    "allStatuses": "全部状态",
+    "allAssignees": "全部成员",
+    "overdue": "逾期",
+    "noTasks": "暂无分配给您的任务"
   },
   "milestone": {
     "addMilestone": "添加里程碑",
