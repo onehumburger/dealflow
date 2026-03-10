@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     where: {
       workstream: { dealId },
       title: { contains: q, mode: "insensitive" },
-      id: { not: exclude },
+      ...(exclude ? { id: { notIn: exclude.split(",").filter(Boolean) } } : {}),
     },
     select: { id: true, title: true },
     take: 10,

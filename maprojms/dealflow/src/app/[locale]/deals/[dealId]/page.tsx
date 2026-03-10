@@ -2,8 +2,9 @@ import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getLocale, getTranslations } from "next-intl/server";
+import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+
 import { DealHeader } from "@/components/deals/deal-header";
 import { MilestoneTimeline } from "@/components/milestones/milestone-timeline";
 import { WorkstreamList } from "@/components/workstreams/workstream-list";
@@ -63,6 +64,7 @@ export default async function DealDetailPage({
 
   const tDecision = await getTranslations("decision");
   const tContact = await getTranslations("contact");
+  const tDocument = await getTranslations("document");
 
   // Serialize dates for client components
   const workstreamsData = deal.workstreams.map((ws) => ({
@@ -150,35 +152,27 @@ export default async function DealDetailPage({
 
       <Separator className="my-6" />
 
-      {/* Bottom Tabs: Decisions, Contacts, Documents */}
-      <Tabs defaultValue="decisions">
-        <TabsList>
-          <TabsTrigger value="decisions">
-            {tDecision("decisions")} ({deal._count.decisions})
-          </TabsTrigger>
-          <TabsTrigger value="contacts">
-            {tContact("name")} ({deal._count.dealContacts})
-          </TabsTrigger>
-          <TabsTrigger value="documents">
-            Documents ({deal._count.documents})
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="decisions">
-          <p className="py-8 text-center text-sm text-muted-foreground">
-            {tDecision("decisions")} &mdash; coming in a later chunk
-          </p>
-        </TabsContent>
-        <TabsContent value="contacts">
-          <p className="py-8 text-center text-sm text-muted-foreground">
-            {tContact("name")} &mdash; coming in a later chunk
-          </p>
-        </TabsContent>
-        <TabsContent value="documents">
-          <p className="py-8 text-center text-sm text-muted-foreground">
-            Documents &mdash; coming in a later chunk
-          </p>
-        </TabsContent>
-      </Tabs>
+      {/* Bottom Links: Decisions, Contacts, Documents */}
+      <div className="flex items-center gap-3">
+        <Link
+          href={`/${locale}/deals/${dealId}/decisions`}
+          className="rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted"
+        >
+          {tDecision("decisions")} ({deal._count.decisions})
+        </Link>
+        <Link
+          href={`/${locale}/deals/${dealId}/contacts`}
+          className="rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted"
+        >
+          {tContact("contacts")} ({deal._count.dealContacts})
+        </Link>
+        <Link
+          href={`/${locale}/deals/${dealId}/documents`}
+          className="rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted"
+        >
+          {tDocument("documents")} ({deal._count.documents})
+        </Link>
+      </div>
 
       {/* Task slide-over panel */}
       <TaskPanel />
