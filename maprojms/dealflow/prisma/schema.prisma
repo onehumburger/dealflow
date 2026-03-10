@@ -185,6 +185,7 @@ model Workstream {
   tasks           Task[]
   activityEntries ActivityEntry[]
   decisions       Decision[]
+  documents       Document[]
 
   @@index([dealId])
 }
@@ -346,6 +347,7 @@ model Document {
   dealId       String
   deal         Deal   @relation(fields: [dealId], references: [id], onDelete: Cascade)
   workstreamId String?
+  workstream   Workstream? @relation(fields: [workstreamId], references: [id], onDelete: SetNull)
   taskId       String?
   task         Task?  @relation(fields: [taskId], references: [id], onDelete: SetNull)
   uploadedById String
