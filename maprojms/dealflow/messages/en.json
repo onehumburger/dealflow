@@ -62,7 +62,10 @@
     "dueDate": "Due Date",
     "tasks": "Tasks",
     "addTask": "Add Task",
-    "addComment": "Add Comment"
+    "addComment": "Add Comment",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "daysOverdue": "{days}d overdue"
   },
   "milestone": {
     "addMilestone": "Add Milestone",
@@ -78,7 +81,11 @@
     "note": "Note",
     "call": "Call",
     "meeting": "Meeting",
-    "clientInstruction": "Client Instruction"
+    "clientInstruction": "Client Instruction",
+    "taskUpdate": "Task Update",
+    "milestoneChange": "Milestone",
+    "decisionCreated": "Decision",
+    "documentUpload": "Document"
   },
   "decision": {
     "decisions": "Decisions",

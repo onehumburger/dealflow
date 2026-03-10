@@ -1,3 +1,6 @@
+"use client";
+
+import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import type { ActivityType } from "@/generated/prisma/client";
 
@@ -22,8 +25,19 @@ const typeStyles: Record<ActivityType, string> = {
   DocumentUpload: "bg-sky-100 text-sky-700",
 };
 
-function formatTimestamp(date: Date): string {
-  return new Intl.DateTimeFormat("en", {
+const typeToTranslationKey: Record<ActivityType, string> = {
+  Note: "note",
+  Call: "call",
+  Meeting: "meeting",
+  ClientInstruction: "clientInstruction",
+  TaskUpdate: "taskUpdate",
+  MilestoneChange: "milestoneChange",
+  DecisionCreated: "decisionCreated",
+  DocumentUpload: "documentUpload",
+};
+
+function formatTimestamp(date: Date, locale: string): string {
+  return new Intl.DateTimeFormat(locale, {
     month: "short",
     day: "numeric",
     hour: "2-digit",
@@ -33,6 +47,10 @@ function formatTimestamp(date: Date): string {
 }
 
 export function ActivityEntryItem({ entry }: ActivityEntryProps) {
+  const locale = useLocale();
+  const t = useTranslations("activity");
+  const labelKey = typeToTranslationKey[entry.type];
+
   return (
     <div className="flex gap-3 py-2">
       <span
@@ -41,12 +59,12 @@ export function ActivityEntryItem({ entry }: ActivityEntryProps) {
           typeStyles[entry.type] || "bg-gray-100 text-gray-600"
         )}
       >
-        {entry.type.replace(/([A-Z])/g, " $1").trim()}
+        {t(labelKey as Parameters<typeof t>[0])}
       </span>
       <div className="flex-1 min-w-0">
         <p className="text-sm">{entry.content}</p>
         <p className="mt-0.5 text-xs text-muted-foreground">
-          {entry.author.name} &middot; {formatTimestamp(entry.createdAt)}
+          {entry.author.name} &middot; {formatTimestamp(entry.createdAt, locale)}
         </p>
       </div>
     </div>

@@ -109,7 +109,7 @@ export default async function DealDetailPage({
       <Separator className="my-4" />
 
       {/* Milestone Timeline */}
-      <MilestoneTimeline milestones={milestonesData} />
+      <MilestoneTimeline milestones={milestonesData} locale={locale} />
 
       <Separator className="my-4" />
 

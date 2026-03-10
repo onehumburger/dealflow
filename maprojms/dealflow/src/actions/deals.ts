@@ -18,10 +18,12 @@ export async function createDeal(formData: FormData) {
     throw new Error("Unauthorized");
   }
 
+  const locale = await getLocale();
+
   const name = formData.get("name") as string;
   const codeName = (formData.get("codeName") as string) || null;
-  const dealType = formData.get("dealType") as DealType;
-  const ourRole = formData.get("ourRole") as DealRole;
+  const dealType = formData.get("dealType") as string;
+  const ourRole = formData.get("ourRole") as string;
   const clientName = formData.get("clientName") as string;
   const targetCompany = formData.get("targetCompany") as string;
   const jurisdictionsRaw = formData.get("jurisdictions") as string;
@@ -35,6 +37,19 @@ export async function createDeal(formData: FormData) {
     : [];
   const summary = (formData.get("summary") as string) || null;
   const templateId = (formData.get("templateId") as string) || null;
+
+  const validDealTypes = ["Auction", "Negotiated", "JV"];
+  const validDealRoles = ["BuySide", "SellSide", "LeadParty", "ParticipatingParty"];
+
+  if (!name || !dealType || !ourRole || !clientName || !targetCompany || !dealLeadId) {
+    throw new Error("Missing required fields");
+  }
+  if (!validDealTypes.includes(dealType)) {
+    throw new Error("Invalid deal type");
+  }
+  if (!validDealRoles.includes(ourRole)) {
+    throw new Error("Invalid deal role");
+  }
 
   // Fetch template definition if provided
   let definition: TemplateDefinition | null = null;
@@ -52,8 +67,8 @@ export async function createDeal(formData: FormData) {
     data: {
       name,
       codeName,
-      dealType,
-      ourRole,
+      dealType: dealType as DealType,
+      ourRole: ourRole as DealRole,
       clientName,
       targetCompany,
       jurisdictions,
@@ -105,8 +120,7 @@ export async function createDeal(formData: FormData) {
     },
   });
 
-  revalidatePath("/[locale]/deals");
-  const locale = await getLocale();
+  revalidatePath(`/${locale}/deals`);
   redirect(`/${locale}/deals/${deal.id}`);
 }
 
@@ -127,6 +141,8 @@ export async function updateDeal(
   if (!session?.user?.id) {
     throw new Error("Unauthorized");
   }
+
+  const locale = await getLocale();
 
   // Check if status is changing
   let oldStatus: DealStatus | null = null;
@@ -157,6 +173,6 @@ export async function updateDeal(
     });
   }
 
-  revalidatePath(`/[locale]/deals/${dealId}`);
-  revalidatePath("/[locale]/deals");
+  revalidatePath(`/${locale}/deals/${dealId}`);
+  revalidatePath(`/${locale}/deals`);
 }

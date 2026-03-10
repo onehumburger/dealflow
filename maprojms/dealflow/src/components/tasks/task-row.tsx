@@ -1,3 +1,6 @@
+"use client";
+
+import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import type { TaskPriority, TaskStatus } from "@/generated/prisma/client";
@@ -13,22 +16,28 @@ interface TaskRowProps {
   };
 }
 
-function formatRelativeDate(date: Date): string {
+function formatRelativeDate(
+  date: Date,
+  locale: string,
+  t: ReturnType<typeof useTranslations<"task">>
+): string {
   const now = new Date();
   const diff = date.getTime() - now.getTime();
   const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
 
-  if (days < 0) return `${Math.abs(days)}d overdue`;
-  if (days === 0) return "Today";
-  if (days === 1) return "Tomorrow";
+  if (days < 0) return t("daysOverdue", { days: Math.abs(days) });
+  if (days === 0) return t("today");
+  if (days === 1) return t("tomorrow");
   if (days <= 7) return `${days}d`;
-  return new Intl.DateTimeFormat("en", {
+  return new Intl.DateTimeFormat(locale, {
     month: "short",
     day: "numeric",
   }).format(date);
 }
 
 export function TaskRow({ task }: TaskRowProps) {
+  const locale = useLocale();
+  const t = useTranslations("task");
   const isDone = task.status === "Done";
   const isOverdue =
     task.dueDate && !isDone && task.dueDate < new Date();
@@ -80,7 +89,7 @@ export function TaskRow({ task }: TaskRowProps) {
             isOverdue ? "text-red-500 font-medium" : "text-muted-foreground"
           )}
         >
-          {formatRelativeDate(task.dueDate)}
+          {formatRelativeDate(task.dueDate, locale, t)}
         </span>
       )}
 

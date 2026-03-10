@@ -9,11 +9,12 @@ interface MilestoneItem {
 
 interface MilestoneTimelineProps {
   milestones: MilestoneItem[];
+  locale: string;
 }
 
-function formatDate(date: Date | null): string {
+function formatDate(date: Date | null, locale: string): string {
   if (!date) return "\u2014";
-  return new Intl.DateTimeFormat("en", {
+  return new Intl.DateTimeFormat(locale, {
     month: "short",
     day: "numeric",
   }).format(date);
@@ -25,7 +26,7 @@ function isOverdue(milestone: MilestoneItem): boolean {
   return milestone.date < new Date();
 }
 
-export function MilestoneTimeline({ milestones }: MilestoneTimelineProps) {
+export function MilestoneTimeline({ milestones, locale }: MilestoneTimelineProps) {
   if (milestones.length === 0) return null;
 
   return (
@@ -62,7 +63,7 @@ export function MilestoneTimeline({ milestones }: MilestoneTimelineProps) {
                   {ms.name}
                 </span>
                 <span className="mt-0.5 text-[10px] text-muted-foreground">
-                  {formatDate(ms.date)}
+                  {formatDate(ms.date, locale)}
                 </span>
               </div>
 

@@ -62,7 +62,10 @@
     "dueDate": "截止日期",
     "tasks": "任务",
     "addTask": "添加任务",
-    "addComment": "添加评论"
+    "addComment": "添加评论",
+    "today": "今天",
+    "tomorrow": "明天",
+    "daysOverdue": "逾期{days}天"
   },
   "milestone": {
     "addMilestone": "添加里程碑",
@@ -78,7 +81,11 @@
     "note": "笔记",
     "call": "电话",
     "meeting": "会议",
-    "clientInstruction": "客户指示"
+    "clientInstruction": "客户指示",
+    "taskUpdate": "任务更新",
+    "milestoneChange": "里程碑",
+    "decisionCreated": "决策",
+    "documentUpload": "文件"
   },
   "decision": {
     "decisions": "决策记录",
