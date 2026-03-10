@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { PanelRightClose, PanelRightOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ActivityEntryItem } from "./activity-entry";
+import { ActivityForm } from "./activity-form";
 import type { ActivityType } from "@/generated/prisma/client";
 
 interface ActivityItem {
@@ -15,13 +16,21 @@ interface ActivityItem {
   author: { name: string };
 }
 
-interface ActivityFeedProps {
-  entries: ActivityItem[];
+interface WorkstreamOption {
+  id: string;
+  name: string;
 }
 
-export function ActivityFeed({ entries }: ActivityFeedProps) {
+interface ActivityFeedProps {
+  entries: ActivityItem[];
+  dealId: string;
+  workstreams: WorkstreamOption[];
+}
+
+export function ActivityFeed({ entries, dealId, workstreams }: ActivityFeedProps) {
   const t = useTranslations("activity");
   const [collapsed, setCollapsed] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
   return (
     <div className="flex flex-col">
@@ -38,23 +47,35 @@ export function ActivityFeed({ entries }: ActivityFeedProps) {
           )}
         </Button>
         {!collapsed && (
-          <button className="rounded-md border border-dashed px-2 py-1 text-xs text-muted-foreground hover:bg-muted/50">
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="rounded-md border border-dashed px-2 py-1 text-xs text-muted-foreground hover:bg-muted/50"
+          >
             + {t("addNote")}
           </button>
         )}
       </div>
 
       {!collapsed && (
-        <div className="divide-y overflow-y-auto max-h-[600px]">
-          {entries.length === 0 && (
-            <p className="py-4 text-center text-sm text-muted-foreground">
-              --
-            </p>
+        <>
+          {showForm && (
+            <ActivityForm
+              dealId={dealId}
+              workstreams={workstreams}
+              onClose={() => setShowForm(false)}
+            />
           )}
-          {entries.map((entry) => (
-            <ActivityEntryItem key={entry.id} entry={entry} />
-          ))}
-        </div>
+          <div className="divide-y overflow-y-auto max-h-[600px]">
+            {entries.length === 0 && (
+              <p className="py-4 text-center text-sm text-muted-foreground">
+                --
+              </p>
+            )}
+            {entries.map((entry) => (
+              <ActivityEntryItem key={entry.id} entry={entry} />
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

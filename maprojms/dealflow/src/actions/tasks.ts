@@ -2,8 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
-import { getLocale } from "next-intl/server";
+import { assertDealMember, revalidateDeal } from "@/actions/_helpers";
 import type {
   TaskStatus,
   TaskPriority,
@@ -12,13 +11,6 @@ import type {
 
 // ---------- helpers ----------
 
-async function assertDealMember(dealId: string, userId: string) {
-  const member = await prisma.dealMember.findUnique({
-    where: { dealId_userId: { dealId, userId } },
-  });
-  if (!member) throw new Error("Forbidden");
-}
-
 async function getDealIdForTask(taskId: string): Promise<string> {
   const task = await prisma.task.findUnique({
     where: { id: taskId },
@@ -26,13 +18,6 @@ async function getDealIdForTask(taskId: string): Promise<string> {
   });
   if (!task) throw new Error("Task not found");
   return task.workstream.dealId;
-}
-
-async function revalidateDeal(dealId: string) {
-  const locale = await getLocale();
-  revalidatePath(`/${locale}/deals/${dealId}`);
-  revalidatePath(`/${locale}/deals`);
-  revalidatePath(`/${locale}/tasks`);
 }
 
 // ---------- updateTaskStatus ----------
@@ -68,7 +53,7 @@ export async function updateTaskStatus(taskId: string, status: TaskStatus) {
     },
   });
 
-  await revalidateDeal(existing.workstream.dealId);
+  await revalidateDeal(existing.workstream.dealId, "/tasks");
 }
 
 // ---------- createTask ----------
@@ -121,7 +106,7 @@ export async function createTask(formData: FormData) {
     },
   });
 
-  await revalidateDeal(workstream.dealId);
+  await revalidateDeal(workstream.dealId, "/tasks");
   return task;
 }
 
@@ -150,7 +135,7 @@ export async function updateTask(
     data,
   });
 
-  await revalidateDeal(dealId);
+  await revalidateDeal(dealId, "/tasks");
 }
 
 // ---------- deleteTask ----------
@@ -181,7 +166,7 @@ export async function deleteTask(taskId: string) {
     },
   });
 
-  await revalidateDeal(task.workstream.dealId);
+  await revalidateDeal(task.workstream.dealId, "/tasks");
 }
 
 // ---------- getTaskDetail ----------
@@ -255,7 +240,7 @@ export async function addTaskComment(taskId: string, content: string) {
     },
   });
 
-  await revalidateDeal(dealId);
+  await revalidateDeal(dealId, "/tasks");
   return comment;
 }
 
@@ -285,7 +270,7 @@ export async function addTaskDependency(
     },
   });
 
-  await revalidateDeal(dealId);
+  await revalidateDeal(dealId, "/tasks");
 }
 
 // ---------- removeTaskDependency ----------
@@ -303,7 +288,7 @@ export async function removeTaskDependency(dependencyId: string) {
   await assertDealMember(dep.task.workstream.dealId, session.user.id);
 
   await prisma.taskDependency.delete({ where: { id: dependencyId } });
-  await revalidateDeal(dep.task.workstream.dealId);
+  await revalidateDeal(dep.task.workstream.dealId, "/tasks");
 }
 
 // ---------- Subtask actions ----------
@@ -333,7 +318,7 @@ export async function addSubtask(taskId: string, title: string) {
     },
   });
 
-  await revalidateDeal(dealId);
+  await revalidateDeal(dealId, "/tasks");
 }
 
 export async function toggleSubtask(subtaskId: string, isDone: boolean) {
@@ -353,7 +338,7 @@ export async function toggleSubtask(subtaskId: string, isDone: boolean) {
     data: { isDone },
   });
 
-  await revalidateDeal(subtask.task.workstream.dealId);
+  await revalidateDeal(subtask.task.workstream.dealId, "/tasks");
 }
 
 export async function deleteSubtask(subtaskId: string) {
@@ -369,5 +354,5 @@ export async function deleteSubtask(subtaskId: string) {
   await assertDealMember(subtask.task.workstream.dealId, session.user.id);
 
   await prisma.subtask.delete({ where: { id: subtaskId } });
-  await revalidateDeal(subtask.task.workstream.dealId);
+  await revalidateDeal(subtask.task.workstream.dealId, "/tasks");
 }

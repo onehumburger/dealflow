@@ -96,7 +96,14 @@ export default async function DealDetailPage({
     id: m.id,
     name: m.name,
     date: m.date ? new Date(m.date) : null,
+    type: m.type,
     isDone: m.isDone,
+  }));
+
+  // Workstream options for ActivityForm
+  const workstreamOptions = deal.workstreams.map((ws) => ({
+    id: ws.id,
+    name: ws.name,
   }));
 
   return (
@@ -117,7 +124,7 @@ export default async function DealDetailPage({
       <Separator className="my-4" />
 
       {/* Milestone Timeline */}
-      <MilestoneTimeline milestones={milestonesData} locale={locale} />
+      <MilestoneTimeline milestones={milestonesData} locale={locale} dealId={dealId} />
 
       <Separator className="my-4" />
 
@@ -128,12 +135,16 @@ export default async function DealDetailPage({
       <div className="flex gap-6">
         {/* Workstreams (left) */}
         <div className="flex-1 min-w-0">
-          <WorkstreamList workstreams={workstreamsData} />
+          <WorkstreamList workstreams={workstreamsData} dealId={dealId} />
         </div>
 
         {/* Activity Feed (right) */}
         <div className="w-[340px] shrink-0">
-          <ActivityFeed entries={activityData} />
+          <ActivityFeed
+            entries={activityData}
+            dealId={dealId}
+            workstreams={workstreamOptions}
+          />
         </div>
       </div>
 

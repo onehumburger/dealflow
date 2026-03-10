@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { WorkstreamSection } from "./workstream-section";
+import { WorkstreamForm } from "./workstream-form";
 import { useTaskFilters } from "@/hooks/use-task-filters";
 import type { TaskPriority, TaskStatus } from "@/generated/prisma/client";
 
@@ -23,9 +24,10 @@ interface WorkstreamData {
 
 interface WorkstreamListProps {
   workstreams: WorkstreamData[];
+  dealId: string;
 }
 
-export function WorkstreamList({ workstreams }: WorkstreamListProps) {
+export function WorkstreamList({ workstreams, dealId }: WorkstreamListProps) {
   const tWs = useTranslations("workstream");
   const statusFilter = useTaskFilters((s) => s.statusFilter);
   const assigneeFilter = useTaskFilters((s) => s.assigneeFilter);
@@ -44,13 +46,18 @@ export function WorkstreamList({ workstreams }: WorkstreamListProps) {
   return (
     <div className="flex flex-col gap-3">
       {filteredWorkstreams.map((ws) => (
-        <WorkstreamSection key={ws.id} workstream={ws} />
+        <WorkstreamSection key={ws.id} workstream={ws} dealId={dealId} />
       ))}
 
-      {/* Add Workstream placeholder button */}
-      <button className="rounded-lg border border-dashed px-4 py-2 text-sm text-muted-foreground hover:bg-muted/50">
-        + {tWs("addWorkstream")}
-      </button>
+      {/* Add Workstream dialog button */}
+      <WorkstreamForm
+        dealId={dealId}
+        trigger={
+          <button className="rounded-lg border border-dashed px-4 py-2 text-sm text-muted-foreground hover:bg-muted/50">
+            + {tWs("addWorkstream")}
+          </button>
+        }
+      />
     </div>
   );
 }

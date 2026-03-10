@@ -82,10 +82,26 @@
     "addMilestone": "添加里程碑",
     "upcoming": "即将到来",
     "done": "已完成",
-    "overdue": "已逾期"
+    "overdue": "已逾期",
+    "name": "里程碑名称",
+    "date": "日期",
+    "type": "类型",
+    "markDone": "标记完成",
+    "markUndone": "取消完成",
+    "types": {
+      "External": "外部",
+      "Contractual": "合同",
+      "Regulatory": "监管",
+      "Internal": "内部",
+      "Custom": "自定义"
+    }
   },
   "workstream": {
-    "addWorkstream": "添加工作流"
+    "addWorkstream": "添加工作流",
+    "renameWorkstream": "重命名工作流",
+    "name": "工作流名称",
+    "namePlaceholder": "例如 尽职调查",
+    "deleteConfirm": "确认删除此工作流及其所有任务吗？"
   },
   "activity": {
     "addNote": "添加记录",
@@ -96,7 +112,11 @@
     "taskUpdate": "任务更新",
     "milestoneChange": "里程碑",
     "decisionCreated": "决策",
-    "documentUpload": "文件"
+    "documentUpload": "文件",
+    "type": "类型",
+    "workstream": "工作流",
+    "allWorkstreams": "全部工作流",
+    "contentPlaceholder": "写一条记录..."
   },
   "decision": {
     "decisions": "决策记录",

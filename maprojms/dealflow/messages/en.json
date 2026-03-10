@@ -82,10 +82,26 @@
     "addMilestone": "Add Milestone",
     "upcoming": "Upcoming",
     "done": "Done",
-    "overdue": "Overdue"
+    "overdue": "Overdue",
+    "name": "Milestone Name",
+    "date": "Date",
+    "type": "Type",
+    "markDone": "Mark Done",
+    "markUndone": "Mark Undone",
+    "types": {
+      "External": "External",
+      "Contractual": "Contractual",
+      "Regulatory": "Regulatory",
+      "Internal": "Internal",
+      "Custom": "Custom"
+    }
   },
   "workstream": {
-    "addWorkstream": "Add Workstream"
+    "addWorkstream": "Add Workstream",
+    "renameWorkstream": "Rename Workstream",
+    "name": "Workstream Name",
+    "namePlaceholder": "e.g. Due Diligence",
+    "deleteConfirm": "Delete this workstream and all its tasks?"
   },
   "activity": {
     "addNote": "Add Note",
@@ -96,7 +112,11 @@
     "taskUpdate": "Task Update",
     "milestoneChange": "Milestone",
     "decisionCreated": "Decision",
-    "documentUpload": "Document"
+    "documentUpload": "Document",
+    "type": "Type",
+    "workstream": "Workstream",
+    "allWorkstreams": "All Workstreams",
+    "contentPlaceholder": "Write a note..."
   },
   "decision": {
     "decisions": "Decisions",
