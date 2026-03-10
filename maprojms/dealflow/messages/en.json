@@ -1,0 +1,103 @@
+{
+  "common": {
+    "appName": "DealFlow",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter",
+    "loading": "Loading...",
+    "noResults": "No results"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "deals": "Deals",
+    "myTasks": "My Tasks",
+    "contacts": "Contacts"
+  },
+  "auth": {
+    "login": "Log In",
+    "logout": "Log Out",
+    "email": "Email",
+    "password": "Password"
+  },
+  "deal": {
+    "newDeal": "New Deal",
+    "name": "Deal Name",
+    "codeName": "Code Name",
+    "dealType": "Deal Type",
+    "ourRole": "Our Role",
+    "clientName": "Client",
+    "targetCompany": "Target",
+    "jurisdictions": "Jurisdictions",
+    "dealLead": "Deal Lead",
+    "teamMembers": "Team Members",
+    "summary": "Summary",
+    "status": "Status",
+    "active": "Active",
+    "onHold": "On Hold",
+    "completed": "Completed",
+    "auction": "Auction",
+    "negotiated": "Negotiated",
+    "jv": "Joint Venture",
+    "buySide": "Buy-Side",
+    "sellSide": "Sell-Side",
+    "leadParty": "Lead Party",
+    "participatingParty": "Participating Party"
+  },
+  "task": {
+    "toDo": "To Do",
+    "inProgress": "In Progress",
+    "done": "Done",
+    "high": "High",
+    "normal": "Normal",
+    "assignee": "Assignee",
+    "dueDate": "Due Date",
+    "addTask": "Add Task",
+    "addComment": "Add Comment"
+  },
+  "milestone": {
+    "addMilestone": "Add Milestone",
+    "upcoming": "Upcoming",
+    "done": "Done",
+    "overdue": "Overdue"
+  },
+  "workstream": {
+    "addWorkstream": "Add Workstream"
+  },
+  "activity": {
+    "addNote": "Add Note",
+    "note": "Note",
+    "call": "Call",
+    "meeting": "Meeting",
+    "clientInstruction": "Client Instruction"
+  },
+  "decision": {
+    "decisions": "Decisions",
+    "newDecision": "New Decision",
+    "background": "Background",
+    "analysis": "Analysis",
+    "options": "Options",
+    "clientDecision": "Client Decision",
+    "pendingAnalysis": "Pending Analysis",
+    "reported": "Reported",
+    "decided": "Decided",
+    "implemented": "Implemented"
+  },
+  "contact": {
+    "name": "Name",
+    "organization": "Organization",
+    "role": "Role",
+    "email": "Email",
+    "phone": "Phone",
+    "timezone": "Timezone"
+  },
+  "dashboard": {
+    "myTasks": "My Tasks",
+    "upcomingMilestones": "Upcoming Milestones",
+    "activeDeals": "Active Deals",
+    "recentActivity": "Recent Activity"
+  }
+}

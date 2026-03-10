@@ -1,0 +1,103 @@
+{
+  "common": {
+    "appName": "DealFlow",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "create": "创建",
+    "search": "搜索",
+    "filter": "筛选",
+    "loading": "加载中...",
+    "noResults": "暂无数据"
+  },
+  "nav": {
+    "dashboard": "工作台",
+    "deals": "项目",
+    "myTasks": "我的任务",
+    "contacts": "通讯录"
+  },
+  "auth": {
+    "login": "登录",
+    "logout": "退出",
+    "email": "邮箱",
+    "password": "密码"
+  },
+  "deal": {
+    "newDeal": "新建项目",
+    "name": "项目名称",
+    "codeName": "代号",
+    "dealType": "交易类型",
+    "ourRole": "我方角色",
+    "clientName": "客户",
+    "targetCompany": "标的公司",
+    "jurisdictions": "涉及法域",
+    "dealLead": "项目负责人",
+    "teamMembers": "团队成员",
+    "summary": "项目概述",
+    "status": "状态",
+    "active": "进行中",
+    "onHold": "暂停",
+    "completed": "已完成",
+    "auction": "竞标交易",
+    "negotiated": "协议交易",
+    "jv": "合资项目",
+    "buySide": "买方",
+    "sellSide": "卖方",
+    "leadParty": "主导方",
+    "participatingParty": "参与方"
+  },
+  "task": {
+    "toDo": "待办",
+    "inProgress": "进行中",
+    "done": "已完成",
+    "high": "高",
+    "normal": "普通",
+    "assignee": "负责人",
+    "dueDate": "截止日期",
+    "addTask": "添加任务",
+    "addComment": "添加评论"
+  },
+  "milestone": {
+    "addMilestone": "添加里程碑",
+    "upcoming": "即将到来",
+    "done": "已完成",
+    "overdue": "已逾期"
+  },
+  "workstream": {
+    "addWorkstream": "添加工作流"
+  },
+  "activity": {
+    "addNote": "添加记录",
+    "note": "笔记",
+    "call": "电话",
+    "meeting": "会议",
+    "clientInstruction": "客户指示"
+  },
+  "decision": {
+    "decisions": "决策记录",
+    "newDecision": "新建决策",
+    "background": "背景",
+    "analysis": "分析",
+    "options": "选项",
+    "clientDecision": "客户决定",
+    "pendingAnalysis": "待分析",
+    "reported": "已汇报",
+    "decided": "已决定",
+    "implemented": "已执行"
+  },
+  "contact": {
+    "name": "姓名",
+    "organization": "单位",
+    "role": "角色",
+    "email": "邮箱",
+    "phone": "电话",
+    "timezone": "时区"
+  },
+  "dashboard": {
+    "myTasks": "我的任务",
+    "upcomingMilestones": "即将到来的里程碑",
+    "activeDeals": "进行中的项目",
+    "recentActivity": "最近动态"
+  }
+}
