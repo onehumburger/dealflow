@@ -15,11 +15,16 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
   }
 
+  const role = (session.user as unknown as { role: string }).role;
+
   const navLinks = [
     { href: `/${locale}/dashboard`, label: t("dashboard") },
     { href: `/${locale}/deals`, label: t("deals") },
     { href: `/${locale}/tasks`, label: t("myTasks") },
     { href: `/${locale}/contacts`, label: t("contacts") },
+    ...(role === "Admin"
+      ? [{ href: `/${locale}/admin/users`, label: t("admin") }]
+      : []),
   ];
 
   return (

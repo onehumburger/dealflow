@@ -15,7 +15,8 @@
     "dashboard": "Dashboard",
     "deals": "Deals",
     "myTasks": "My Tasks",
-    "contacts": "Contacts"
+    "contacts": "Contacts",
+    "admin": "Admin"
   },
   "auth": {
     "login": "Log In",
@@ -199,5 +200,29 @@
     "templateName": "Template Name",
     "templateNamePlaceholder": "e.g. Standard M&A Template",
     "saved": "Template saved successfully!"
+  },
+  "user": {
+    "users": "User Management",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "locale": "Language",
+    "password": "Password",
+    "admin": "Admin",
+    "member": "Member",
+    "addUser": "Add User",
+    "resetPassword": "Reset Password",
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "At least 6 characters",
+    "passwordPlaceholder": "At least 6 characters"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Please try again or contact the administrator.",
+    "errorCode": "Error code",
+    "tryAgain": "Try Again",
+    "dealErrorTitle": "Deal Error",
+    "dealErrorDescription": "Unable to load this deal. It may have been deleted or you may not have access.",
+    "backToDeals": "Back to Deals"
   }
 }

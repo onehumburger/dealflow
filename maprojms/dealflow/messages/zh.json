@@ -15,7 +15,8 @@
     "dashboard": "工作台",
     "deals": "项目",
     "myTasks": "我的任务",
-    "contacts": "通讯录"
+    "contacts": "通讯录",
+    "admin": "管理"
   },
   "auth": {
     "login": "登录",
@@ -199,5 +200,29 @@
     "templateName": "模板名称",
     "templateNamePlaceholder": "例如 标准并购模板",
     "saved": "模板保存成功！"
+  },
+  "user": {
+    "users": "用户管理",
+    "name": "姓名",
+    "email": "邮箱",
+    "role": "角色",
+    "locale": "语言",
+    "password": "密码",
+    "admin": "管理员",
+    "member": "成员",
+    "addUser": "添加用户",
+    "resetPassword": "重置密码",
+    "newPassword": "新密码",
+    "newPasswordPlaceholder": "至少6个字符",
+    "passwordPlaceholder": "至少6个字符"
+  },
+  "error": {
+    "title": "出现错误",
+    "description": "发生了意外错误，请重试或联系管理员。",
+    "errorCode": "错误代码",
+    "tryAgain": "重试",
+    "dealErrorTitle": "项目错误",
+    "dealErrorDescription": "无法加载此项目，该项目可能已被删除或您没有访问权限。",
+    "backToDeals": "返回项目列表"
   }
 }
