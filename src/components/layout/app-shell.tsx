@@ -11,6 +11,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
   const t = await getTranslations("nav");
   const tCommon = await getTranslations("common");
+  const tBilling = await getTranslations("billing");
 
   if (!session) {
     return <>{children}</>;
@@ -25,7 +26,10 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
     { href: `/${locale}/tasks`, label: t("myTasks") },
     { href: `/${locale}/contacts`, label: t("contacts") },
     ...(role === "Admin"
-      ? [{ href: `/${locale}/admin/users`, label: t("admin") }]
+      ? [
+          { href: `/${locale}/admin/users`, label: t("admin") },
+          { href: `/${locale}/admin/billing`, label: tBilling("billing") },
+        ]
       : []),
   ];
 
