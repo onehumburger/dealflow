@@ -22,14 +22,12 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
   const navLinks = [
     { href: `/${locale}/dashboard`, label: t("dashboard") },
     { href: `/${locale}/deals`, label: t("deals") },
-    { href: `/${locale}/calendar`, label: t("calendar") },
     { href: `/${locale}/tasks`, label: t("myTasks") },
+    { href: `/${locale}/calendar`, label: t("calendar") },
+    { href: `/${locale}/billing`, label: tBilling("billing") },
     { href: `/${locale}/contacts`, label: t("contacts") },
     ...(role === "Admin"
-      ? [
-          { href: `/${locale}/admin/users`, label: t("admin") },
-          { href: `/${locale}/admin/billing`, label: tBilling("billing") },
-        ]
+      ? [{ href: `/${locale}/admin/users`, label: t("admin") }]
       : []),
   ];
 

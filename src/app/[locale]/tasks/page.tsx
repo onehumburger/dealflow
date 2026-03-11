@@ -15,7 +15,11 @@ export default async function MyTasksPage() {
   const tNav = await getTranslations("nav");
 
   const tasks = await prisma.task.findMany({
-    where: { assigneeId: session.user.id, status: { not: "Done" } },
+    where: {
+      assigneeId: session.user.id,
+      status: { not: "Done" },
+      workstream: { deal: { status: "Active" } },
+    },
     orderBy: [{ dueDate: "asc" }, { createdAt: "desc" }],
     include: {
       workstream: {

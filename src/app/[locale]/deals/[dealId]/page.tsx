@@ -126,9 +126,11 @@ export default async function DealDetailPage({
         deal={{
           id: deal.id,
           name: deal.name,
+          codeName: deal.codeName,
           status: deal.status,
           clientName: deal.clientName,
           targetCompany: deal.targetCompany,
+          jurisdictions: deal.jurisdictions,
           summary: deal.summary,
           dealLead: deal.dealLead,
         }}
@@ -148,7 +150,7 @@ export default async function DealDetailPage({
       <div className="flex gap-6">
         {/* Workstreams (left) */}
         <div className="flex-1 min-w-0">
-          <WorkstreamList workstreams={workstreamsData} dealId={dealId} />
+          <WorkstreamList workstreams={workstreamsData} dealId={dealId} dealStatus={deal.status} />
         </div>
 
         {/* Activity Feed (right) */}

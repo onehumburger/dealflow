@@ -25,6 +25,7 @@ export function TimerBar() {
   const stop = useTimer((s) => s.stop);
 
   const [elapsed, setElapsed] = useState(0);
+  const [frozenElapsed, setFrozenElapsed] = useState<number | null>(null);
   const [showDescription, setShowDescription] = useState(false);
   const [description, setDescription] = useState("");
   const [isPending, startTransition] = useTransition();
@@ -44,6 +45,7 @@ export function TimerBar() {
   if (!activeEntryId) return null;
 
   function handleStop() {
+    setFrozenElapsed(elapsed);
     setShowDescription(true);
   }
 
@@ -52,6 +54,7 @@ export function TimerBar() {
       await stopTimer(activeEntryId!, description.trim() || undefined);
       stop();
       setShowDescription(false);
+      setFrozenElapsed(null);
       setDescription("");
     });
   }
@@ -61,6 +64,7 @@ export function TimerBar() {
       await stopTimer(activeEntryId!);
       stop();
       setShowDescription(false);
+      setFrozenElapsed(null);
       setDescription("");
     });
   }
@@ -78,7 +82,7 @@ export function TimerBar() {
 
         <div className="ml-auto flex items-center gap-3">
           <span className="font-mono text-sm font-medium tabular-nums">
-            {formatElapsed(elapsed)}
+            {formatElapsed(frozenElapsed ?? elapsed)}
           </span>
 
           {showDescription ? (

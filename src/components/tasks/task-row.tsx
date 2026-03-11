@@ -19,6 +19,7 @@ interface TaskRowProps {
     completedAt: Date | null;
     assignee: { name: string } | null;
   };
+  hideOverdue?: boolean;
 }
 
 function formatRelativeDate(
@@ -40,7 +41,7 @@ function formatRelativeDate(
   }).format(date);
 }
 
-export function TaskRow({ task }: TaskRowProps) {
+export function TaskRow({ task, hideOverdue }: TaskRowProps) {
   const locale = useLocale();
   const t = useTranslations("task");
   const [isPending, startTransition] = useTransition();
@@ -48,7 +49,7 @@ export function TaskRow({ task }: TaskRowProps) {
 
   const isDone = task.status === "Done";
   const isOverdue =
-    task.dueDate && !isDone && task.dueDate < new Date();
+    !hideOverdue && task.dueDate && !isDone && task.dueDate < new Date();
 
   function handleToggle(e: React.MouseEvent) {
     e.stopPropagation();

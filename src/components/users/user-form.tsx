@@ -28,7 +28,6 @@ interface UserData {
   name: string;
   email: string;
   role: UserRole;
-  locale: string;
 }
 
 interface UserFormProps {
@@ -51,7 +50,6 @@ export function UserForm({ user, trigger }: UserFormProps) {
           name: formData.get("name") as string,
           email: formData.get("email") as string,
           role: formData.get("role") as UserRole,
-          locale: formData.get("locale") as string,
         });
       } else {
         await createUser(formData);
@@ -109,38 +107,21 @@ export function UserForm({ user, trigger }: UserFormProps) {
             </div>
           )}
 
-          {/* Role + Locale side-by-side */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <Label>{t("role")}</Label>
-              <Select
-                name="role"
-                defaultValue={user?.role ?? "Member"}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Admin">{t("admin")}</SelectItem>
-                  <SelectItem value="Member">{t("member")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label>{t("locale")}</Label>
-              <Select
-                name="locale"
-                defaultValue={user?.locale ?? "zh"}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="zh">中文</SelectItem>
-                  <SelectItem value="en">English</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          {/* Role */}
+          <div className="flex flex-col gap-1.5">
+            <Label>{t("role")}</Label>
+            <Select
+              name="role"
+              defaultValue={user?.role ?? "Member"}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Admin">{t("admin")}</SelectItem>
+                <SelectItem value="Member">{t("member")}</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <DialogFooter>

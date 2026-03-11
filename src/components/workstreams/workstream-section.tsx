@@ -36,9 +36,10 @@ interface WorkstreamSectionProps {
     tasks: WorkstreamTask[];
   };
   dealId: string;
+  dealStatus?: string;
 }
 
-export function WorkstreamSection({ workstream, dealId }: WorkstreamSectionProps) {
+export function WorkstreamSection({ workstream, dealId, dealStatus }: WorkstreamSectionProps) {
   const t = useTranslations("workstream");
   const tTask = useTranslations("task");
   const tCommon = useTranslations("common");
@@ -118,7 +119,7 @@ export function WorkstreamSection({ workstream, dealId }: WorkstreamSectionProps
             {workstream.tasks.length > 0 && (
               <>
                 {workstream.tasks.map((task) => (
-                  <TaskRow key={task.id} task={task} />
+                  <TaskRow key={task.id} task={task} hideOverdue={dealStatus !== "Active"} />
                 ))}
               </>
             )}

@@ -16,7 +16,7 @@
     "deals": "Deals",
     "myTasks": "My Tasks",
     "contacts": "Contacts",
-    "admin": "Admin",
+    "admin": "Users",
     "calendar": "Calendar"
   },
   "auth": {
@@ -192,7 +192,8 @@
     "myTasks": "My Tasks",
     "upcomingMilestones": "Upcoming Milestones",
     "activeDeals": "Active Deals",
-    "recentActivity": "Recent Activity"
+    "recentActivity": "Recent Activity",
+    "allDeals": "All Deals"
   },
   "search": {
     "placeholder": "Search deals, tasks, contacts...",
@@ -217,7 +218,8 @@
     "resetPassword": "Reset Password",
     "newPassword": "New Password",
     "newPasswordPlaceholder": "At least 6 characters",
-    "passwordPlaceholder": "At least 6 characters"
+    "passwordPlaceholder": "At least 6 characters",
+    "deleteUserConfirm": "Are you sure you want to delete this user? This action cannot be undone."
   },
   "calendar": {
     "calendar": "Calendar",

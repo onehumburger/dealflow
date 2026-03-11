@@ -17,13 +17,11 @@ export default async function AdminBillingPage() {
   }
 
   const role = (session.user as unknown as { role: string }).role;
-  if (role !== "Admin") {
-    redirect(`/${locale}/dashboard`);
-  }
+  const isAdmin = role === "Admin";
 
   const [entries, rates, options] = await Promise.all([
     getFilteredTimeEntries({}),
-    getDealBillingRates(),
+    isAdmin ? getDealBillingRates() : Promise.resolve([]),
     getAdminFilterOptions(),
   ]);
 
@@ -34,6 +32,8 @@ export default async function AdminBillingPage() {
         users={options.users}
         initialEntries={entries}
         initialRates={rates}
+        isAdmin={isAdmin}
+        currentUserId={session.user.id}
       />
     </div>
   );

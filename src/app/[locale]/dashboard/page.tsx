@@ -32,30 +32,80 @@ export default async function DashboardPage() {
   });
   const dealIds = memberships.map((m) => m.dealId);
 
-  // --- My Tasks ---
-  const tasks = await prisma.task.findMany({
-    where: {
-      assigneeId: userId,
-      status: { not: "Done" },
-      workstream: { dealId: { in: dealIds } },
-    },
-    orderBy: [{ dueDate: "asc" }, { createdAt: "desc" }],
-    take: 10,
-    select: {
-      id: true,
-      title: true,
-      priority: true,
-      dueDate: true,
-      workstream: {
-        select: {
-          deal: { select: { id: true, name: true } },
+  const now = new Date();
+
+  // --- Parallel data fetching ---
+  const [tasks, milestones, activeDeals, recentActivity] = await Promise.all([
+    prisma.task.findMany({
+      where: {
+        assigneeId: userId,
+        status: { not: "Done" },
+        workstream: { deal: { id: { in: dealIds }, status: "Active" } },
+      },
+      orderBy: [{ dueDate: "asc" }, { createdAt: "desc" }],
+      take: 10,
+      select: {
+        id: true,
+        title: true,
+        priority: true,
+        dueDate: true,
+        workstream: {
+          select: {
+            deal: { select: { id: true, name: true } },
+          },
         },
       },
-    },
-  });
+    }),
+    prisma.milestone.findMany({
+      where: {
+        isDone: false,
+        deal: { id: { in: dealIds }, status: "Active" },
+        date: { not: null },
+      },
+      orderBy: { date: "asc" },
+      take: 8,
+      select: {
+        id: true,
+        name: true,
+        date: true,
+        deal: { select: { id: true, name: true } },
+      },
+    }),
+    prisma.deal.findMany({
+      where: {
+        id: { in: dealIds },
+        status: "Active",
+      },
+      orderBy: { updatedAt: "desc" },
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        clientName: true,
+        targetCompany: true,
+        workstreams: {
+          select: {
+            tasks: { select: { status: true } },
+          },
+        },
+      },
+    }),
+    prisma.activityEntry.findMany({
+      where: { dealId: { in: dealIds } },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+      select: {
+        id: true,
+        type: true,
+        content: true,
+        createdAt: true,
+        author: { select: { name: true } },
+        deal: { select: { id: true, name: true } },
+      },
+    }),
+  ]);
 
-  // Sort: overdue first, then by due date
-  const now = new Date();
+  // Sort tasks: overdue first, then by due date
   const sortedTasks = tasks.sort((a, b) => {
     const aOverdue = a.dueDate && a.dueDate < now;
     const bOverdue = b.dueDate && b.dueDate < now;
@@ -76,23 +126,6 @@ export default async function DashboardPage() {
     dealName: t.workstream.deal.name,
   }));
 
-  // --- Upcoming Milestones ---
-  const milestones = await prisma.milestone.findMany({
-    where: {
-      isDone: false,
-      dealId: { in: dealIds },
-      date: { not: null },
-    },
-    orderBy: { date: "asc" },
-    take: 8,
-    select: {
-      id: true,
-      name: true,
-      date: true,
-      deal: { select: { id: true, name: true } },
-    },
-  });
-
   const milestoneItems = milestones.map((m) => {
     let daysRemaining: number | null = null;
     if (m.date) {
@@ -110,27 +143,6 @@ export default async function DashboardPage() {
     };
   });
 
-  // --- Active Deals ---
-  const activeDeals = await prisma.deal.findMany({
-    where: {
-      id: { in: dealIds },
-      status: "Active",
-    },
-    orderBy: { updatedAt: "desc" },
-    select: {
-      id: true,
-      name: true,
-      status: true,
-      clientName: true,
-      targetCompany: true,
-      workstreams: {
-        select: {
-          tasks: { select: { status: true } },
-        },
-      },
-    },
-  });
-
   const dealItems = activeDeals.map((d) => {
     const allTasks = d.workstreams.flatMap((ws) => ws.tasks);
     return {
@@ -142,21 +154,6 @@ export default async function DashboardPage() {
       tasksDone: allTasks.filter((t) => t.status === "Done").length,
       tasksTotal: allTasks.length,
     };
-  });
-
-  // --- Recent Activity ---
-  const recentActivity = await prisma.activityEntry.findMany({
-    where: { dealId: { in: dealIds } },
-    orderBy: { createdAt: "desc" },
-    take: 20,
-    select: {
-      id: true,
-      type: true,
-      content: true,
-      createdAt: true,
-      author: { select: { name: true } },
-      deal: { select: { id: true, name: true } },
-    },
   });
 
   const activityItems = recentActivity.map((e) => ({
@@ -183,6 +180,7 @@ export default async function DashboardPage() {
             high: tTask("high"),
             overdue: tTask("overdue"),
             noTasks: tTask("noTasks"),
+            allDeals: tDashboard("allDeals"),
           }}
         />
 
@@ -194,6 +192,7 @@ export default async function DashboardPage() {
             upcomingMilestones: tDashboard("upcomingMilestones"),
             overdue: tMilestone("overdue"),
             noResults: tCommon("noResults"),
+            allDeals: tDashboard("allDeals"),
           }}
         />
       </div>

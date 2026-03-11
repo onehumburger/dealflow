@@ -224,6 +224,8 @@ export async function getTaskDetail(taskId: string) {
 
   if (!task) throw new Error("Task not found");
 
+  await assertDealMember(task.workstream.dealId, session.user.id);
+
   return task;
 }
 

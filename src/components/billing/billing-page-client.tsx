@@ -17,6 +17,8 @@ interface BillingPageClientProps {
   users: { id: string; name: string }[];
   initialEntries: EntryData[];
   initialRates: RateData[];
+  isAdmin: boolean;
+  currentUserId: string;
 }
 
 export function BillingPageClient({
@@ -24,6 +26,8 @@ export function BillingPageClient({
   users,
   initialEntries,
   initialRates,
+  isAdmin,
+  currentUserId,
 }: BillingPageClientProps) {
   const tBilling = useTranslations("billing");
   const [isPending, startTransition] = useTransition();
@@ -115,14 +119,22 @@ export function BillingPageClient({
         onExport={handleExport}
       />
 
-      <BillingRateEditor
-        deals={deals}
-        users={users}
-        rates={rates}
-        onRatesChange={setRates}
-      />
+      {isAdmin && (
+        <BillingRateEditor
+          deals={deals}
+          users={users}
+          rates={rates}
+          onRatesChange={setRates}
+        />
+      )}
 
-      <BillingTable entries={entries} precision={precision} onRefresh={handleFilter} />
+      <BillingTable
+        entries={entries}
+        precision={precision}
+        onRefresh={handleFilter}
+        isAdmin={isAdmin}
+        currentUserId={currentUserId}
+      />
 
       <BillingSummary entries={entries} rates={rates} precision={precision} />
     </div>

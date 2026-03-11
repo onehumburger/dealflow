@@ -6,13 +6,12 @@ import { logAudit } from "@/lib/audit";
 import { revalidatePath } from "next/cache";
 import { getLocale } from "next-intl/server";
 import ExcelJS from "exceljs";
-
-// ---------- helpers ----------
+import { assertAdmin } from "@/actions/_helpers";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function assertAdmin(session: any) {
+function isAdminUser(session: any): boolean {
   const role = (session?.user as unknown as { role: string } | undefined)?.role;
-  if (role !== "Admin") throw new Error("Forbidden: Admin only");
+  return role === "Admin";
 }
 
 // ---------- getFilteredTimeEntries ----------
@@ -27,11 +26,26 @@ export async function getFilteredTimeEntries(filters: {
 }) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
-  assertAdmin(session);
 
+  const admin = isAdminUser(session);
   const where: Record<string, unknown> = {};
 
-  if (filters.dealId) where.dealId = filters.dealId;
+  // Non-admin: scope to deals they belong to
+  if (!admin) {
+    const memberDealIds = await prisma.dealMember.findMany({
+      where: { userId: session.user.id },
+      select: { dealId: true },
+    });
+    const ids = memberDealIds.map((d) => d.dealId);
+    if (filters.dealId) {
+      if (!ids.includes(filters.dealId)) throw new Error("Forbidden");
+      where.dealId = filters.dealId;
+    } else {
+      where.dealId = { in: ids };
+    }
+  } else if (filters.dealId) {
+    where.dealId = filters.dealId;
+  }
   if (filters.userId) where.userId = filters.userId;
   if (filters.billableOnly) where.isBillable = true;
   if (filters.workstreamId) where.task = { workstreamId: filters.workstreamId };
@@ -81,9 +95,7 @@ export async function setBillingRate(
   userId: string,
   ratePerHour: number
 ) {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthorized");
-  assertAdmin(session);
+  const adminId = await assertAdmin();
 
   await prisma.dealBillingRate.upsert({
     where: { dealId_userId: { dealId, userId } },
@@ -91,20 +103,18 @@ export async function setBillingRate(
     create: { dealId, userId, ratePerHour },
   });
 
-  await logAudit(session.user.id, "set_billing_rate", "DealBillingRate", `${dealId}-${userId}`, {
+  await logAudit(adminId, "set_billing_rate", "DealBillingRate", `${dealId}-${userId}`, {
     ratePerHour: { from: null, to: ratePerHour },
   });
 
   const locale = await getLocale();
-  revalidatePath(`/${locale}/admin/billing`);
+  revalidatePath(`/${locale}/billing`);
 }
 
 // ---------- getDealBillingRates ----------
 
 export async function getDealBillingRates(dealId?: string) {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthorized");
-  assertAdmin(session);
+  await assertAdmin();
 
   const where = dealId ? { dealId } : {};
 
@@ -130,12 +140,19 @@ export async function getDealBillingRates(dealId?: string) {
 export async function getAdminFilterOptions() {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
-  assertAdmin(session);
 
-  const deals = await prisma.deal.findMany({
-    orderBy: { name: "asc" },
-    select: { id: true, name: true },
-  });
+  const admin = isAdminUser(session);
+
+  const deals = admin
+    ? await prisma.deal.findMany({
+        orderBy: { name: "asc" },
+        select: { id: true, name: true },
+      })
+    : await prisma.deal.findMany({
+        where: { members: { some: { userId: session.user.id } } },
+        orderBy: { name: "asc" },
+        select: { id: true, name: true },
+      });
 
   const users = await prisma.user.findMany({
     orderBy: { name: "asc" },
@@ -150,7 +167,13 @@ export async function getAdminFilterOptions() {
 export async function getWorkstreamsForDeal(dealId: string) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
-  assertAdmin(session);
+
+  if (!isAdminUser(session)) {
+    const membership = await prisma.dealMember.findFirst({
+      where: { dealId, userId: session.user.id },
+    });
+    if (!membership) throw new Error("Forbidden");
+  }
 
   const workstreams = await prisma.workstream.findMany({
     where: { dealId },
@@ -173,10 +196,10 @@ export async function exportBillingExcel(filters: {
 }): Promise<string> {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
-  assertAdmin(session);
 
+  const admin = isAdminUser(session);
   const entries = await getFilteredTimeEntries(filters);
-  const rates = await getDealBillingRates(filters.dealId);
+  const rates = admin ? await getDealBillingRates(filters.dealId) : [];
 
   // Build rate lookup: dealId-userId → ratePerHour
   const rateMap = new Map<string, number>();

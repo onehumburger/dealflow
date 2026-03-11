@@ -18,9 +18,11 @@ interface BillingTableProps {
   entries: EntryData[];
   precision: number;
   onRefresh: () => void;
+  isAdmin: boolean;
+  currentUserId: string;
 }
 
-export function BillingTable({ entries, precision, onRefresh }: BillingTableProps) {
+export function BillingTable({ entries, precision, onRefresh, isAdmin, currentUserId }: BillingTableProps) {
   const locale = useLocale();
   const tBilling = useTranslations("billing");
   const tTimer = useTranslations("timer");
@@ -109,23 +111,29 @@ export function BillingTable({ entries, precision, onRefresh }: BillingTableProp
                 )}
               </td>
               <td className="px-3 py-1.5 text-center">
-                <button onClick={() => handleToggleBillable(entry.id, entry.isBillable)} disabled={isPending} className="text-sm">
-                  {entry.isBillable ? "✓" : "✗"}
-                </button>
+                {(isAdmin || entry.user.id === currentUserId) ? (
+                  <button onClick={() => handleToggleBillable(entry.id, entry.isBillable)} disabled={isPending} className="text-sm">
+                    {entry.isBillable ? "✓" : "✗"}
+                  </button>
+                ) : (
+                  <span className="text-sm">{entry.isBillable ? "✓" : "✗"}</span>
+                )}
               </td>
               <td className="px-3 py-1.5 text-right">
-                <div className="flex items-center justify-end gap-1">
-                  {editingEntry === entry.id ? (
-                    <Button size="xs" onClick={handleSaveEdit} disabled={isPending}>{tCommon("save")}</Button>
-                  ) : (
-                    <button onClick={() => handleStartEdit(entry)} className="text-muted-foreground hover:text-foreground">
-                      <Pencil className="size-3.5" />
+                {(isAdmin || entry.user.id === currentUserId) && (
+                  <div className="flex items-center justify-end gap-1">
+                    {editingEntry === entry.id ? (
+                      <Button size="xs" onClick={handleSaveEdit} disabled={isPending}>{tCommon("save")}</Button>
+                    ) : (
+                      <button onClick={() => handleStartEdit(entry)} className="text-muted-foreground hover:text-foreground">
+                        <Pencil className="size-3.5" />
+                      </button>
+                    )}
+                    <button onClick={() => handleDelete(entry.id)} disabled={isPending} className="text-muted-foreground hover:text-red-500">
+                      <Trash2 className="size-3.5" />
                     </button>
-                  )}
-                  <button onClick={() => handleDelete(entry.id)} disabled={isPending} className="text-muted-foreground hover:text-red-500">
-                    <Trash2 className="size-3.5" />
-                  </button>
-                </div>
+                  </div>
+                )}
               </td>
             </tr>
           ))}

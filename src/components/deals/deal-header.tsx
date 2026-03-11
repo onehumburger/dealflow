@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowLeft, ChevronDown, Copy } from "lucide-react";
+import { ArrowLeft, ChevronDown, Copy, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -28,9 +28,11 @@ interface DealHeaderProps {
   deal: {
     id: string;
     name: string;
+    codeName: string | null;
     status: DealStatus;
     clientName: string;
     targetCompany: string;
+    jurisdictions: string[];
     summary: string | null;
     dealLead: { name: string };
   };
@@ -49,10 +51,33 @@ export function DealHeader({ deal }: DealHeaderProps) {
   const [templateName, setTemplateName] = useState("");
   const [templateSaving, startTemplateSave] = useTransition();
   const [templateSaved, setTemplateSaved] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [editName, setEditName] = useState(deal.name);
+  const [editCodeName, setEditCodeName] = useState(deal.codeName ?? "");
+  const [editClient, setEditClient] = useState(deal.clientName);
+  const [editTarget, setEditTarget] = useState(deal.targetCompany);
+  const [editJurisdictions, setEditJurisdictions] = useState(deal.jurisdictions.join(", "));
+  const [editSummary, setEditSummary] = useState(deal.summary ?? "");
+  const [editSaving, startEditSave] = useTransition();
 
   function handleStatusChange(newStatus: DealStatus) {
     startTransition(async () => {
       await updateDeal(deal.id, { status: newStatus });
+    });
+  }
+
+  function handleEditSave() {
+    if (!editName.trim() || !editClient.trim() || !editTarget.trim()) return;
+    startEditSave(async () => {
+      await updateDeal(deal.id, {
+        name: editName.trim(),
+        codeName: editCodeName.trim() || null,
+        clientName: editClient.trim(),
+        targetCompany: editTarget.trim(),
+        jurisdictions: editJurisdictions.split(",").map((s) => s.trim()).filter(Boolean),
+        summary: editSummary.trim() || null,
+      });
+      setEditOpen(false);
     });
   }
 
@@ -83,6 +108,18 @@ export function DealHeader({ deal }: DealHeaderProps) {
 
       <div className="flex items-center gap-3">
         <h1 className="text-2xl font-bold">{deal.name}</h1>
+        {deal.codeName && (
+          <span className="text-sm text-muted-foreground">({deal.codeName})</span>
+        )}
+
+        <Button
+          variant="ghost"
+          size="icon-xs"
+          onClick={() => setEditOpen(true)}
+          className="text-muted-foreground"
+        >
+          <Pencil className="size-3.5" />
+        </Button>
 
         <DropdownMenu>
           <DropdownMenuTrigger
@@ -186,6 +223,59 @@ export function DealHeader({ deal }: DealHeaderProps) {
           )}
         </div>
       )}
+
+      {/* Edit Deal Dialog */}
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{tCommon("edit")} — {deal.name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 pt-2">
+            <div>
+              <label className="mb-1 block text-sm font-medium">{t("name")}</label>
+              <Input value={editName} onChange={(e) => setEditName(e.target.value)} disabled={editSaving} />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium">{t("codeName")}</label>
+              <Input value={editCodeName} onChange={(e) => setEditCodeName(e.target.value)} disabled={editSaving} />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium">{t("clientName")}</label>
+              <Input value={editClient} onChange={(e) => setEditClient(e.target.value)} disabled={editSaving} />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium">{t("targetCompany")}</label>
+              <Input value={editTarget} onChange={(e) => setEditTarget(e.target.value)} disabled={editSaving} />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium">{t("jurisdictions")}</label>
+              <Input
+                value={editJurisdictions}
+                onChange={(e) => setEditJurisdictions(e.target.value)}
+                placeholder="PRC, Vietnam"
+                disabled={editSaving}
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium">{t("summary")}</label>
+              <textarea
+                value={editSummary}
+                onChange={(e) => setEditSummary(e.target.value)}
+                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                disabled={editSaving}
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setEditOpen(false)} disabled={editSaving}>
+                {tCommon("cancel")}
+              </Button>
+              <Button onClick={handleEditSave} disabled={editSaving || !editName.trim()}>
+                {tCommon("save")}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

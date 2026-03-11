@@ -16,7 +16,7 @@
     "deals": "项目",
     "myTasks": "我的任务",
     "contacts": "通讯录",
-    "admin": "管理",
+    "admin": "用户管理",
     "calendar": "日历"
   },
   "auth": {
@@ -192,7 +192,8 @@
     "myTasks": "我的任务",
     "upcomingMilestones": "即将到来的里程碑",
     "activeDeals": "进行中的项目",
-    "recentActivity": "最近动态"
+    "recentActivity": "最近动态",
+    "allDeals": "全部项目"
   },
   "search": {
     "placeholder": "搜索项目、任务、联系人...",
@@ -217,7 +218,8 @@
     "resetPassword": "重置密码",
     "newPassword": "新密码",
     "newPasswordPlaceholder": "至少6个字符",
-    "passwordPlaceholder": "至少6个字符"
+    "passwordPlaceholder": "至少6个字符",
+    "deleteUserConfirm": "确定要删除此用户吗？该操作不可撤销。"
   },
   "calendar": {
     "calendar": "日历",
