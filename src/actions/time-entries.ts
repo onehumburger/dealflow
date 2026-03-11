@@ -36,22 +36,6 @@ export async function startTimer(taskId: string) {
 
   await assertDealMember(dealId, session.user.id);
 
-  // Stop any running timer for this user
-  const running = await prisma.timeEntry.findFirst({
-    where: { userId: session.user.id, stoppedAt: null, isManual: false },
-  });
-  if (running) {
-    const now = new Date();
-    const durationMs = now.getTime() - (running.startedAt?.getTime() ?? now.getTime());
-    await prisma.timeEntry.update({
-      where: { id: running.id },
-      data: {
-        stoppedAt: now,
-        durationMinutes: Math.max(1, Math.round(durationMs / 60000)),
-      },
-    });
-  }
-
   const entry = await prisma.timeEntry.create({
     data: {
       startedAt: new Date(),
@@ -63,6 +47,9 @@ export async function startTimer(taskId: string) {
     },
   });
 
+  await logAudit(session.user.id, "start_timer", "TimeEntry", entry.id, {
+    taskId: { from: null, to: taskId },
+  });
   await revalidateDeal(dealId);
 
   return {
@@ -98,6 +85,9 @@ export async function stopTimer(entryId: string, description?: string) {
     },
   });
 
+  await logAudit(session.user.id, "stop_timer", "TimeEntry", entryId, {
+    durationMinutes: { from: 0, to: Math.max(1, Math.round(durationMs / 60000)) },
+  });
   await revalidateDeal(entry.dealId);
 }
 
@@ -118,7 +108,7 @@ export async function logManualTime(
   const durationMinutes = Math.round(data.durationHours * 60);
   if (durationMinutes <= 0) throw new Error("Duration must be positive");
 
-  await prisma.timeEntry.create({
+  const entry = await prisma.timeEntry.create({
     data: {
       durationMinutes,
       isManual: true,
@@ -130,6 +120,10 @@ export async function logManualTime(
     },
   });
 
+  await logAudit(session.user.id, "log_manual_time", "TimeEntry", entry.id, {
+    durationMinutes: { from: null, to: durationMinutes },
+    taskId: { from: null, to: taskId },
+  });
   await revalidateDeal(dealId);
 }
 
@@ -205,6 +199,9 @@ export async function deleteTimeEntry(entryId: string) {
 export async function getTaskTimeEntries(taskId: string) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
+
+  const task = await getTaskWithDeal(taskId);
+  await assertDealMember(task.workstream.dealId, session.user.id);
 
   const entries = await prisma.timeEntry.findMany({
     where: { taskId },
