@@ -16,9 +16,9 @@ interface CalendarState {
   setSelectedDealIds: (ids: string[] | null) => void;
 }
 
-const now = new Date();
-
-export const useCalendar = create<CalendarState>((set) => ({
+export const useCalendar = create<CalendarState>((set) => {
+  const now = new Date();
+  return {
   year: now.getFullYear(),
   month: now.getMonth() + 1,
   showMilestones: true,
@@ -44,4 +44,5 @@ export const useCalendar = create<CalendarState>((set) => ({
   toggleTasks: () => set((s) => ({ showTasks: !s.showTasks })),
   toggleActivity: () => set((s) => ({ showActivity: !s.showActivity })),
   setSelectedDealIds: (ids) => set({ selectedDealIds: ids }),
-}));
+  };
+});

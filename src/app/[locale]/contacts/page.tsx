@@ -22,8 +22,11 @@ export default async function GlobalContactsPage() {
   });
   const dealIds = memberships.map((m) => m.dealId);
 
-  // Get all contacts with their deal links
+  // Get contacts linked to user's deals only
   const contacts = await prisma.contact.findMany({
+    where: {
+      dealContacts: { some: { dealId: { in: dealIds } } },
+    },
     orderBy: { name: "asc" },
     include: {
       dealContacts: {
