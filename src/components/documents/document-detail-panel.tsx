@@ -38,14 +38,13 @@ export function DocumentDetailPanel({ documents }: DocumentDetailPanelProps) {
     ? documents.find((d) => d.id === documentId) ?? null
     : null;
 
+  /* eslint-disable react-hooks/set-state-in-effect -- data-fetching effect with cleanup */
   useEffect(() => {
-    if (!documentId) {
-      setVersions([]);
-      return;
-    }
+    if (!documentId) return;
 
     let cancelled = false;
     setVersionsLoading(true);
+    setVersions([]);
 
     getVersionHistory(documentId)
       .then((data) => {
@@ -62,6 +61,7 @@ export function DocumentDetailPanel({ documents }: DocumentDetailPanelProps) {
       cancelled = true;
     };
   }, [documentId]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && close()}>

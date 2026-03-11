@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -39,11 +39,7 @@ export function TaskDocumentsTab({ taskId, dealId, workstreamId }: Props) {
   const [pendingFile, setPendingFile] = useState<File | null>(null);
 
   // Fetch documents for this task via a server action
-  useEffect(() => {
-    loadDocuments();
-  }, [taskId]);
-
-  async function loadDocuments() {
+  const loadDocuments = useCallback(async () => {
     setLoading(true);
     try {
       const res = await getTaskDocuments(taskId);
@@ -51,7 +47,11 @@ export function TaskDocumentsTab({ taskId, dealId, workstreamId }: Props) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [taskId]);
+
+  useEffect(() => {
+    loadDocuments();
+  }, [loadDocuments]);
 
   async function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];

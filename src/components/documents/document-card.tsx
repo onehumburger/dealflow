@@ -8,6 +8,7 @@ import {
   Image,
   File,
 } from "lucide-react";
+import { createElement } from "react";
 import { Badge } from "@/components/ui/badge";
 import { formatFileSize } from "@/lib/format";
 import type { DocumentItem } from "@/components/documents/document-hub";
@@ -17,20 +18,23 @@ interface DocumentCardProps {
   onClick: () => void;
 }
 
-function getFileIcon(fileType: string) {
+const iconClass = "size-5 shrink-0 text-muted-foreground";
+
+function renderFileIcon(fileType: string) {
   const ext = fileType.toLowerCase();
-  if (["doc", "docx", "pdf", "txt"].includes(ext)) return FileText;
-  if (["xls", "xlsx"].includes(ext)) return FileSpreadsheet;
-  if (["ppt", "pptx"].includes(ext)) return Presentation;
+  if (["doc", "docx", "pdf", "txt"].includes(ext))
+    return createElement(FileText, { className: iconClass });
+  if (["xls", "xlsx"].includes(ext))
+    return createElement(FileSpreadsheet, { className: iconClass });
+  if (["ppt", "pptx"].includes(ext))
+    return createElement(Presentation, { className: iconClass });
   if (["jpg", "jpeg", "png", "gif", "bmp", "svg", "webp"].includes(ext))
-    return Image;
-  return File;
+    return createElement(Image, { className: iconClass });
+  return createElement(File, { className: iconClass });
 }
 
 export function DocumentCard({ document: doc, onClick }: DocumentCardProps) {
   const t = useTranslations("document");
-
-  const Icon = getFileIcon(doc.fileType);
 
   const contextPath = doc.task
     ? `${doc.deal.name} → ${doc.workstream?.name ?? ""} → ${doc.task.title}`
@@ -45,7 +49,7 @@ export function DocumentCard({ document: doc, onClick }: DocumentCardProps) {
       className="flex items-center gap-3 rounded-lg border p-3 cursor-pointer transition-colors hover:bg-accent"
       onClick={onClick}
     >
-      <Icon className="size-5 shrink-0 text-muted-foreground" />
+      {renderFileIcon(doc.fileType)}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <span className="truncate text-sm font-medium">{doc.name}</span>

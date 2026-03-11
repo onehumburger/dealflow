@@ -1,5 +1,6 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element */
 import { File as FileIcon } from "lucide-react";
 
 interface DocumentPreviewProps {
