@@ -23,6 +23,9 @@ const typeStyles: Record<ActivityType, string> = {
   MilestoneChange: "bg-emerald-100 text-emerald-700",
   DecisionCreated: "bg-rose-100 text-rose-700",
   DocumentUpload: "bg-sky-100 text-sky-700",
+  DocumentVersionUpload: "bg-sky-100 text-sky-700",
+  DocumentRestore: "bg-teal-100 text-teal-700",
+  DocumentDelete: "bg-red-100 text-red-700",
 };
 
 const typeToTranslationKey: Record<ActivityType, string> = {
@@ -34,6 +37,9 @@ const typeToTranslationKey: Record<ActivityType, string> = {
   MilestoneChange: "milestoneChange",
   DecisionCreated: "decisionCreated",
   DocumentUpload: "documentUpload",
+  DocumentVersionUpload: "documentVersionUpload",
+  DocumentRestore: "documentRestore",
+  DocumentDelete: "documentDelete",
 };
 
 function formatTimestamp(date: Date, locale: string): string {

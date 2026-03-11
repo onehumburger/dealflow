@@ -228,6 +228,9 @@ export default async function DashboardPage() {
             milestoneChange: tActivity("milestoneChange"),
             decisionCreated: tActivity("decisionCreated"),
             documentUpload: tActivity("documentUpload"),
+            documentVersionUpload: tActivity("documentVersionUpload"),
+            documentRestore: tActivity("documentRestore"),
+            documentDelete: tActivity("documentDelete"),
           }}
         />
       </div>

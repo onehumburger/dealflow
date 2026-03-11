@@ -17,7 +17,8 @@
     "myTasks": "我的任务",
     "contacts": "通讯录",
     "admin": "用户管理",
-    "calendar": "日历"
+    "calendar": "日历",
+    "documents": "文档管理"
   },
   "auth": {
     "login": "登录",
@@ -132,6 +133,9 @@
     "milestoneChange": "里程碑",
     "decisionCreated": "决策",
     "documentUpload": "文件",
+    "documentVersionUpload": "新版本",
+    "documentRestore": "版本恢复",
+    "documentDelete": "文件删除",
     "type": "类型",
     "workstream": "工作流",
     "allWorkstreams": "全部工作流",
@@ -193,7 +197,7 @@
     "linkedToDeals": "关联{count}个项目"
   },
   "document": {
-    "documents": "文件管理",
+    "documents": "文档管理",
     "fileName": "文件名",
     "workstream": "工作流",
     "task": "任务",
@@ -201,9 +205,30 @@
     "date": "日期",
     "upload": "上传",
     "selectFile": "选择文件",
-    "deleteConfirm": "确认删除此文件？",
+    "deleteConfirm": "确认删除此文件？所有版本将被永久删除。",
     "noDocuments": "暂无文件",
-    "download": "下载"
+    "download": "下载",
+    "preview": "预览",
+    "versionHistory": "版本历史",
+    "uploadNewVersion": "上传新版本",
+    "currentVersion": "当前版本",
+    "restoreVersion": "恢复此版本",
+    "restoreConfirm": "确认恢复到版本 {version}？这将创建一个新版本。",
+    "versionNote": "版本说明（可选）",
+    "generalDocuments": "通用文档",
+    "allDeals": "全部项目",
+    "allWorkstreams": "全部工作流",
+    "allTypes": "全部类型",
+    "dateRange": "日期范围",
+    "uploader": "上传人",
+    "sortByDate": "按日期",
+    "sortByName": "按名称",
+    "sortBySize": "按大小",
+    "fileExists": "文件 \"{name}\" 已存在",
+    "uploadAsNewVersion": "上传为新版本 (v{version})",
+    "uploadAsSeparate": "上传为独立文档",
+    "details": "详情",
+    "activity": "活动"
   },
   "dashboard": {
     "myTasks": "我的任务",
