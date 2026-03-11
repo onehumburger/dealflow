@@ -51,7 +51,8 @@ export function CalendarGrid({ events }: CalendarGridProps) {
   });
 
   return (
-    <div className="mt-3">
+    <div className="mt-3 overflow-x-auto">
+      <div className="min-w-[700px]">
       <div className="grid grid-cols-7 text-center text-xs font-medium text-muted-foreground">
         {weekdays.map((wd, i) => (
           <div key={wd} className={i >= 5 ? "text-muted-foreground/60" : undefined}>
@@ -76,6 +77,7 @@ export function CalendarGrid({ events }: CalendarGridProps) {
             </div>
           );
         })}
+      </div>
       </div>
     </div>
   );

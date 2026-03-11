@@ -2,9 +2,12 @@
 
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 import { DocumentCard } from "@/components/documents/document-card";
 import { DocumentDetailPanel } from "@/components/documents/document-detail-panel";
 import { useDocumentPanel } from "@/hooks/use-document-panel";
+import { downloadDocumentsZip } from "@/lib/download-zip";
 import type { DocumentItem } from "@/components/documents/document-hub";
 
 interface WorkstreamInfo {
@@ -14,6 +17,7 @@ interface WorkstreamInfo {
 }
 
 interface DealDocumentsContentProps {
+  dealId: string;
   documents: DocumentItem[];
   workstreams: WorkstreamInfo[];
 }
@@ -29,6 +33,7 @@ type WorkstreamGroup = {
 };
 
 export function DealDocumentsContent({
+  dealId,
   documents,
   workstreams,
 }: DealDocumentsContentProps) {
@@ -108,6 +113,16 @@ export function DealDocumentsContent({
 
   return (
     <>
+      <div className="mb-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => downloadDocumentsZip({ dealId })}
+        >
+          <Download className="size-3.5" />
+          {t("downloadAll")}
+        </Button>
+      </div>
       <div className="space-y-6">
         {/* General documents (no task association) */}
         {generalDocs.length > 0 && (

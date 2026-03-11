@@ -27,7 +27,7 @@ import {
   TabsTrigger,
   TabsContent,
 } from "@/components/ui/tabs";
-import { Trash2, Loader2 } from "lucide-react";
+import { Trash2, Loader2, MessageSquare } from "lucide-react";
 import { useTaskPanel } from "@/hooks/use-task-panel";
 import {
   getTaskDetail,
@@ -47,7 +47,7 @@ import type { TaskStatus, TaskPriority } from "@/generated/prisma/client";
 
 type TaskData = Awaited<ReturnType<typeof getTaskDetail>>;
 
-export function TaskPanel() {
+export function TaskPanel({ canManageTasks }: { canManageTasks?: boolean }) {
   const t = useTranslations("task");
   const tCommon = useTranslations("common");
   const tTimer = useTranslations("timer");
@@ -60,6 +60,7 @@ export function TaskPanel() {
   const [task, setTask] = useState<TaskData | null>(null);
   const [loading, setLoading] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [activeTab, setActiveTab] = useState<number>(0);
 
   // Editable fields
   const [title, setTitle] = useState("");
@@ -95,6 +96,7 @@ export function TaskPanel() {
 
   useEffect(() => {
     if (taskId) {
+      setActiveTab(0);
       loadTask(taskId);
     } else {
       setTask(null);
@@ -126,6 +128,7 @@ export function TaskPanel() {
 
   function handleDelete() {
     if (!taskId) return;
+    if (!confirm(tCommon("confirmDelete"))) return;
     startTransition(async () => {
       await deleteTask(taskId);
       close();
@@ -171,16 +174,21 @@ export function TaskPanel() {
               />
             </SheetHeader>
 
-            <Tabs defaultValue={0}>
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="w-full">
                 <TabsTrigger value={0} className="flex-1">
                   {tDocument("details")}
                 </TabsTrigger>
                 <TabsTrigger value={1} className="flex-1">
-                  {tDocument("documents")}
+                  {tDocument("documentsTab")}
                 </TabsTrigger>
                 <TabsTrigger value={2} className="flex-1">
                   {tDocument("activity")}
+                  {task.comments.length > 0 && (
+                    <span className="ml-1 text-xs text-muted-foreground">
+                      ({task.comments.length})
+                    </span>
+                  )}
                 </TabsTrigger>
               </TabsList>
 
@@ -349,18 +357,51 @@ export function TaskPanel() {
                     </div>
                   </div>
 
-                  {/* Delete */}
-                  <div className="border-t pt-4">
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={handleDelete}
-                      disabled={isPending}
-                    >
-                      <Trash2 className="size-3.5" />
-                      {tCommon("delete")}
-                    </Button>
-                  </div>
+                  {/* Recent Comments Preview */}
+                  {task.comments.length > 0 && (
+                    <div>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <Label className="text-xs text-muted-foreground flex items-center gap-1">
+                          <MessageSquare className="size-3" />
+                          {tDocument("activity")}
+                        </Label>
+                        <button
+                          type="button"
+                          onClick={() => setActiveTab(2)}
+                          className="text-xs text-primary hover:underline"
+                        >
+                          {t("viewAll")} ({task.comments.length}) →
+                        </button>
+                      </div>
+                      <div className="flex flex-col gap-2 rounded-md border p-2">
+                        {task.comments.slice(-3).map((c) => (
+                          <div key={c.id} className="flex gap-2 text-xs">
+                            <span className="font-medium shrink-0">
+                              {c.author.name}
+                            </span>
+                            <span className="text-muted-foreground truncate">
+                              {c.content}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Delete — only for deal lead / admin */}
+                  {canManageTasks !== false && (
+                    <div className="border-t pt-4">
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={handleDelete}
+                        disabled={isPending}
+                      >
+                        <Trash2 className="size-3.5" />
+                        {tCommon("delete")}
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </TabsContent>
 

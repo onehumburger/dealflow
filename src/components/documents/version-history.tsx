@@ -1,11 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { restoreVersion } from "@/actions/documents";
-import { Download, RotateCcw, Loader2 } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 
 interface VersionEntry {
   id: string;
@@ -30,18 +28,6 @@ export function VersionHistory({
   loading,
 }: VersionHistoryProps) {
   const t = useTranslations("document");
-  const [isPending, startTransition] = useTransition();
-
-  function handleRestore(versionNumber: number) {
-    const confirmed = confirm(
-      t("restoreConfirm", { version: versionNumber })
-    );
-    if (!confirmed) return;
-
-    startTransition(async () => {
-      await restoreVersion(documentId, versionNumber);
-    });
-  }
 
   return (
     <div>
@@ -92,32 +78,19 @@ export function VersionHistory({
                   </div>
                 )}
               </div>
-              <div className="flex items-center gap-1 shrink-0">
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  render={
-                    <a
-                      href={`/api/documents/${documentId}/download?version=${v.versionNumber}`}
-                      download
-                    />
-                  }
-                >
-                  <Download className="size-3.5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  onClick={() => handleRestore(v.versionNumber)}
-                  disabled={isPending}
-                >
-                  {isPending ? (
-                    <Loader2 className="size-3.5 animate-spin" />
-                  ) : (
-                    <RotateCcw className="size-3.5" />
-                  )}
-                </Button>
-              </div>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                nativeButton={false}
+                render={
+                  <a
+                    href={`/api/documents/${documentId}/download?version=${v.versionNumber}`}
+                    download
+                  />
+                }
+              >
+                <Download className="size-3.5" />
+              </Button>
             </div>
           ))}
         </div>

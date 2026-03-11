@@ -81,7 +81,7 @@ export function RecentActivityWidget({
   return (
     <div className="rounded-lg border bg-card">
       <div className="border-b px-4 py-3">
-        <h3 className="text-sm font-semibold">{translations.recentActivity}</h3>
+        <h3 className="text-base font-semibold">{translations.recentActivity}</h3>
       </div>
       <div className="divide-y max-h-[400px] overflow-y-auto">
         {entries.length === 0 ? (
@@ -97,7 +97,7 @@ export function RecentActivityWidget({
             >
               <span
                 className={cn(
-                  "mt-0.5 inline-flex h-5 shrink-0 items-center rounded px-1.5 text-[10px] font-medium uppercase",
+                  "mt-0.5 inline-flex h-5 shrink-0 items-center rounded px-1.5 text-xs font-medium uppercase",
                   typeStyles[entry.type] || "bg-gray-100 text-gray-600"
                 )}
               >

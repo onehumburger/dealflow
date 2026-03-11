@@ -10,6 +10,8 @@ import {
   DecisionStatus,
   DecisionSource,
   ContactRole,
+  DealPhase,
+  DealSource,
 } from "../src/generated/prisma/client";
 import * as fs from "fs";
 import * as path from "path";
@@ -74,6 +76,12 @@ async function main() {
       targetCompany: "Viet Pharma JSC",
       jurisdictions: ["PRC", "Vietnam"],
       status: DealStatus.Active,
+      phase: DealPhase.Intake,
+      dealValue: 50000000,
+      valueCurrency: "USD",
+      keyTerms: "100%股权收购，约$50M",
+      source: DealSource.FAReferral,
+      sourceNote: "金桥资本(Golden Bridge Capital)引荐",
       summary: "华瑞医疗拟收购越南制药公司Viet Pharma JSC 100%股权，交易金额约5000万美元。由金桥资本引荐，我方代表买方。涉及PRC和越南双边法律事务。",
       dealLeadId: liwei.id,
       createdAt: d("2025-12-01"),
@@ -391,6 +399,10 @@ async function main() {
     "2025-12-12 to 2025-12-25",
     "Vietnamese local counsel (Lexcomm Vietnam) engaged. DD request list prepared and sent. VDR access obtained. DD workstream becomes the main focus. Initial DD findings start coming in."
   );
+
+  // Advance phase to DueDiligence
+  await prisma.deal.update({ where: { id: deal.id }, data: { phase: DealPhase.DueDiligence, updatedAt: d("2025-12-12") } });
+  logAction("Deal phase advanced to DueDiligence");
 
   // VN law research done
   await prisma.task.update({
@@ -917,6 +929,10 @@ async function main() {
     "SPA first draft prepared. Multiple rounds of negotiation. Regulatory filings initiated (ODI in PRC, investment registration in Vietnam). Key negotiation points: R&W scope, indemnity caps, escrow, CPs."
   );
 
+  // Advance phase to Negotiation
+  await prisma.deal.update({ where: { id: deal.id }, data: { phase: DealPhase.Negotiation, updatedAt: d("2026-02-15") } });
+  logAction("Deal phase advanced to Negotiation");
+
   // SPA tasks
   const taskSPADraft = await prisma.task.create({
     data: {
@@ -1187,6 +1203,10 @@ async function main() {
     "SPA finalized. CP tracker established. Board approvals obtained. Signing ceremony conducted."
   );
 
+  // Advance phase to Signing
+  await prisma.deal.update({ where: { id: deal.id }, data: { phase: DealPhase.Signing, updatedAt: d("2026-03-20") } });
+  logAction("Deal phase advanced to Signing");
+
   // Create CP tracker workstream
   const wsCP = await prisma.workstream.create({
     data: { name: "交割条件跟踪", dealId: deal.id, sortOrder: 5, createdAt: d("2026-03-20") },
@@ -1311,6 +1331,10 @@ async function main() {
     "2026-04-05 to 2026-05-20",
     "Post-signing, working towards closing. CP satisfaction: ODI approval obtained, Vietnam IRC in progress, closing checklist prepared."
   );
+
+  // Advance phase to Closing
+  await prisma.deal.update({ where: { id: deal.id }, data: { phase: DealPhase.Closing, updatedAt: d("2026-04-05") } });
+  logAction("Deal phase advanced to Closing");
 
   // Create closing workstream
   const wsClosing = await prisma.workstream.create({
@@ -1585,7 +1609,7 @@ async function main() {
   // Change deal status to Completed
   await prisma.deal.update({
     where: { id: deal.id },
-    data: { status: DealStatus.Completed, updatedAt: d("2026-06-05") },
+    data: { status: DealStatus.Completed, phase: DealPhase.PostClosing, updatedAt: d("2026-06-05") },
   });
   logAction("Deal status changed to COMPLETED");
 

@@ -114,6 +114,7 @@ export default async function DocumentsPage({
 
       <div className="mt-6">
         <DealDocumentsContent
+          dealId={dealId}
           documents={documentsData}
           workstreams={workstreamOrder}
         />

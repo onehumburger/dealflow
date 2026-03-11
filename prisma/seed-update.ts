@@ -1,4 +1,4 @@
-import { PrismaClient } from "../src/generated/prisma/client";
+import { PrismaClient, DealPhase, DealSource } from "../src/generated/prisma/client";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -59,6 +59,12 @@ async function main() {
   await prisma.milestone.updateMany({
     where: { dealId: alpha.id, name: "尽调完成" },
     data: { isDone: true, date: new Date("2026-03-11") },
+  });
+
+  // Advance deal phase to Negotiation (DD complete, SPA drafting underway)
+  await prisma.deal.update({
+    where: { id: alpha.id },
+    data: { phase: DealPhase.Negotiation },
   });
 
   // Add activity entries
@@ -156,6 +162,11 @@ async function main() {
       targetCompany: "Duval Industries Kft. (匈牙利子公司)",
       jurisdictions: ["PRC", "France", "Hungary", "EU"],
       status: "Active",
+      phase: DealPhase.DueDiligence,
+      dealValue: 60000000,
+      valueCurrency: "EUR",
+      keyTerms: "EV/EBITDA 7-8x，竞标流程(两轮NBO→BO)，匈牙利政府补贴合规为关键风险点",
+      source: DealSource.DirectClient,
       summary:
         "中远海运国际拟收购法国Duval集团旗下匈牙利子公司Duval Industries Kft.的100%股权。目标公司为布达佩斯汽车零部件制造商，年营收约€45M，员工约320人。卖方Duval SA (Paris)聘请Rothschild作为财务顾问，采用竞标流程出售。本项目现处于Phase 1阶段，需在4月15日前提交Non-Binding Offer。交易预估价值€55-65M。涉及中国ODI备案、匈牙利外商投资审查及欧盟反垄断分析。",
       dealLeadId: liWei.id,
@@ -638,7 +649,49 @@ async function main() {
     ],
   });
 
-  console.log("✅ Project Beta created: Auction buy-side, NBO stage, 4 workstreams, 15+ tasks, 7 contacts, 3 decisions, 9 activity entries");
+  // ── Beta Billing Rates ───────────────────────────────────────
+  await prisma.dealBillingRate.createMany({
+    data: [
+      { dealId: beta.id, userId: liWei.id, ratePerHour: 4500, currency: "CNY" },
+      { dealId: beta.id, userId: heXin.id, ratePerHour: 2200, currency: "CNY" },
+      { dealId: beta.id, userId: yangFei.id, ratePerHour: 2200, currency: "CNY" },
+      { dealId: beta.id, userId: wangHao.id, ratePerHour: 2500, currency: "CNY" },
+      { dealId: beta.id, userId: chenYu.id, ratePerHour: 2500, currency: "CNY" },
+    ],
+  });
+
+  // ── Beta Time Entries ───────────────────────────────────────
+  await prisma.timeEntry.createMany({
+    data: [
+      // 李伟 — 合伙人
+      { description: "项目启动、委托协议签署、团队组建", durationMinutes: 90, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: beta.id }, title: "签署委托协议" } }))!.id, userId: liWei.id, dealId: beta.id, createdAt: new Date("2026-02-15") },
+      { description: "竞标策略讨论会 — 与客户及CICC确认报价策略", durationMinutes: 180, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: beta.id }, title: { contains: "竞标策略" } } }))!.id, userId: liWei.id, dealId: beta.id, createdAt: new Date("2026-03-10") },
+      { description: "与Rothschild电话 — 确认竞标时间线和买方数量", durationMinutes: 45, isManual: true, isBillable: true, taskId: taskBetaValuation.id, userId: liWei.id, dealId: beta.id, createdAt: new Date("2026-03-18") },
+      { description: "NBO估值分析讨论及报价策略审阅", durationMinutes: 120, isManual: true, isBillable: true, taskId: taskBetaValuation.id, userId: liWei.id, dealId: beta.id, createdAt: new Date("2026-04-01") },
+
+      // 何欣 — Phase 1尽调主力
+      { description: "NDA签署协调及VDR访问权限获取", durationMinutes: 60, isManual: true, isBillable: true, taskId: taskBetaNda.id, userId: heXin.id, dealId: beta.id, createdAt: new Date("2026-02-20") },
+      { description: "VDR文件索引、按工作组分配审阅任务", durationMinutes: 120, isManual: true, isBillable: true, taskId: taskBetaVdr.id, userId: heXin.id, dealId: beta.id, createdAt: new Date("2026-03-02") },
+      { description: "法律尽调 — 公司章程及股东决议审阅", durationMinutes: 180, isManual: true, isBillable: true, taskId: taskBetaDdLegal.id, userId: heXin.id, dealId: beta.id, createdAt: new Date("2026-03-08") },
+      { description: "法律尽调 — 重大合同审阅（15份，进行中）", durationMinutes: 360, isManual: true, isBillable: true, taskId: taskBetaDdLegal.id, userId: heXin.id, dealId: beta.id, createdAt: new Date("2026-03-15") },
+      { description: "NBO函件主体框架起草", durationMinutes: 180, isManual: true, isBillable: true, taskId: taskBetaNboLetter.id, userId: heXin.id, dealId: beta.id, createdAt: new Date("2026-03-25") },
+      { description: "关联交易梳理及独立运营安排分析", durationMinutes: 120, isManual: true, isBillable: true, taskId: taskBetaDdLegal.id, userId: heXin.id, dealId: beta.id, createdAt: new Date("2026-03-20") },
+
+      // 杨飞 — 匈牙利当地律所协调
+      { description: "与DLA Piper Budapest对接，确认尽调范围和匈牙利法律事项", durationMinutes: 120, isManual: true, isBillable: true, taskId: taskBetaDdHungary.id, userId: yangFei.id, dealId: beta.id, createdAt: new Date("2026-03-05") },
+      { description: "匈牙利外商投资审查规定研究", durationMinutes: 240, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: beta.id }, title: { contains: "匈牙利外商投资" } } }))!.id, userId: yangFei.id, dealId: beta.id, createdAt: new Date("2026-03-12") },
+      { description: "DLA Piper匈牙利尽调中期报告审阅", durationMinutes: 180, isManual: true, isBillable: true, taskId: taskBetaDdHungary.id, userId: yangFei.id, dealId: beta.id, createdAt: new Date("2026-03-20") },
+
+      // 王浩 — 交易结构
+      { description: "交易结构方案比较（直接收购 vs 香港SPV），考虑中匈税收协定", durationMinutes: 240, isManual: true, isBillable: true, taskId: taskBetaStructure.id, userId: wangHao.id, dealId: beta.id, createdAt: new Date("2026-03-10") },
+      { description: "知识产权及技术许可审阅 — Duval SA技术许可协议分析", durationMinutes: 180, isManual: true, isBillable: true, taskId: taskBetaDdIp.id, userId: wangHao.id, dealId: beta.id, createdAt: new Date("2026-03-14") },
+
+      // 陈宇 — 监管
+      { description: "各法域审批清单梳理（PRC ODI、匈牙利FDI、欧盟反垄断）", durationMinutes: 180, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: beta.id }, title: "梳理各法域所需审批" } }))!.id, userId: chenYu.id, dealId: beta.id, createdAt: new Date("2026-03-12") },
+    ],
+  });
+
+  console.log("✅ Project Beta created: Auction buy-side, NBO stage, 4 workstreams, 15+ tasks, 7 contacts, 3 decisions, 9 activity entries, 17 time entries, 5 billing rates");
 }
 
 main()

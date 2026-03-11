@@ -79,6 +79,8 @@ export function DealHeader({ deal }: DealHeaderProps) {
   const [editSource, setEditSource] = useState<DealSource | "">(deal.source ?? "");
   const [editSourceNote, setEditSourceNote] = useState(deal.sourceNote ?? "");
   const [editSaving, startEditSave] = useTransition();
+  const [summaryEditing, setSummaryEditing] = useState(false);
+  const [inlineSummary, setInlineSummary] = useState(deal.summary ?? "");
 
   function handleStatusChange(newStatus: DealStatus) {
     startTransition(async () => {
@@ -100,6 +102,13 @@ export function DealHeader({ deal }: DealHeaderProps) {
         valueCurrency: inlineCurrency,
       });
       setValueEditing(false);
+    });
+  }
+
+  function handleSummarySave() {
+    startTransition(async () => {
+      await updateDeal(deal.id, { summary: inlineSummary.trim() || null });
+      setSummaryEditing(false);
     });
   }
 
@@ -258,7 +267,7 @@ export function DealHeader({ deal }: DealHeaderProps) {
         </div>
       </div>
 
-      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+      <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
         <span>
           {t("clientName")}: <strong className="text-foreground">{deal.clientName}</strong>
         </span>
@@ -272,7 +281,7 @@ export function DealHeader({ deal }: DealHeaderProps) {
         </span>
       </div>
 
-      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+      <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
         {valueEditing ? (
           <div className="flex items-center gap-1.5">
             <select
@@ -330,21 +339,48 @@ export function DealHeader({ deal }: DealHeaderProps) {
         )}
       </div>
 
-      {deal.summary && (
-        <div>
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="text-sm text-muted-foreground hover:text-foreground"
-          >
-            {expanded ? "\u25B2" : "\u25BC"} {t("summary")}
-          </button>
-          {expanded && (
-            <p className="mt-1 text-sm text-muted-foreground whitespace-pre-wrap">
-              {deal.summary}
+      <div>
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="text-sm text-muted-foreground hover:text-foreground"
+        >
+          {expanded ? "\u25B2" : "\u25BC"} {t("summary")}
+        </button>
+        {expanded && (
+          summaryEditing ? (
+            <div className="mt-1">
+              <textarea
+                value={inlineSummary}
+                onChange={(e) => setInlineSummary(e.target.value)}
+                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    setSummaryEditing(false);
+                    setInlineSummary(deal.summary ?? "");
+                  }
+                }}
+              />
+              <div className="mt-1.5 flex items-center gap-1.5">
+                <Button size="xs" onClick={handleSummarySave} disabled={isPending}>
+                  {tCommon("save")}
+                </Button>
+                <Button size="xs" variant="ghost" onClick={() => { setSummaryEditing(false); setInlineSummary(deal.summary ?? ""); }}>
+                  {tCommon("cancel")}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <p
+              className="mt-1 text-sm text-muted-foreground whitespace-pre-wrap cursor-pointer rounded px-1 -mx-1 hover:bg-muted/50"
+              onClick={() => setSummaryEditing(true)}
+              title={tCommon("edit")}
+            >
+              {deal.summary || <span className="italic">{t("summaryPlaceholder")}</span>}
             </p>
-          )}
-        </div>
-      )}
+          )
+        )}
+      </div>
 
       {deal.keyTerms && (
         <div>

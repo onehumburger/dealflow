@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronDown, ChevronRight, MoreHorizontal, Pencil, Trash2, Plus } from "lucide-react";
+import { ChevronDown, ChevronRight, MoreHorizontal, Pencil, Trash2, Plus, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -16,6 +16,7 @@ import { TaskRow } from "@/components/tasks/task-row";
 import { WorkstreamRenameDialog } from "./workstream-form";
 import { deleteWorkstream } from "@/actions/workstreams";
 import { createTask } from "@/actions/tasks";
+import { downloadDocumentsZip } from "@/lib/download-zip";
 import type { TaskPriority, TaskStatus } from "@/generated/prisma/client";
 
 interface WorkstreamTask {
@@ -37,12 +38,14 @@ interface WorkstreamSectionProps {
   };
   dealId: string;
   dealStatus?: string;
+  canManageTasks?: boolean;
 }
 
-export function WorkstreamSection({ workstream, dealId, dealStatus }: WorkstreamSectionProps) {
+export function WorkstreamSection({ workstream, dealId, dealStatus, canManageTasks }: WorkstreamSectionProps) {
   const t = useTranslations("workstream");
   const tTask = useTranslations("task");
   const tCommon = useTranslations("common");
+  const tDocument = useTranslations("document");
   const [expanded, setExpanded] = useState(true);
   const [showAddTask, setShowAddTask] = useState(false);
   const [showRename, setShowRename] = useState(false);
@@ -101,6 +104,17 @@ export function WorkstreamSection({ workstream, dealId, dealStatus }: Workstream
                 <Pencil className="size-3.5" />
                 {t("renameWorkstream")}
               </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() =>
+                  downloadDocumentsZip({
+                    dealId,
+                    workstreamId: workstream.id,
+                  })
+                }
+              >
+                <Download className="size-3.5" />
+                {tDocument("downloadDocs")}
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 variant="destructive"
@@ -124,8 +138,8 @@ export function WorkstreamSection({ workstream, dealId, dealStatus }: Workstream
               </>
             )}
 
-            {/* Add task inline form */}
-            {showAddTask ? (
+            {/* Add task inline form — only for deal lead / admin */}
+            {canManageTasks !== false && showAddTask ? (
               <form
                 action={handleAddTask}
                 className="flex items-center gap-2 px-2 py-1.5"
@@ -150,7 +164,7 @@ export function WorkstreamSection({ workstream, dealId, dealStatus }: Workstream
                   {tCommon("cancel")}
                 </Button>
               </form>
-            ) : (
+            ) : canManageTasks !== false ? (
               <button
                 onClick={() => setShowAddTask(true)}
                 className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:bg-muted/50"
@@ -158,7 +172,7 @@ export function WorkstreamSection({ workstream, dealId, dealStatus }: Workstream
                 <Plus className="size-3.5" />
                 {tTask("addTask")}
               </button>
-            )}
+            ) : null}
           </div>
         )}
       </div>

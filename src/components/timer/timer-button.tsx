@@ -63,7 +63,7 @@ export function TimerButton({ taskId, size = "sm", className }: TimerButtonProps
         onClick={handleClick}
         disabled={isPending}
         className={cn(
-          "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50",
+          "flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors disabled:opacity-50",
           isRunningOnThisTask
             ? "bg-red-50 text-red-600 hover:bg-red-100"
             : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100",
@@ -71,9 +71,9 @@ export function TimerButton({ taskId, size = "sm", className }: TimerButtonProps
         )}
       >
         {isRunningOnThisTask ? (
-          <Square className="size-3.5 fill-current" />
+          <Square className="size-3 fill-current" />
         ) : (
-          <Play className="size-3.5 fill-current" />
+          <Play className="size-3 fill-current" />
         )}
         {label}
       </button>

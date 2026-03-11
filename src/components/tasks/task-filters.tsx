@@ -60,7 +60,7 @@ export function TaskFilters({ members }: TaskFiltersProps) {
         value={assigneeFilter}
         onValueChange={(val) => setAssigneeFilter(val ?? "all")}
       >
-        <SelectTrigger size="sm">
+        <SelectTrigger size="sm" className="h-5 text-xs px-2 rounded-4xl">
           <span className="flex flex-1 text-left truncate">
             {assigneeFilter === "all"
               ? t("allAssignees")

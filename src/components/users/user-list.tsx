@@ -70,6 +70,7 @@ export function UserList({ users }: UserListProps) {
 
   return (
     <>
+      <div className="overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
@@ -121,6 +122,7 @@ export function UserList({ users }: UserListProps) {
           ))}
         </TableBody>
       </Table>
+      </div>
 
       {/* Reset Password Dialog */}
       <Dialog

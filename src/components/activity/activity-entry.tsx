@@ -61,7 +61,7 @@ export function ActivityEntryItem({ entry }: ActivityEntryProps) {
     <div className="flex gap-3 py-2">
       <span
         className={cn(
-          "mt-0.5 inline-flex h-5 shrink-0 items-center rounded px-1.5 text-[10px] font-medium uppercase",
+          "mt-0.5 inline-flex h-5 shrink-0 items-center rounded px-1.5 text-xs font-medium uppercase",
           typeStyles[entry.type] || "bg-gray-100 text-gray-600"
         )}
       >

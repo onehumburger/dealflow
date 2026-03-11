@@ -170,8 +170,19 @@ export default async function DashboardPage() {
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
       <h1 className="mb-6 text-2xl font-bold">{tCommon("appName")}</h1>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Top-left: My Tasks */}
+      {/* Top: Active Deals */}
+      <ActiveDealsWidget
+        deals={dealItems}
+        locale={locale}
+        translations={{
+          activeDeals: tDashboard("activeDeals"),
+          noResults: tCommon("noResults"),
+          tasks: tTask("tasks"),
+        }}
+      />
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        {/* My Tasks */}
         <MyTasksWidget
           tasks={taskItems}
           locale={locale}
@@ -184,7 +195,7 @@ export default async function DashboardPage() {
           }}
         />
 
-        {/* Top-right: Milestones */}
+        {/* Milestones */}
         <MilestonesWidget
           milestones={milestoneItems}
           locale={locale}
@@ -193,19 +204,6 @@ export default async function DashboardPage() {
             overdue: tMilestone("overdue"),
             noResults: tCommon("noResults"),
             allDeals: tDashboard("allDeals"),
-          }}
-        />
-      </div>
-
-      {/* Middle: Active Deals */}
-      <div className="mt-6">
-        <ActiveDealsWidget
-          deals={dealItems}
-          locale={locale}
-          translations={{
-            activeDeals: tDashboard("activeDeals"),
-            noResults: tCommon("noResults"),
-            tasks: tTask("tasks"),
           }}
         />
       </div>

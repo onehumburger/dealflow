@@ -113,6 +113,11 @@ export default async function DealDetailPage({
     isDone: m.isDone,
   }));
 
+  // Permission: can current user create/delete tasks?
+  const userRole = (session.user as unknown as { role: string }).role;
+  const canManageTasks =
+    userRole === "Admin" || deal.dealLeadId === session.user.id;
+
   // Workstream options for ActivityForm
   const workstreamOptions = deal.workstreams.map((ws) => ({
     id: ws.id,
@@ -153,14 +158,14 @@ export default async function DealDetailPage({
       <TaskFilters members={membersData} />
 
       {/* Main content: Workstreams + Activity Feed */}
-      <div className="flex gap-6">
+      <div className="flex flex-col lg:flex-row gap-6">
         {/* Workstreams (left) */}
         <div className="flex-1 min-w-0">
-          <WorkstreamList workstreams={workstreamsData} dealId={dealId} dealStatus={deal.status} />
+          <WorkstreamList workstreams={workstreamsData} dealId={dealId} dealStatus={deal.status} canManageTasks={canManageTasks} />
         </div>
 
         {/* Activity Feed (right) */}
-        <div className="w-[340px] shrink-0">
+        <div className="w-full lg:w-[340px] lg:shrink-0 order-2 lg:order-none">
           <ActivityFeed
             entries={activityData}
             dealId={dealId}
@@ -172,7 +177,7 @@ export default async function DealDetailPage({
       <Separator className="my-6" />
 
       {/* Bottom Links: Decisions, Contacts, Documents */}
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <Link
           href={`/${locale}/deals/${dealId}/decisions`}
           className="rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted"
@@ -206,7 +211,7 @@ export default async function DealDetailPage({
       </div>
 
       {/* Task slide-over panel */}
-      <TaskPanel />
+      <TaskPanel canManageTasks={canManageTasks} />
     </div>
   );
 }

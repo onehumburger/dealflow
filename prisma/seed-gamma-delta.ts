@@ -1,4 +1,4 @@
-import { PrismaClient } from "../src/generated/prisma/client";
+import { PrismaClient, DealPhase, DealSource } from "../src/generated/prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -33,6 +33,11 @@ async function main() {
       targetCompany: "Montecchi Industriale S.p.A. (买方)",
       jurisdictions: ["PRC", "Italy"],
       status: "OnHold",
+      phase: DealPhase.DueDiligence,
+      dealValue: 900000000,
+      valueCurrency: "CNY",
+      keyTerms: "出售60%股权，预征集+产权交易所挂牌模式，国资委审批",
+      source: DealSource.DirectClient,
       summary:
         "中机精密装备集团（国有独资）拟出售旗下高端数控机床业务板块60%股权。意大利工业集团Montecchi Industriale S.p.A.通过其在华代表处表达收购意向。本所代表卖方/国企。交易采用竞标流程，预估交易价值¥8-10亿。项目在NBO阶段因客户（国企母公司）内部战略调整而叫停——集团层面决定暂不推进该板块出售，保留自主发展可能。",
       dealLeadId: liWei.id,
@@ -503,7 +508,47 @@ async function main() {
     ],
   });
 
-  console.log("✅ Project Gamma created: SOE sell-side, terminated at NBO stage, 5 workstreams, 16 tasks, 5 contacts, 2 decisions, 12 activity entries");
+  // ── Gamma Billing Rates ──────────────────────────────────────
+  await prisma.dealBillingRate.createMany({
+    data: [
+      { dealId: gamma.id, userId: liWei.id, ratePerHour: 4500, currency: "CNY" },
+      { dealId: gamma.id, userId: zhangLin.id, ratePerHour: 2800, currency: "CNY" },
+      { dealId: gamma.id, userId: chenYu.id, ratePerHour: 2500, currency: "CNY" },
+      { dealId: gamma.id, userId: zhouJing.id, ratePerHour: 1800, currency: "CNY" },
+    ],
+  });
+
+  // ── Gamma Time Entries ──────────────────────────────────────
+  await prisma.timeEntry.createMany({
+    data: [
+      // 李伟 — 合伙人
+      { description: "项目启动、竞标流程设计与客户确认", durationMinutes: 180, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: gamma.id }, title: { contains: "竞标流程设计" } } }))!.id, userId: liWei.id, dealId: gamma.id, createdAt: new Date("2025-10-20") },
+      { description: "Process Letter起草及审阅", durationMinutes: 180, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: gamma.id }, title: { contains: "Process Letter" } } }))!.id, userId: liWei.id, dealId: gamma.id, createdAt: new Date("2025-11-25") },
+      { description: "向潜在买方分发IM — 电话沟通及邮件协调", durationMinutes: 120, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: gamma.id }, title: { contains: "向潜在买方发送" } } }))!.id, userId: liWei.id, dealId: gamma.id, createdAt: new Date("2025-12-01") },
+      { description: "与Montecchi Marco Rossi电话 — 了解买方初步意向", durationMinutes: 60, isManual: true, isBillable: true, taskId: taskGammaNboCollect.id, userId: liWei.id, dealId: gamma.id, createdAt: new Date("2025-12-15") },
+      { description: "起草暂停通知函、与客户沟通善后方案", durationMinutes: 150, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: gamma.id }, title: { contains: "通知潜在买方" } } }))!.id, userId: liWei.id, dealId: gamma.id, createdAt: new Date("2026-01-18") },
+
+      // 张琳 — VDR准备及IM
+      { description: "VDR目录结构设计", durationMinutes: 180, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: gamma.id }, title: { contains: "设计VDR结构" } } }))!.id, userId: zhangLin.id, dealId: gamma.id, createdAt: new Date("2025-10-28") },
+      { description: "VDR文件审阅及质量控制（680份）", durationMinutes: 360, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: gamma.id }, title: { contains: "VDR文件审阅" } } }))!.id, userId: zhangLin.id, dealId: gamma.id, createdAt: new Date("2025-11-17") },
+      { description: "信息备忘录起草 — 中英双语（约60页）", durationMinutes: 720, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: gamma.id }, title: { contains: "信息备忘录" } } }))!.id, userId: zhangLin.id, dealId: gamma.id, createdAt: new Date("2025-11-15") },
+      { description: "Teaser起草（中英双语一页纸）", durationMinutes: 90, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: gamma.id }, title: { contains: "Teaser" } } }))!.id, userId: zhangLin.id, dealId: gamma.id, createdAt: new Date("2025-10-28") },
+
+      // 陈宇 — 国企特殊程序及监管
+      { description: "国有股权转让审批流程梳理及备忘录", durationMinutes: 240, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: gamma.id }, title: { contains: "国有股权转让审批" } } }))!.id, userId: chenYu.id, dealId: gamma.id, createdAt: new Date("2025-10-22") },
+      { description: "聘请评估机构 — 范围确认及合同审阅", durationMinutes: 120, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: gamma.id }, title: { contains: "聘请评估机构" } } }))!.id, userId: chenYu.id, dealId: gamma.id, createdAt: new Date("2025-11-05") },
+      { description: "国资委报批材料准备", durationMinutes: 300, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: gamma.id }, title: { contains: "国资委内部报批" } } }))!.id, userId: chenYu.id, dealId: gamma.id, createdAt: new Date("2025-12-20") },
+      { description: "外商投资准入审查分析备忘录", durationMinutes: 180, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: gamma.id }, title: { contains: "外商投资准入" } } }))!.id, userId: chenYu.id, dealId: gamma.id, createdAt: new Date("2025-11-03") },
+      { description: "反垄断申报门槛分析", durationMinutes: 120, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: gamma.id }, title: { contains: "反垄断申报" } } }))!.id, userId: chenYu.id, dealId: gamma.id, createdAt: new Date("2025-12-12") },
+
+      // 周静 — Q&A管理
+      { description: "协调客户各部门收集VDR文件", durationMinutes: 300, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: gamma.id }, title: { contains: "协调客户收集" } } }))!.id, userId: zhouJing.id, dealId: gamma.id, createdAt: new Date("2025-11-08") },
+      { description: "买方Q&A回复协调（已回复45/82问）", durationMinutes: 360, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: gamma.id }, title: { contains: "管理买方Q&A" } } }))!.id, userId: zhouJing.id, dealId: gamma.id, createdAt: new Date("2026-01-05") },
+      { description: "职工安置方案草案起草", durationMinutes: 240, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: gamma.id }, title: { contains: "职工安置" } } }))!.id, userId: zhouJing.id, dealId: gamma.id, createdAt: new Date("2026-01-10") },
+    ],
+  });
+
+  console.log("✅ Project Gamma created: SOE sell-side, terminated at NBO stage, 5 workstreams, 16 tasks, 5 contacts, 2 decisions, 12 activity entries, 17 time entries, 4 billing rates");
 
   // ════════════════════════════════════════════════════════════════
   // Project Delta — 境内D轮融资，代表被投资方（融资方）
@@ -520,6 +565,12 @@ async function main() {
       targetCompany: "远景成长基金二期 (投资方)",
       jurisdictions: ["PRC"],
       status: "Active",
+      phase: DealPhase.Negotiation,
+      dealValue: 250000000,
+      valueCurrency: "CNY",
+      keyTerms: "Pre-money估值¥10亿，D轮优先股，1x非参与型优先清算权，加权平均反稀释，5+2年回购",
+      source: DealSource.PartnerReferral,
+      sourceNote: "经合伙人朋友介绍",
       summary:
         "智元数据科技有限公司D轮融资项目。智元数据是一家专注于工业AI和数字孪生技术的科技公司，成立于2018年，已完成A/B/C轮融资，累计融资¥4.5亿。本轮D轮由远景成长基金二期领投，融资金额¥2.5亿，投前估值¥10亿（Pre-money），投后估值¥12.5亿。本所代表融资方（智元数据）。目前处于SPA及SHA（股东协议）审阅和谈判阶段。核心谈判点：反稀释条款、优先清算权、回购权触发条件、董事会席位安排。",
       dealLeadId: liWei.id,
@@ -1055,7 +1106,48 @@ async function main() {
     ],
   });
 
-  console.log("✅ Project Delta created: Series D financing, SPA/SHA review stage, 5 workstreams, 20+ tasks, 6 contacts, 3 decisions, 13 activity entries");
+  // ── Delta Billing Rates ──────────────────────────────────────
+  await prisma.dealBillingRate.createMany({
+    data: [
+      { dealId: delta.id, userId: liWei.id, ratePerHour: 4500, currency: "CNY" },
+      { dealId: delta.id, userId: heXin.id, ratePerHour: 2200, currency: "CNY" },
+      { dealId: delta.id, userId: wangHao.id, ratePerHour: 2500, currency: "CNY" },
+      { dealId: delta.id, userId: zhouJing.id, ratePerHour: 1800, currency: "CNY" },
+    ],
+  });
+
+  // ── Delta Time Entries ──────────────────────────────────────
+  await prisma.timeEntry.createMany({
+    data: [
+      // 李伟 — 合伙人，Term Sheet谈判及SPA审阅
+      { description: "项目启动、了解客户融资历史及本轮诉求", durationMinutes: 120, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: delta.id }, title: "签署委托协议" } }))!.id, userId: liWei.id, dealId: delta.id, createdAt: new Date("2026-01-10") },
+      { description: "Term Sheet条款审阅及谈判策略讨论", durationMinutes: 180, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: delta.id }, title: { contains: "Term Sheet谈判" } } }))!.id, userId: liWei.id, dealId: delta.id, createdAt: new Date("2026-01-15") },
+      { description: "SPA/SHA审阅策略内部会议", durationMinutes: 120, isManual: true, isBillable: true, taskId: taskDeltaSpaReview.id, userId: liWei.id, dealId: delta.id, createdAt: new Date("2026-03-05") },
+      { description: "SPA先决条件及陈述与保证条款审阅", durationMinutes: 300, isManual: true, isBillable: true, taskId: taskDeltaSpaReview.id, userId: liWei.id, dealId: delta.id, createdAt: new Date("2026-03-08") },
+      { description: "SPA特别赔偿及违约条款审阅", durationMinutes: 240, isManual: true, isBillable: true, taskId: taskDeltaSpaReview.id, userId: liWei.id, dealId: delta.id, createdAt: new Date("2026-03-10") },
+      { description: "与客户CEO讨论谈判底线", durationMinutes: 90, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: delta.id }, title: { contains: "SPA/SHA核心条款谈判策略" } } }))!.id, userId: liWei.id, dealId: delta.id, createdAt: new Date("2026-03-06") },
+
+      // 何欣 — SHA审阅及尽调配合
+      { description: "审阅现有B轮/C轮融资文件（红杉、高瓴SHA）", durationMinutes: 240, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: delta.id }, title: { contains: "准备尽调资料" } } }))!.id, userId: heXin.id, dealId: delta.id, createdAt: new Date("2026-01-15") },
+      { description: "回复投资方律师尽调补充问题（38项）", durationMinutes: 360, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: delta.id }, title: { contains: "审阅并回复投资方" } } }))!.id, userId: heXin.id, dealId: delta.id, createdAt: new Date("2026-02-15") },
+      { description: "软著权整改 — 名称变更登记申请材料准备", durationMinutes: 120, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: delta.id }, title: { contains: "处理尽调发现" } } }))!.id, userId: heXin.id, dealId: delta.id, createdAt: new Date("2026-02-12") },
+      { description: "竞业禁止协议补充条款起草", durationMinutes: 90, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: delta.id }, title: { contains: "处理尽调发现" } } }))!.id, userId: heXin.id, dealId: delta.id, createdAt: new Date("2026-02-18") },
+      { description: "SHA董事会组成及表决机制条款审阅", durationMinutes: 180, isManual: true, isBillable: true, taskId: taskDeltaShaReview.id, userId: heXin.id, dealId: delta.id, createdAt: new Date("2026-03-06") },
+      { description: "SHA反稀释条款分析 — 全面棘轮 vs 加权平均比较备忘录", durationMinutes: 240, isManual: true, isBillable: true, taskId: taskDeltaShaReview.id, userId: heXin.id, dealId: delta.id, createdAt: new Date("2026-03-09") },
+      { description: "SHA领售权及优先清算权条款审阅", durationMinutes: 180, isManual: true, isBillable: true, taskId: taskDeltaShaReview.id, userId: heXin.id, dealId: delta.id, createdAt: new Date("2026-03-11") },
+
+      // 王浩 — 交割前准备及股东沟通
+      { description: "与红杉沟通D轮优先认购权放弃事宜", durationMinutes: 60, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: delta.id }, title: { contains: "现有股东知情同意" } } }))!.id, userId: wangHao.id, dealId: delta.id, createdAt: new Date("2026-03-08") },
+      { description: "与高瓴沟通 — 放弃优先认购权及共售权比例条件", durationMinutes: 90, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: delta.id }, title: { contains: "现有股东知情同意" } } }))!.id, userId: wangHao.id, dealId: delta.id, createdAt: new Date("2026-03-09") },
+
+      // 周静 — 尽调资料协调
+      { description: "协调客户各部门准备尽调资料（126项清单）", durationMinutes: 480, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: delta.id }, title: { contains: "准备尽调资料" } } }))!.id, userId: zhouJing.id, dealId: delta.id, createdAt: new Date("2026-01-28") },
+      { description: "管理层访谈安排协调（CTO、CFO、技术VP）", durationMinutes: 60, isManual: true, isBillable: false, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: delta.id }, title: { contains: "协调管理层" } } }))!.id, userId: zhouJing.id, dealId: delta.id, createdAt: new Date("2026-02-10") },
+      { description: "创始人配偶确认函起草及协调签署", durationMinutes: 90, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: delta.id }, title: { contains: "创始人配偶" } } }))!.id, userId: zhouJing.id, dealId: delta.id, createdAt: new Date("2026-03-05") },
+    ],
+  });
+
+  console.log("✅ Project Delta created: Series D financing, SPA/SHA review stage, 5 workstreams, 20+ tasks, 6 contacts, 3 decisions, 13 activity entries, 17 time entries, 4 billing rates");
 }
 
 main()

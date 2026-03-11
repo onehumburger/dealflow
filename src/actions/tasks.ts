@@ -2,7 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { assertDealMember, revalidateDeal } from "@/actions/_helpers";
+import { assertDealMember, assertDealLeadOrAdmin, revalidateDeal } from "@/actions/_helpers";
 import { logAudit } from "@/lib/audit";
 import type {
   TaskStatus,
@@ -89,7 +89,7 @@ export async function createTask(formData: FormData) {
   });
   if (!workstream) throw new Error("Workstream not found");
 
-  await assertDealMember(workstream.dealId, session.user.id);
+  await assertDealLeadOrAdmin(workstream.dealId, session.user.id);
 
   const nextSortOrder =
     workstream.tasks.length > 0 ? workstream.tasks[0].sortOrder + 1 : 0;
@@ -161,7 +161,7 @@ export async function deleteTask(taskId: string) {
   });
   if (!task) throw new Error("Task not found");
 
-  await assertDealMember(task.workstream.dealId, session.user.id);
+  await assertDealLeadOrAdmin(task.workstream.dealId, session.user.id);
 
   await prisma.task.delete({ where: { id: taskId } });
 

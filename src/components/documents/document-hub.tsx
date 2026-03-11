@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Search } from "lucide-react";
+import { Search, Download } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -15,6 +15,7 @@ import { DocumentFilters } from "@/components/documents/document-filters";
 import { DocumentCard } from "@/components/documents/document-card";
 import { DocumentDetailPanel } from "@/components/documents/document-detail-panel";
 import { useDocumentPanel } from "@/hooks/use-document-panel";
+import { downloadDocumentsZip } from "@/lib/download-zip";
 
 export type DocumentItem = {
   id: string;
@@ -165,8 +166,8 @@ export function DocumentHub({ documents, deals }: DocumentHubProps) {
   const paginated = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
   return (
-    <div className="flex gap-6">
-      <div className="w-[240px] shrink-0">
+    <div className="flex flex-col lg:flex-row gap-6">
+      <div className="w-full lg:w-[240px] lg:shrink-0">
         <DocumentFilters
           deals={deals}
           dealId={dealId}
@@ -207,6 +208,25 @@ export function DocumentHub({ documents, deals }: DocumentHubProps) {
               <SelectItem value="size">{t("sortBySize")}</SelectItem>
             </SelectContent>
           </Select>
+          {filtered.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8"
+              onClick={() => {
+                const targetDealId = dealId || filtered[0]?.deal.id;
+                if (targetDealId) {
+                  downloadDocumentsZip({
+                    dealId: targetDealId,
+                    workstreamId: workstreamId || undefined,
+                  });
+                }
+              }}
+            >
+              <Download className="size-3.5" />
+              {t("downloadAll")}
+            </Button>
+          )}
         </div>
 
         {/* Document card list */}

@@ -30,7 +30,7 @@ export function ActiveDealsWidget({
   return (
     <div className="rounded-lg border bg-card">
       <div className="border-b px-4 py-3">
-        <h3 className="text-sm font-semibold">{translations.activeDeals}</h3>
+        <h3 className="text-base font-semibold">{translations.activeDeals}</h3>
       </div>
       {deals.length === 0 ? (
         <p className="px-4 py-6 text-center text-sm text-muted-foreground">
@@ -66,7 +66,7 @@ export function ActiveDealsWidget({
                       style={{ width: `${pct}%` }}
                     />
                   </div>
-                  <span className="text-[11px] tabular-nums text-muted-foreground">
+                  <span className="text-xs tabular-nums text-muted-foreground">
                     {deal.tasksDone}/{deal.tasksTotal}
                   </span>
                 </div>

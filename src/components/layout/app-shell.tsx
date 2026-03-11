@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import { LocaleSwitcher } from "./locale-switcher";
 import { LogoutButton } from "./logout-button";
+import { MobileNav } from "./mobile-nav";
 import { TimerBar } from "@/components/timer/timer-bar";
 
 export async function AppShell({ children }: { children: React.ReactNode }) {
@@ -36,6 +37,8 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-muted/30">
       <header className="sticky top-0 z-50 border-b bg-background">
         <div className="flex h-14 items-center gap-4 px-4 sm:px-6">
+          <MobileNav navLinks={navLinks} />
+
           <Link
             href={`/${locale}/dashboard`}
             className="text-lg font-bold tracking-tight"

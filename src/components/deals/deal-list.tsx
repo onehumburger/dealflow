@@ -146,81 +146,125 @@ export function DealList({ deals, locale, translations }: DealListProps) {
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>{translations.name}</TableHead>
-          <TableHead>{translations.codeName}</TableHead>
-          <TableHead>{translations.clientName}</TableHead>
-          <TableHead>{translations.targetCompany}</TableHead>
-          <TableHead>{translations.status}</TableHead>
-          <TableHead>{translations.phase}</TableHead>
-          <TableHead>{translations.dealValue}</TableHead>
-          <TableHead>{translations.dealLead}</TableHead>
-          <TableHead>{translations.tasks}</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
+    <>
+      {/* Mobile card view */}
+      <div className="flex flex-col gap-3 md:hidden">
         {deals.map((deal) => {
           const allTasks = deal.workstreams.flatMap((ws) => ws.tasks);
           const doneTasks = allTasks.filter((t) => t.status === "Done").length;
           const totalTasks = allTasks.length;
 
           return (
-            <TableRow key={deal.id}>
-              <TableCell>
+            <div key={deal.id} className="rounded-lg border bg-card p-4">
+              <div className="flex items-center justify-between gap-2">
                 <Link
                   href={`/${locale}/deals/${deal.id}`}
                   className="font-medium text-foreground hover:underline"
                 >
                   {deal.name}
                 </Link>
-              </TableCell>
-              <TableCell className="text-muted-foreground">
-                {deal.codeName || "\u2014"}
-              </TableCell>
-              <TableCell>{deal.clientName}</TableCell>
-              <TableCell>{deal.targetCompany}</TableCell>
-              <TableCell>
                 <DealStatusBadge status={deal.status} locale={locale} />
-              </TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger
-                    disabled={isPending}
-                    className="inline-flex items-center gap-1"
-                  >
-                    <DealPhaseBadge phase={deal.phase} locale={locale} />
-                    <ChevronDown className="size-3 text-muted-foreground" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    {ALL_PHASES.map((p) => (
-                      <DropdownMenuItem
-                        key={p}
-                        onClick={() => handlePhaseChange(deal.id, p)}
-                      >
-                        <DealPhaseBadge phase={p} locale={locale} />
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-              <TableCell>
-                <InlineValueEdit
-                  dealId={deal.id}
-                  initialValue={deal.dealValue}
-                  initialCurrency={deal.valueCurrency}
-                  locale={locale}
-                />
-              </TableCell>
-              <TableCell>{deal.dealLead.name}</TableCell>
-              <TableCell className="text-muted-foreground">
-                {totalTasks > 0 ? `${doneTasks}/${totalTasks}` : "\u2014"}
-              </TableCell>
-            </TableRow>
+              </div>
+
+              <div className="mt-1">
+                <DealPhaseBadge phase={deal.phase} locale={locale} />
+              </div>
+
+              <p className="mt-2 text-sm text-muted-foreground">
+                {deal.clientName}
+                {deal.targetCompany ? ` \u00B7 ${deal.targetCompany}` : ""}
+              </p>
+
+              <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+                <span>{deal.dealLead.name}</span>
+                <span>
+                  {totalTasks > 0 ? `${doneTasks}/${totalTasks} ${translations.tasks}` : ""}
+                </span>
+              </div>
+            </div>
           );
         })}
-      </TableBody>
-    </Table>
+      </div>
+
+      {/* Desktop table view */}
+      <div className="hidden md:block">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{translations.name}</TableHead>
+              <TableHead>{translations.codeName}</TableHead>
+              <TableHead>{translations.clientName}</TableHead>
+              <TableHead>{translations.targetCompany}</TableHead>
+              <TableHead>{translations.status}</TableHead>
+              <TableHead>{translations.phase}</TableHead>
+              <TableHead>{translations.dealValue}</TableHead>
+              <TableHead>{translations.dealLead}</TableHead>
+              <TableHead>{translations.tasks}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {deals.map((deal) => {
+              const allTasks = deal.workstreams.flatMap((ws) => ws.tasks);
+              const doneTasks = allTasks.filter((t) => t.status === "Done").length;
+              const totalTasks = allTasks.length;
+
+              return (
+                <TableRow key={deal.id}>
+                  <TableCell>
+                    <Link
+                      href={`/${locale}/deals/${deal.id}`}
+                      className="font-medium text-foreground hover:underline"
+                    >
+                      {deal.name}
+                    </Link>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {deal.codeName || "\u2014"}
+                  </TableCell>
+                  <TableCell>{deal.clientName}</TableCell>
+                  <TableCell>{deal.targetCompany}</TableCell>
+                  <TableCell>
+                    <DealStatusBadge status={deal.status} locale={locale} />
+                  </TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        disabled={isPending}
+                        className="inline-flex items-center gap-1"
+                      >
+                        <DealPhaseBadge phase={deal.phase} locale={locale} />
+                        <ChevronDown className="size-3 text-muted-foreground" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        {ALL_PHASES.map((p) => (
+                          <DropdownMenuItem
+                            key={p}
+                            onClick={() => handlePhaseChange(deal.id, p)}
+                          >
+                            <DealPhaseBadge phase={p} locale={locale} />
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                  <TableCell>
+                    <InlineValueEdit
+                      dealId={deal.id}
+                      initialValue={deal.dealValue}
+                      initialCurrency={deal.valueCurrency}
+                      locale={locale}
+                    />
+                  </TableCell>
+                  <TableCell>{deal.dealLead.name}</TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {totalTasks > 0 ? `${doneTasks}/${totalTasks}` : "\u2014"}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
+    </>
   );
 }

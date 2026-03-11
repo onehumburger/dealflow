@@ -152,6 +152,7 @@ export async function uploadNewVersion(formData: FormData) {
       fileSize: existing.fileSize,
       storagePath: existing.storagePath,
       uploadedById: existing.uploadedById,
+      note: note || null,
     },
   });
 

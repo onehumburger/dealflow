@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import {
   Sheet,
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useDocumentPanel } from "@/hooks/use-document-panel";
-import { getVersionHistory } from "@/actions/documents";
+import { getVersionHistory, uploadNewVersion } from "@/actions/documents";
 import { formatFileSize } from "@/lib/format";
 import { DocumentPreview } from "./document-preview";
 import { VersionHistory } from "./version-history";
@@ -33,6 +33,8 @@ export function DocumentDetailPanel({ documents }: DocumentDetailPanelProps) {
 
   const [versions, setVersions] = useState<VersionEntry[]>([]);
   const [versionsLoading, setVersionsLoading] = useState(false);
+  const [isUploading, startUpload] = useTransition();
+  const versionInputRef = useRef<HTMLInputElement>(null);
 
   const document = documentId
     ? documents.find((d) => d.id === documentId) ?? null
@@ -96,6 +98,7 @@ export function DocumentDetailPanel({ documents }: DocumentDetailPanelProps) {
               <Button
                 variant="outline"
                 size="sm"
+                nativeButton={false}
                 render={
                   <a
                     href={`/api/documents/${document.id}/download`}
@@ -106,8 +109,36 @@ export function DocumentDetailPanel({ documents }: DocumentDetailPanelProps) {
                 <Download className="size-3.5" />
                 {t("download")}
               </Button>
-              <Button variant="outline" size="sm" disabled>
-                <Upload className="size-3.5" />
+              <input
+                ref={versionInputRef}
+                type="file"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (!file || !document) return;
+                  startUpload(async () => {
+                    const formData = new FormData();
+                    formData.set("documentId", document.id);
+                    formData.set("file", file);
+                    await uploadNewVersion(formData);
+                    // Refresh version history
+                    const data = await getVersionHistory(document.id);
+                    setVersions(data);
+                  });
+                  e.target.value = "";
+                }}
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={isUploading}
+                onClick={() => versionInputRef.current?.click()}
+              >
+                {isUploading ? (
+                  <Loader2 className="size-3.5 animate-spin" />
+                ) : (
+                  <Upload className="size-3.5" />
+                )}
                 {t("uploadNewVersion")}
               </Button>
             </div>

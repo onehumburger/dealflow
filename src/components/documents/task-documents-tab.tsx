@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Upload, Download, FileText, Loader2, Trash2 } from "lucide-react";
+import { Upload, Download, FileText, Loader2, Trash2, FolderDown } from "lucide-react";
 import {
   uploadDocument,
   checkDuplicateName,
@@ -13,6 +13,7 @@ import {
 } from "@/actions/documents";
 import { UploadVersionDialog } from "./upload-version-dialog";
 import { formatFileSize } from "@/lib/format";
+import { downloadDocumentsZip } from "@/lib/download-zip";
 
 interface Props {
   taskId: string;
@@ -106,8 +107,8 @@ export function TaskDocumentsTab({ taskId, dealId, workstreamId }: Props) {
 
   return (
     <div className="flex flex-col gap-3 pt-3">
-      {/* Upload button */}
-      <div>
+      {/* Upload + Download buttons */}
+      <div className="flex items-center gap-2">
         <input
           ref={fileInputRef}
           type="file"
@@ -127,6 +128,18 @@ export function TaskDocumentsTab({ taskId, dealId, workstreamId }: Props) {
           )}
           {isPending ? tCommon("loading") : t("upload")}
         </Button>
+        {documents.length > 0 && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              downloadDocumentsZip({ dealId, workstreamId, taskId })
+            }
+          >
+            <FolderDown className="mr-1.5 size-3.5" />
+            {t("downloadDocs")}
+          </Button>
+        )}
       </div>
 
       {/* Document list */}
@@ -158,11 +171,16 @@ export function TaskDocumentsTab({ taskId, dealId, workstreamId }: Props) {
                 </p>
               </div>
               <div className="flex items-center gap-1 shrink-0">
-                <a href={`/api/documents/${doc.id}/download`}>
-                  <Button variant="ghost" size="icon-sm">
-                    <Download className="size-3.5" />
-                  </Button>
-                </a>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  nativeButton={false}
+                  render={
+                    <a href={`/api/documents/${doc.id}/download`} download />
+                  }
+                >
+                  <Download className="size-3.5" />
+                </Button>
                 <Button
                   variant="ghost"
                   size="icon-sm"

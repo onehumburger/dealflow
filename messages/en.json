@@ -9,7 +9,9 @@
     "search": "Search",
     "filter": "Filter",
     "loading": "Loading...",
-    "noResults": "No results"
+    "noResults": "No results",
+    "confirmDiscard": "Discard this time entry?",
+    "confirmDelete": "Are you sure? This cannot be undone."
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -40,6 +42,7 @@
     "dealLead": "Deal Lead",
     "teamMembers": "Team Members",
     "summary": "Summary",
+    "summaryPlaceholder": "Click to add summary...",
     "status": "Status",
     "active": "Active",
     "onHold": "On Hold",
@@ -96,7 +99,8 @@
     "allStatuses": "All Statuses",
     "allAssignees": "All Assignees",
     "overdue": "overdue",
-    "noTasks": "No tasks assigned to you"
+    "noTasks": "No tasks assigned to you",
+    "viewAll": "View All"
   },
   "milestone": {
     "addMilestone": "Add Milestone",
@@ -139,7 +143,9 @@
     "type": "Type",
     "workstream": "Workstream",
     "allWorkstreams": "All Workstreams",
-    "contentPlaceholder": "Write a note..."
+    "contentPlaceholder": "Write a note...",
+    "hideTaskUpdates": "Hide task updates",
+    "showTaskUpdates": "Show task updates"
   },
   "decision": {
     "decisions": "Decisions",
@@ -211,6 +217,8 @@
     "preview": "Preview",
     "versionHistory": "Version History",
     "uploadNewVersion": "Upload New Version",
+    "downloadAll": "Download All",
+    "downloadDocs": "Download Documents",
     "currentVersion": "Current Version",
     "restoreVersion": "Restore This Version",
     "restoreConfirm": "Restore to version {version}? This will create a new version.",
@@ -228,7 +236,8 @@
     "uploadAsNewVersion": "Upload as new version (v{version})",
     "uploadAsSeparate": "Upload as separate document",
     "details": "Details",
-    "activity": "Activity"
+    "documentsTab": "Documents",
+    "activity": "Comments"
   },
   "dashboard": {
     "myTasks": "My Tasks",
@@ -298,6 +307,7 @@
     "resume": "Resume",
     "paused": "Paused",
     "submit": "Submit",
+    "skip": "Skip",
     "deleteConfirm": "Delete this time entry?"
   },
   "billing": {

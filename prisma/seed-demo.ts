@@ -1,4 +1,4 @@
-import { PrismaClient } from "../src/generated/prisma/client";
+import { PrismaClient, DealPhase, DealSource } from "../src/generated/prisma/client";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -93,6 +93,11 @@ async function main() {
       targetCompany: "Müller Präzisionstechnik GmbH",
       jurisdictions: ["PRC", "Germany", "Hong Kong"],
       status: "Active",
+      phase: DealPhase.DueDiligence,
+      dealValue: 120000000,
+      valueCurrency: "EUR",
+      keyTerms: "无现金无负债基础定价，锁箱机制（锁箱日2025-12-31），对价€120M，赔偿上限€24M (20%)，W&I保险配合条款",
+      source: DealSource.DirectClient,
       summary:
         "华鑫集团拟通过其香港子公司收购德国Müller精密技术有限公司100%股权。目标公司为巴登-符腾堡州精密零部件制造商，年营收约€85M，拥有多项精密加工专利。交易价值约€120M，采用无现金无负债基础定价，含锁箱机制。涉及中国境外投资备案(ODI)、德国外商投资审查(AWV §55)及欧盟反垄断申报。",
       dealLeadId: liWei.id,
@@ -905,7 +910,65 @@ async function main() {
     });
   }
 
-  console.log("Demo data seeded: Project Alpha with 7 workstreams, 35+ tasks, 8 contacts, 3 decisions, 13 activity entries");
+  // ── Billing Rates ────────────────────────────────────────────
+  await prisma.dealBillingRate.createMany({
+    data: [
+      { dealId: deal.id, userId: liWei.id, ratePerHour: 4500, currency: "CNY" },
+      { dealId: deal.id, userId: zhangLin.id, ratePerHour: 2800, currency: "CNY" },
+      { dealId: deal.id, userId: wangHao.id, ratePerHour: 2500, currency: "CNY" },
+      { dealId: deal.id, userId: chenYu.id, ratePerHour: 2500, currency: "CNY" },
+      { dealId: deal.id, userId: liuMing.id, ratePerHour: 2800, currency: "CNY" },
+      { dealId: deal.id, userId: zhouJing.id, ratePerHour: 1800, currency: "CNY" },
+    ],
+  });
+
+  // ── Time Entries ────────────────────────────────────────────
+  await prisma.timeEntry.createMany({
+    data: [
+      // 李伟 — 合伙人，主要做LOI谈判、SPA起草、客户沟通
+      { description: "项目启动、团队组建、委托协议审阅", durationMinutes: 120, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: deal.id }, title: { contains: "签署委托协议" } } }))!.id, userId: liWei.id, dealId: deal.id, createdAt: new Date("2026-01-10") },
+      { description: "LOI核心条款策略讨论及内部备忘录", durationMinutes: 180, isManual: true, isBillable: true, taskId: taskLoi.id, userId: liWei.id, dealId: deal.id, createdAt: new Date("2026-01-30") },
+      { description: "LOI谈判会议（视频），与卖方律师Dr. Weber就排他期和分手费谈判", durationMinutes: 210, isManual: true, isBillable: true, taskId: taskLoi.id, userId: liWei.id, dealId: deal.id, createdAt: new Date("2026-02-03") },
+      { description: "LOI定稿审阅、签署协调", durationMinutes: 90, isManual: true, isBillable: true, taskId: taskLoi.id, userId: liWei.id, dealId: deal.id, createdAt: new Date("2026-02-10") },
+      { description: "SPA框架设计及核心条款起草（锁箱机制、R&W）", durationMinutes: 360, isManual: true, isBillable: true, taskId: taskSpaDraft.id, userId: liWei.id, dealId: deal.id, createdAt: new Date("2026-03-08") },
+      { description: "SPA赔偿条款及先决条件条款起草", durationMinutes: 300, isManual: true, isBillable: true, taskId: taskSpaDraft.id, userId: liWei.id, dealId: deal.id, createdAt: new Date("2026-03-12") },
+
+      // 张琳 — 高年级律师，主导尽调
+      { description: "签署NDA、获取VDR访问权限、团队VDR培训", durationMinutes: 90, isManual: true, isBillable: true, taskId: taskNda.id, userId: zhangLin.id, dealId: deal.id, createdAt: new Date("2026-01-15") },
+      { description: "Phase 1尽调 — 公司章程及股东文件审阅", durationMinutes: 240, isManual: true, isBillable: true, taskId: taskDdPhase1.id, userId: zhangLin.id, dealId: deal.id, createdAt: new Date("2026-02-15") },
+      { description: "Phase 1尽调 — 重大合同审阅（前15大合同）", durationMinutes: 480, isManual: true, isBillable: true, taskId: taskDdPhase1.id, userId: zhangLin.id, dealId: deal.id, createdAt: new Date("2026-02-20") },
+      { description: "Phase 1尽调 — 劳动合同及works council文件审阅", durationMinutes: 360, isManual: true, isBillable: true, taskId: taskDdPhase1.id, userId: zhangLin.id, dealId: deal.id, createdAt: new Date("2026-02-28") },
+      { description: "Phase 2尽调 — 管理层面谈准备及问题清单", durationMinutes: 180, isManual: true, isBillable: true, taskId: taskDdPhase2.id, userId: zhangLin.id, dealId: deal.id, createdAt: new Date("2026-03-20") },
+      { description: "Phase 2尽调 — 管理层面谈（Stuttgart现场，Day 1）", durationMinutes: 480, isManual: true, isBillable: false, taskId: taskDdPhase2.id, userId: zhangLin.id, dealId: deal.id, createdAt: new Date("2026-03-25") },
+      { description: "Phase 2尽调 — 管理层面谈（Stuttgart现场，Day 2）", durationMinutes: 420, isManual: true, isBillable: false, taskId: taskDdPhase2.id, userId: zhangLin.id, dealId: deal.id, createdAt: new Date("2026-03-26") },
+      { description: "TSA初稿起草", durationMinutes: 240, isManual: true, isBillable: true, taskId: taskTsa.id, userId: zhangLin.id, dealId: deal.id, createdAt: new Date("2026-03-05") },
+
+      // 王浩 — 交易结构与税务方向
+      { description: "收购架构比较分析（直接收购 vs 香港控股 vs 新加坡SPV）", durationMinutes: 300, isManual: true, isBillable: true, taskId: taskVehicle.id, userId: wangHao.id, dealId: deal.id, createdAt: new Date("2026-02-10") },
+      { description: "与PWC德国办公室电话，确认RETT和转让定价分析", durationMinutes: 60, isManual: true, isBillable: true, taskId: taskTaxAdvice.id, userId: wangHao.id, dealId: deal.id, createdAt: new Date("2026-02-25") },
+      { description: "知识产权专利清单核对及权属分析（37项）", durationMinutes: 360, isManual: true, isBillable: true, taskId: taskDdIp.id, userId: wangHao.id, dealId: deal.id, createdAt: new Date("2026-03-05") },
+      { description: "前员工专利纠纷案件分析及风险评估备忘录", durationMinutes: 240, isManual: true, isBillable: true, taskId: taskDdIp.id, userId: wangHao.id, dealId: deal.id, createdAt: new Date("2026-03-12") },
+      { description: "融资安排审阅 — 中国银行并购贷款条款分析", durationMinutes: 180, isManual: true, isBillable: true, taskId: taskFinancing.id, userId: wangHao.id, dealId: deal.id, createdAt: new Date("2026-03-08") },
+
+      // 陈宇 — 监管审批方向
+      { description: "各法域审批清单梳理及流程研究", durationMinutes: 240, isManual: true, isBillable: true, taskId: taskRegId.id, userId: chenYu.id, dealId: deal.id, createdAt: new Date("2026-02-25") },
+      { description: "发改委ODI备案材料起草", durationMinutes: 360, isManual: true, isBillable: true, taskId: taskOdi.id, userId: chenYu.id, dealId: deal.id, createdAt: new Date("2026-03-01") },
+      { description: "发改委备案材料修改及补充（根据窗口指导意见）", durationMinutes: 180, isManual: true, isBillable: true, taskId: taskOdi.id, userId: chenYu.id, dealId: deal.id, createdAt: new Date("2026-03-05") },
+      { description: "发改委备案正式提交及跟进", durationMinutes: 60, isManual: true, isBillable: true, taskId: taskOdi.id, userId: chenYu.id, dealId: deal.id, createdAt: new Date("2026-03-11") },
+      { description: "环境合规尽调 — 审阅BImSchG许可证及土壤检测报告", durationMinutes: 300, isManual: true, isBillable: true, taskId: taskDdEnv.id, userId: chenYu.id, dealId: deal.id, createdAt: new Date("2026-03-15") },
+
+      // 刘明 — 德国法律协调
+      { description: "与Gleiss Lutz对接，确认尽调范围和时间线", durationMinutes: 120, isManual: true, isBillable: true, taskId: taskDdCoord.id, userId: liuMing.id, dealId: deal.id, createdAt: new Date("2026-01-20") },
+      { description: "审阅Gleiss Lutz Phase 1尽调报告初稿", durationMinutes: 240, isManual: true, isBillable: true, taskId: taskDdCoord.id, userId: liuMing.id, dealId: deal.id, createdAt: new Date("2026-03-05") },
+      { description: "反垄断申报门槛分析（德国GWB + 欧盟EUMR）", durationMinutes: 300, isManual: true, isBillable: true, taskId: taskAntitrust.id, userId: liuMing.id, dealId: deal.id, createdAt: new Date("2026-03-10") },
+      { description: "德国AWV §55外商投资审查要求研究备忘录", durationMinutes: 240, isManual: true, isBillable: true, taskId: taskAwv.id, userId: liuMing.id, dealId: deal.id, createdAt: new Date("2026-03-08") },
+
+      // 周静 — 项目协调（低费率）
+      { description: "项目内部进度会议纪要整理", durationMinutes: 60, isManual: true, isBillable: false, taskId: taskClientBrief.id, userId: zhouJing.id, dealId: deal.id, createdAt: new Date("2026-03-05") },
+    ],
+  });
+
+  console.log("Demo data seeded: Project Alpha with 7 workstreams, 35+ tasks, 8 contacts, 3 decisions, 13 activity entries, 30 time entries, 6 billing rates");
 }
 
 main()

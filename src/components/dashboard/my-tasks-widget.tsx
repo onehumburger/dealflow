@@ -65,7 +65,7 @@ export function MyTasksWidget({ tasks, locale, translations }: MyTasksWidgetProp
   return (
     <div className="rounded-lg border bg-card">
       <div className="border-b px-4 py-3">
-        <h3 className="text-sm font-semibold">{translations.myTasks}</h3>
+        <h3 className="text-base font-semibold">{translations.myTasks}</h3>
         {deals.length > 1 && (
           <div className="mt-1.5 flex flex-wrap gap-1">
             <button
