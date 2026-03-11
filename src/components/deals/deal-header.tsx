@@ -20,9 +20,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DealStatusBadge } from "./deal-status-badge";
+import { DealPhaseBadge } from "./deal-phase-badge";
 import { updateDeal } from "@/actions/deals";
 import { saveDealAsTemplate } from "@/actions/templates";
-import type { DealStatus } from "@/generated/prisma/client";
+import type { DealStatus, DealPhase, DealSource } from "@/generated/prisma/client";
 
 interface DealHeaderProps {
   deal: {
@@ -35,10 +36,19 @@ interface DealHeaderProps {
     jurisdictions: string[];
     summary: string | null;
     dealLead: { name: string };
+    phase: DealPhase;
+    dealValue: number | null;
+    valueCurrency: string;
+    keyTerms: string | null;
+    source: DealSource | null;
+    sourceNote: string | null;
   };
 }
 
 const ALL_STATUSES: DealStatus[] = ["Active", "OnHold", "Completed"];
+const ALL_PHASES: DealPhase[] = ["Intake", "DueDiligence", "Negotiation", "Signing", "Closing", "PostClosing"];
+const ALL_SOURCES: DealSource[] = ["FAReferral", "DirectClient", "PartnerReferral", "Repeat", "Other"];
+const CURRENCIES = ["USD", "CNY", "EUR", "HKD", "SGD", "VND"] as const;
 
 export function DealHeader({ deal }: DealHeaderProps) {
   const locale = useLocale();
@@ -46,6 +56,7 @@ export function DealHeader({ deal }: DealHeaderProps) {
   const tTemplate = useTranslations("template");
   const tCommon = useTranslations("common");
   const [expanded, setExpanded] = useState(false);
+  const [keyTermsExpanded, setKeyTermsExpanded] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [templateOpen, setTemplateOpen] = useState(false);
   const [templateName, setTemplateName] = useState("");
@@ -58,6 +69,12 @@ export function DealHeader({ deal }: DealHeaderProps) {
   const [editTarget, setEditTarget] = useState(deal.targetCompany);
   const [editJurisdictions, setEditJurisdictions] = useState(deal.jurisdictions.join(", "));
   const [editSummary, setEditSummary] = useState(deal.summary ?? "");
+  const [editPhase, setEditPhase] = useState(deal.phase);
+  const [editDealValue, setEditDealValue] = useState(deal.dealValue?.toString() ?? "");
+  const [editValueCurrency, setEditValueCurrency] = useState(deal.valueCurrency);
+  const [editKeyTerms, setEditKeyTerms] = useState(deal.keyTerms ?? "");
+  const [editSource, setEditSource] = useState<DealSource | "">(deal.source ?? "");
+  const [editSourceNote, setEditSourceNote] = useState(deal.sourceNote ?? "");
   const [editSaving, startEditSave] = useTransition();
 
   function handleStatusChange(newStatus: DealStatus) {
@@ -69,6 +86,7 @@ export function DealHeader({ deal }: DealHeaderProps) {
   function handleEditSave() {
     if (!editName.trim() || !editClient.trim() || !editTarget.trim()) return;
     startEditSave(async () => {
+      const parsedValue = editDealValue.trim() ? parseFloat(editDealValue) : null;
       await updateDeal(deal.id, {
         name: editName.trim(),
         codeName: editCodeName.trim() || null,
@@ -76,6 +94,12 @@ export function DealHeader({ deal }: DealHeaderProps) {
         targetCompany: editTarget.trim(),
         jurisdictions: editJurisdictions.split(",").map((s) => s.trim()).filter(Boolean),
         summary: editSummary.trim() || null,
+        phase: editPhase as DealPhase,
+        dealValue: parsedValue !== null && !isNaN(parsedValue) ? parsedValue : null,
+        valueCurrency: editValueCurrency,
+        keyTerms: editKeyTerms.trim() || null,
+        source: editSource || null,
+        sourceNote: editSourceNote.trim() || null,
       });
       setEditOpen(false);
     });
@@ -140,6 +164,8 @@ export function DealHeader({ deal }: DealHeaderProps) {
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <DealPhaseBadge phase={deal.phase} locale={locale} />
 
         <div className="ml-auto">
           <Dialog open={templateOpen} onOpenChange={setTemplateOpen}>
@@ -208,6 +234,25 @@ export function DealHeader({ deal }: DealHeaderProps) {
         </span>
       </div>
 
+      {(deal.dealValue !== null || deal.source) && (
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          {deal.dealValue !== null && (
+            <span>
+              <strong className="text-foreground">
+                {deal.valueCurrency} {deal.dealValue.toLocaleString(locale === "zh" ? "zh-CN" : "en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+              </strong>
+            </span>
+          )}
+          {deal.dealValue !== null && deal.source && <span>|</span>}
+          {deal.source && (
+            <span>
+              {t(deal.source === "FAReferral" ? "faReferral" : deal.source === "DirectClient" ? "directClient" : deal.source === "PartnerReferral" ? "partnerReferral" : deal.source === "Repeat" ? "repeat" : "otherSource")}
+              {deal.sourceNote && ` — ${deal.sourceNote}`}
+            </span>
+          )}
+        </div>
+      )}
+
       {deal.summary && (
         <div>
           <button
@@ -219,6 +264,22 @@ export function DealHeader({ deal }: DealHeaderProps) {
           {expanded && (
             <p className="mt-1 text-sm text-muted-foreground whitespace-pre-wrap">
               {deal.summary}
+            </p>
+          )}
+        </div>
+      )}
+
+      {deal.keyTerms && (
+        <div>
+          <button
+            onClick={() => setKeyTermsExpanded(!keyTermsExpanded)}
+            className="text-sm text-muted-foreground hover:text-foreground"
+          >
+            {keyTermsExpanded ? "\u25B2" : "\u25BC"} {t("keyTerms")}
+          </button>
+          {keyTermsExpanded && (
+            <p className="mt-1 text-sm text-muted-foreground whitespace-pre-wrap">
+              {deal.keyTerms}
             </p>
           )}
         </div>
@@ -265,6 +326,85 @@ export function DealHeader({ deal }: DealHeaderProps) {
                 disabled={editSaving}
               />
             </div>
+            {/* Phase */}
+            <div>
+              <label className="mb-1 block text-sm font-medium">{t("phase")}</label>
+              <select
+                value={editPhase}
+                onChange={(e) => setEditPhase(e.target.value as DealPhase)}
+                disabled={editSaving}
+                className="flex h-8 w-full rounded-md border border-input bg-background px-3 text-sm"
+              >
+                {ALL_PHASES.map((p) => (
+                  <option key={p} value={p}>
+                    {t(p === "DueDiligence" ? "dueDiligence" : p === "PostClosing" ? "postClosing" : p.toLowerCase())}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* Deal Value + Currency */}
+            <div className="grid grid-cols-[1fr_100px] gap-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium">{t("dealValue")}</label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={editDealValue}
+                  onChange={(e) => setEditDealValue(e.target.value)}
+                  disabled={editSaving}
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium">{t("valueCurrency")}</label>
+                <select
+                  value={editValueCurrency}
+                  onChange={(e) => setEditValueCurrency(e.target.value)}
+                  disabled={editSaving}
+                  className="flex h-8 w-full rounded-md border border-input bg-background px-3 text-sm"
+                >
+                  {CURRENCIES.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            {/* Key Terms */}
+            <div>
+              <label className="mb-1 block text-sm font-medium">{t("keyTerms")}</label>
+              <textarea
+                value={editKeyTerms}
+                onChange={(e) => setEditKeyTerms(e.target.value)}
+                className="flex min-h-[60px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                disabled={editSaving}
+              />
+            </div>
+            {/* Source + Source Note */}
+            <div>
+              <label className="mb-1 block text-sm font-medium">{t("source")}</label>
+              <select
+                value={editSource}
+                onChange={(e) => setEditSource(e.target.value as DealSource | "")}
+                disabled={editSaving}
+                className="flex h-8 w-full rounded-md border border-input bg-background px-3 text-sm"
+              >
+                <option value="">—</option>
+                {ALL_SOURCES.map((s) => (
+                  <option key={s} value={s}>
+                    {t(s === "FAReferral" ? "faReferral" : s === "DirectClient" ? "directClient" : s === "PartnerReferral" ? "partnerReferral" : s === "Repeat" ? "repeat" : "otherSource")}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {editSource && (
+              <div>
+                <label className="mb-1 block text-sm font-medium">{t("sourceNote")}</label>
+                <Input
+                  value={editSourceNote}
+                  onChange={(e) => setEditSourceNote(e.target.value)}
+                  disabled={editSaving}
+                />
+              </div>
+            )}
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setEditOpen(false)} disabled={editSaving}>
                 {tCommon("cancel")}
