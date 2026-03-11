@@ -21,6 +21,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/ui/tabs";
 import { Trash2, Loader2 } from "lucide-react";
 import { useTaskPanel } from "@/hooks/use-task-panel";
 import {
@@ -32,6 +38,7 @@ import {
 import { TaskComments } from "./task-comments";
 import { TaskDependencies } from "./task-dependencies";
 import { TaskSubtasks } from "./task-subtasks";
+import { TaskDocumentsTab } from "@/components/documents/task-documents-tab";
 import { TimerButton } from "@/components/timer/timer-button";
 import { TimeEntryList } from "@/components/time/time-entry-list";
 import { ManualTimeForm } from "@/components/time/manual-time-form";
@@ -44,6 +51,7 @@ export function TaskPanel() {
   const t = useTranslations("task");
   const tCommon = useTranslations("common");
   const tTimer = useTranslations("timer");
+  const tDocument = useTranslations("document");
 
   const taskId = useTaskPanel((s) => s.taskId);
   const close = useTaskPanel((s) => s.close);
@@ -148,7 +156,7 @@ export function TaskPanel() {
             <Loader2 className="size-6 animate-spin text-muted-foreground" />
           </div>
         ) : task ? (
-          <div className="flex flex-col gap-5 px-4 pb-4">
+          <div className="flex flex-col gap-3 px-4 pb-4">
             <SheetHeader className="px-0">
               <SheetTitle className="sr-only">{task.title}</SheetTitle>
               <SheetDescription className="sr-only">
@@ -163,182 +171,219 @@ export function TaskPanel() {
               />
             </SheetHeader>
 
-            {/* Status + Priority row */}
-            <div className="flex items-center gap-3">
-              <div className="flex-1">
-                <Label className="mb-1.5 text-xs text-muted-foreground">
-                  {t("status")}
-                </Label>
-                <div className="flex gap-1.5">
-                  {statusOptions.map((opt) => (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => handleStatusChange(opt.value)}
-                      disabled={isPending}
-                    >
-                      <Badge
-                        variant={status === opt.value ? "default" : "outline"}
-                      >
-                        {opt.label}
-                      </Badge>
-                    </button>
-                  ))}
-                </div>
-              </div>
+            <Tabs defaultValue={0}>
+              <TabsList className="w-full">
+                <TabsTrigger value={0} className="flex-1">
+                  {tDocument("details")}
+                </TabsTrigger>
+                <TabsTrigger value={1} className="flex-1">
+                  {tDocument("documents")}
+                </TabsTrigger>
+                <TabsTrigger value={2} className="flex-1">
+                  {tDocument("activity")}
+                </TabsTrigger>
+              </TabsList>
 
-              <div>
-                <Label className="mb-1.5 text-xs text-muted-foreground">
-                  {t("high")} / {t("normal")}
-                </Label>
-                <div className="flex gap-1.5">
-                  {priorityOptions.map((opt) => (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => {
-                        setPriority(opt.value);
+              {/* Panel 0: Details */}
+              <TabsContent value={0}>
+                <div className="flex flex-col gap-5 pt-3">
+                  {/* Status + Priority row */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1">
+                      <Label className="mb-1.5 text-xs text-muted-foreground">
+                        {t("status")}
+                      </Label>
+                      <div className="flex gap-1.5">
+                        {statusOptions.map((opt) => (
+                          <button
+                            key={opt.value}
+                            type="button"
+                            onClick={() => handleStatusChange(opt.value)}
+                            disabled={isPending}
+                          >
+                            <Badge
+                              variant={
+                                status === opt.value ? "default" : "outline"
+                              }
+                            >
+                              {opt.label}
+                            </Badge>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label className="mb-1.5 text-xs text-muted-foreground">
+                        {t("high")} / {t("normal")}
+                      </Label>
+                      <div className="flex gap-1.5">
+                        {priorityOptions.map((opt) => (
+                          <button
+                            key={opt.value}
+                            type="button"
+                            onClick={() => {
+                              setPriority(opt.value);
+                              if (taskId) {
+                                startTransition(async () => {
+                                  await updateTask(taskId, {
+                                    priority: opt.value,
+                                  });
+                                });
+                              }
+                            }}
+                            disabled={isPending}
+                          >
+                            <Badge
+                              variant={
+                                priority === opt.value
+                                  ? opt.value === "High"
+                                    ? "destructive"
+                                    : "default"
+                                  : "outline"
+                              }
+                            >
+                              {opt.label}
+                            </Badge>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Assignee */}
+                  <div>
+                    <Label className="mb-1.5 text-xs text-muted-foreground">
+                      {t("assignee")}
+                    </Label>
+                    <Select
+                      value={assigneeId ?? ""}
+                      onValueChange={(val) => {
+                        const newId = val || null;
+                        setAssigneeId(newId);
                         if (taskId) {
                           startTransition(async () => {
-                            await updateTask(taskId, { priority: opt.value });
+                            await updateTask(taskId, { assigneeId: newId });
+                            await loadTask(taskId);
                           });
                         }
                       }}
+                    >
+                      <SelectTrigger className="w-full">
+                        <span className="flex flex-1 text-left truncate">
+                          {assigneeId
+                            ? teamMembers.find((u) => u.id === assigneeId)
+                                ?.name ?? t("assignee")
+                            : t("assignee")}
+                        </span>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">--</SelectItem>
+                        {teamMembers.map((u) => (
+                          <SelectItem key={u.id} value={u.id}>
+                            {u.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Due date */}
+                  <div>
+                    <Label className="mb-1.5 text-xs text-muted-foreground">
+                      {t("dueDate")}
+                    </Label>
+                    <Input
+                      type="date"
+                      value={dueDate}
+                      onChange={(e) => setDueDate(e.target.value)}
+                      onBlur={handleSave}
+                    />
+                  </div>
+
+                  {/* Description */}
+                  <div>
+                    <Label className="mb-1.5 text-xs text-muted-foreground">
+                      {t("description")}
+                    </Label>
+                    <Textarea
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      onBlur={handleSave}
+                      placeholder="..."
+                      rows={3}
+                    />
+                  </div>
+
+                  {/* Subtasks */}
+                  <TaskSubtasks
+                    taskId={task.id}
+                    subtasks={task.subtasks}
+                    onRefresh={() => taskId && loadTask(taskId)}
+                  />
+
+                  {/* Dependencies */}
+                  <TaskDependencies
+                    taskId={task.id}
+                    blockedBy={task.blockedBy}
+                    blocks={task.blocks}
+                    dealId={task.workstream.dealId}
+                    onRefresh={() => taskId && loadTask(taskId)}
+                  />
+
+                  {/* Time Entries */}
+                  <div>
+                    <Label className="mb-1.5 text-xs text-muted-foreground">
+                      {tTimer("timeEntries")}
+                    </Label>
+                    <TimeEntryList
+                      entries={timeEntries}
+                      onRefresh={() => taskId && loadTask(taskId)}
+                    />
+                    <div className="mt-2 flex items-center gap-2">
+                      <ManualTimeForm
+                        taskId={task.id}
+                        onDone={() => taskId && loadTask(taskId)}
+                      />
+                      <TimerButton taskId={task.id} size="lg" />
+                    </div>
+                  </div>
+
+                  {/* Delete */}
+                  <div className="border-t pt-4">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={handleDelete}
                       disabled={isPending}
                     >
-                      <Badge
-                        variant={
-                          priority === opt.value
-                            ? opt.value === "High"
-                              ? "destructive"
-                              : "default"
-                            : "outline"
-                        }
-                      >
-                        {opt.label}
-                      </Badge>
-                    </button>
-                  ))}
+                      <Trash2 className="size-3.5" />
+                      {tCommon("delete")}
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </div>
+              </TabsContent>
 
-            {/* Assignee */}
-            <div>
-              <Label className="mb-1.5 text-xs text-muted-foreground">
-                {t("assignee")}
-              </Label>
-              <Select
-                value={assigneeId ?? ""}
-                onValueChange={(val) => {
-                  const newId = val || null;
-                  setAssigneeId(newId);
-                  if (taskId) {
-                    startTransition(async () => {
-                      await updateTask(taskId, { assigneeId: newId });
-                      await loadTask(taskId);
-                    });
-                  }
-                }}
-              >
-                <SelectTrigger className="w-full">
-                  <span className="flex flex-1 text-left truncate">
-                    {assigneeId
-                      ? teamMembers.find((u) => u.id === assigneeId)?.name ?? t("assignee")
-                      : t("assignee")}
-                  </span>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">--</SelectItem>
-                  {teamMembers.map((u) => (
-                    <SelectItem key={u.id} value={u.id}>
-                      {u.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Due date */}
-            <div>
-              <Label className="mb-1.5 text-xs text-muted-foreground">
-                {t("dueDate")}
-              </Label>
-              <Input
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                onBlur={handleSave}
-              />
-            </div>
-
-            {/* Description */}
-            <div>
-              <Label className="mb-1.5 text-xs text-muted-foreground">
-                {t("description")}
-              </Label>
-              <Textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                onBlur={handleSave}
-                placeholder="..."
-                rows={3}
-              />
-            </div>
-
-            {/* Subtasks */}
-            <TaskSubtasks
-              taskId={task.id}
-              subtasks={task.subtasks}
-              onRefresh={() => taskId && loadTask(taskId)}
-            />
-
-            {/* Dependencies */}
-            <TaskDependencies
-              taskId={task.id}
-              blockedBy={task.blockedBy}
-              blocks={task.blocks}
-              dealId={task.workstream.dealId}
-              onRefresh={() => taskId && loadTask(taskId)}
-            />
-
-            {/* Time Entries */}
-            <div>
-              <Label className="mb-1.5 text-xs text-muted-foreground">
-                {tTimer("timeEntries")}
-              </Label>
-              <TimeEntryList
-                entries={timeEntries}
-                onRefresh={() => taskId && loadTask(taskId)}
-              />
-              <div className="mt-2 flex items-center gap-2">
-                <ManualTimeForm
+              {/* Panel 1: Documents */}
+              <TabsContent value={1}>
+                <TaskDocumentsTab
                   taskId={task.id}
-                  onDone={() => taskId && loadTask(taskId)}
+                  dealId={task.workstream.dealId}
+                  workstreamId={task.workstreamId}
                 />
-                <TimerButton taskId={task.id} size="lg" />
-              </div>
-            </div>
+              </TabsContent>
 
-            {/* Comments */}
-            <TaskComments
-              taskId={task.id}
-              comments={task.comments}
-              onRefresh={() => taskId && loadTask(taskId)}
-            />
-
-            {/* Delete */}
-            <div className="border-t pt-4">
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={handleDelete}
-                disabled={isPending}
-              >
-                <Trash2 className="size-3.5" />
-                {tCommon("delete")}
-              </Button>
-            </div>
+              {/* Panel 2: Activity */}
+              <TabsContent value={2}>
+                <div className="pt-3">
+                  <TaskComments
+                    taskId={task.id}
+                    comments={task.comments}
+                    onRefresh={() => taskId && loadTask(taskId)}
+                  />
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
         ) : null}
       </SheetContent>
