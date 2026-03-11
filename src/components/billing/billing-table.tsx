@@ -10,16 +10,17 @@ import type { getFilteredTimeEntries } from "@/actions/billing";
 
 export type EntryData = Awaited<ReturnType<typeof getFilteredTimeEntries>>[number];
 
-function formatHours(minutes: number): string {
-  return (minutes / 60).toFixed(1) + "h";
+function formatHours(minutes: number, precision: number): string {
+  return (minutes / 60).toFixed(precision) + "h";
 }
 
 interface BillingTableProps {
   entries: EntryData[];
+  precision: number;
   onRefresh: () => void;
 }
 
-export function BillingTable({ entries, onRefresh }: BillingTableProps) {
+export function BillingTable({ entries, precision, onRefresh }: BillingTableProps) {
   const locale = useLocale();
   const tBilling = useTranslations("billing");
   const tTimer = useTranslations("timer");
@@ -104,7 +105,7 @@ export function BillingTable({ entries, onRefresh }: BillingTableProps) {
                 {editingEntry === entry.id ? (
                   <Input type="number" step="0.25" value={editDuration} onChange={(e) => setEditDuration(e.target.value)} className="h-6 w-16 text-sm ml-auto" onKeyDown={(e) => e.key === "Enter" && handleSaveEdit()} />
                 ) : (
-                  formatHours(entry.durationMinutes)
+                  formatHours(entry.durationMinutes, precision)
                 )}
               </td>
               <td className="px-3 py-1.5 text-center">

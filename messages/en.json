@@ -279,7 +279,9 @@
     "currency": "CNY",
     "noRates": "No rates configured",
     "rateUpdated": "Rate updated",
-    "perHour": "/hr"
+    "perHour": "/hr",
+    "allWorkstreams": "All Workstreams",
+    "precision": "Decimal Places"
   },
   "error": {
     "title": "Something went wrong",

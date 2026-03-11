@@ -20,6 +20,7 @@ function assertAdmin(session: any) {
 export async function getFilteredTimeEntries(filters: {
   dealId?: string;
   userId?: string;
+  workstreamId?: string;
   startDate?: string;
   endDate?: string;
   billableOnly?: boolean;
@@ -33,6 +34,7 @@ export async function getFilteredTimeEntries(filters: {
   if (filters.dealId) where.dealId = filters.dealId;
   if (filters.userId) where.userId = filters.userId;
   if (filters.billableOnly) where.isBillable = true;
+  if (filters.workstreamId) where.task = { workstreamId: filters.workstreamId };
 
   if (filters.startDate || filters.endDate) {
     const dateFilter: Record<string, Date> = {};
@@ -61,7 +63,7 @@ export async function getFilteredTimeEntries(filters: {
         select: {
           id: true,
           title: true,
-          workstream: { select: { name: true } },
+          workstream: { select: { id: true, name: true } },
         },
       },
       user: { select: { id: true, name: true } },
@@ -143,11 +145,28 @@ export async function getAdminFilterOptions() {
   return { deals, users };
 }
 
+// ---------- getWorkstreamsForDeal ----------
+
+export async function getWorkstreamsForDeal(dealId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthorized");
+  assertAdmin(session);
+
+  const workstreams = await prisma.workstream.findMany({
+    where: { dealId },
+    orderBy: { sortOrder: "asc" },
+    select: { id: true, name: true },
+  });
+
+  return workstreams;
+}
+
 // ---------- exportBillingExcel ----------
 
 export async function exportBillingExcel(filters: {
   dealId?: string;
   userId?: string;
+  workstreamId?: string;
   startDate?: string;
   endDate?: string;
   billableOnly?: boolean;
