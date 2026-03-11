@@ -133,6 +133,12 @@ export default async function DealDetailPage({
           jurisdictions: deal.jurisdictions,
           summary: deal.summary,
           dealLead: deal.dealLead,
+          phase: deal.phase,
+          dealValue: deal.dealValue ? Number(deal.dealValue) : null,
+          valueCurrency: deal.valueCurrency,
+          keyTerms: deal.keyTerms,
+          source: deal.source,
+          sourceNote: deal.sourceNote,
         }}
       />
 
