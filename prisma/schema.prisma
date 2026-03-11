@@ -159,7 +159,18 @@ model Milestone {
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
 
+  linkedTasks MilestoneTask[]
+
   @@index([dealId])
+}
+
+model MilestoneTask {
+  milestoneId String
+  taskId      String
+  milestone   Milestone @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+  task        Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@id([milestoneId, taskId])
 }
 
 model Workstream {
@@ -174,6 +185,7 @@ model Workstream {
   tasks           Task[]
   activityEntries ActivityEntry[]
   decisions       Decision[]
+  documents       Document[]
 
   @@index([dealId])
 }
@@ -184,10 +196,11 @@ model Task {
   description String?
   status      TaskStatus   @default(ToDo)
   priority    TaskPriority @default(Normal)
-  dueDate     DateTime?
-  sortOrder   Int          @default(0)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  dueDate      DateTime?
+  completedAt  DateTime?
+  sortOrder    Int          @default(0)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
 
   workstreamId String
   workstream   Workstream    @relation(fields: [workstreamId], references: [id], onDelete: Cascade)
@@ -200,7 +213,8 @@ model Task {
   blockedBy    TaskDependency[] @relation("DependentTask")
   blocks       TaskDependency[] @relation("DependencyTask")
 
-  linkedDecisions DecisionTaskLink[]
+  linkedDecisions  DecisionTaskLink[]
+  linkedMilestones MilestoneTask[]
 
   @@index([workstreamId])
   @@index([assigneeId])
@@ -334,6 +348,7 @@ model Document {
   dealId       String
   deal         Deal   @relation(fields: [dealId], references: [id], onDelete: Cascade)
   workstreamId String?
+  workstream   Workstream? @relation(fields: [workstreamId], references: [id], onDelete: SetNull)
   taskId       String?
   task         Task?  @relation(fields: [taskId], references: [id], onDelete: SetNull)
   uploadedById String

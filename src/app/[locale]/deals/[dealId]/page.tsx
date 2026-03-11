@@ -85,6 +85,7 @@ export default async function DealDetailPage({
       status: t.status,
       priority: t.priority,
       dueDate: t.dueDate ? new Date(t.dueDate) : null,
+      completedAt: t.completedAt ? new Date(t.completedAt) : null,
       assigneeId: t.assigneeId,
       assignee: t.assignee,
     })),
