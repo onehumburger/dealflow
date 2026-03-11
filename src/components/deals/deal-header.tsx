@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowLeft, ChevronDown, Copy, Pencil } from "lucide-react";
+import { ArrowLeft, Check, ChevronDown, Copy, Pencil, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -58,6 +58,9 @@ export function DealHeader({ deal }: DealHeaderProps) {
   const [expanded, setExpanded] = useState(false);
   const [keyTermsExpanded, setKeyTermsExpanded] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [valueEditing, setValueEditing] = useState(false);
+  const [inlineValue, setInlineValue] = useState(deal.dealValue?.toString() ?? "");
+  const [inlineCurrency, setInlineCurrency] = useState(deal.valueCurrency);
   const [templateOpen, setTemplateOpen] = useState(false);
   const [templateName, setTemplateName] = useState("");
   const [templateSaving, startTemplateSave] = useTransition();
@@ -80,6 +83,23 @@ export function DealHeader({ deal }: DealHeaderProps) {
   function handleStatusChange(newStatus: DealStatus) {
     startTransition(async () => {
       await updateDeal(deal.id, { status: newStatus });
+    });
+  }
+
+  function handlePhaseChange(newPhase: DealPhase) {
+    startTransition(async () => {
+      await updateDeal(deal.id, { phase: newPhase });
+    });
+  }
+
+  function handleValueSave() {
+    const parsed = inlineValue.trim() ? parseFloat(inlineValue) : null;
+    startTransition(async () => {
+      await updateDeal(deal.id, {
+        dealValue: parsed !== null && !isNaN(parsed) ? parsed : null,
+        valueCurrency: inlineCurrency,
+      });
+      setValueEditing(false);
     });
   }
 
@@ -165,7 +185,25 @@ export function DealHeader({ deal }: DealHeaderProps) {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <DealPhaseBadge phase={deal.phase} locale={locale} />
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            disabled={isPending}
+            className="inline-flex items-center gap-1"
+          >
+            <DealPhaseBadge phase={deal.phase} locale={locale} />
+            <ChevronDown className="size-3 text-muted-foreground" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            {ALL_PHASES.map((p) => (
+              <DropdownMenuItem
+                key={p}
+                onClick={() => handlePhaseChange(p)}
+              >
+                <DealPhaseBadge phase={p} locale={locale} />
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         <div className="ml-auto">
           <Dialog open={templateOpen} onOpenChange={setTemplateOpen}>
@@ -234,24 +272,63 @@ export function DealHeader({ deal }: DealHeaderProps) {
         </span>
       </div>
 
-      {(deal.dealValue !== null || deal.source) && (
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          {deal.dealValue !== null && (
-            <span>
+      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+        {valueEditing ? (
+          <div className="flex items-center gap-1.5">
+            <select
+              value={inlineCurrency}
+              onChange={(e) => setInlineCurrency(e.target.value)}
+              className="h-7 rounded border border-input bg-background px-1.5 text-xs"
+              disabled={isPending}
+            >
+              {CURRENCIES.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+            <Input
+              type="number"
+              step="0.01"
+              value={inlineValue}
+              onChange={(e) => setInlineValue(e.target.value)}
+              className="h-7 w-36 text-xs"
+              disabled={isPending}
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleValueSave();
+                if (e.key === "Escape") setValueEditing(false);
+              }}
+            />
+            <Button variant="ghost" size="icon-xs" onClick={handleValueSave} disabled={isPending}>
+              <Check className="size-3.5 text-emerald-600" />
+            </Button>
+            <Button variant="ghost" size="icon-xs" onClick={() => setValueEditing(false)} disabled={isPending}>
+              <X className="size-3.5 text-muted-foreground" />
+            </Button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setValueEditing(true)}
+            className="hover:text-foreground hover:underline decoration-dashed underline-offset-2"
+          >
+            {deal.dealValue !== null ? (
               <strong className="text-foreground">
                 {deal.valueCurrency} {deal.dealValue.toLocaleString(locale === "zh" ? "zh-CN" : "en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
               </strong>
-            </span>
-          )}
-          {deal.dealValue !== null && deal.source && <span>|</span>}
-          {deal.source && (
+            ) : (
+              <span className="italic">{t("dealValue")}: —</span>
+            )}
+          </button>
+        )}
+        {!valueEditing && deal.source && (
+          <>
+            {deal.dealValue !== null && <span>|</span>}
             <span>
               {t(deal.source === "FAReferral" ? "faReferral" : deal.source === "DirectClient" ? "directClient" : deal.source === "PartnerReferral" ? "partnerReferral" : deal.source === "Repeat" ? "repeat" : "otherSource")}
               {deal.sourceNote && ` — ${deal.sourceNote}`}
             </span>
-          )}
-        </div>
-      )}
+          </>
+        )}
+      </div>
 
       {deal.summary && (
         <div>
