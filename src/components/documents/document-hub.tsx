@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { DocumentFilters } from "@/components/documents/document-filters";
 import { DocumentCard } from "@/components/documents/document-card";
+import { DocumentDetailPanel } from "@/components/documents/document-detail-panel";
 import { useDocumentPanel } from "@/hooks/use-document-panel";
 
 export type DocumentItem = {
@@ -252,6 +253,8 @@ export function DocumentHub({ documents, deals }: DocumentHubProps) {
           </div>
         )}
       </div>
+
+      <DocumentDetailPanel documents={documents} />
     </div>
   );
 }

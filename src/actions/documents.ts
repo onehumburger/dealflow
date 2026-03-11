@@ -17,26 +17,7 @@ function getFileExtension(filename: string): string {
 }
 
 function getFileType(filename: string): string {
-  const ext = filename.split(".").pop()?.toLowerCase() || "";
-  const mimeTypes: Record<string, string> = {
-    pdf: "application/pdf",
-    doc: "application/msword",
-    docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    xls: "application/vnd.ms-excel",
-    xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    ppt: "application/vnd.ms-powerpoint",
-    pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    png: "image/png",
-    jpg: "image/jpeg",
-    jpeg: "image/jpeg",
-    gif: "image/gif",
-    txt: "text/plain",
-    csv: "text/csv",
-    zip: "application/zip",
-    rar: "application/x-rar-compressed",
-    rtf: "application/rtf",
-  };
-  return mimeTypes[ext] || "application/octet-stream";
+  return filename.split(".").pop()?.toLowerCase() || "";
 }
 
 // ---------- checkDuplicateName ----------

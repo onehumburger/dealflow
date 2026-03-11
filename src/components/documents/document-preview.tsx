@@ -16,7 +16,7 @@ export function DocumentPreview({
 }: DocumentPreviewProps) {
   const previewUrl = `/api/documents/${documentId}/download?preview=true`;
 
-  if (fileType === "application/pdf") {
+  if (fileType === "pdf") {
     return (
       <iframe
         src={previewUrl}
@@ -26,7 +26,7 @@ export function DocumentPreview({
     );
   }
 
-  if (fileType.startsWith("image/")) {
+  if (["jpg", "jpeg", "png", "gif", "bmp", "svg", "webp"].includes(fileType)) {
     return (
       <img
         src={previewUrl}
