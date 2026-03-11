@@ -49,3 +49,6 @@ next-env.d.ts
 # uploaded documents
 /storage/uploads/*
 !/storage/uploads/.gitkeep
+
+# superpowers brainstorm mockups
+.superpowers/
