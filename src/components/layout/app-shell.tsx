@@ -25,6 +25,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
     { href: `/${locale}/tasks`, label: t("myTasks") },
     { href: `/${locale}/calendar`, label: t("calendar") },
     { href: `/${locale}/billing`, label: tBilling("billing") },
+    { href: `/${locale}/documents`, label: t("documents") },
     { href: `/${locale}/contacts`, label: t("contacts") },
     ...(role === "Admin"
       ? [{ href: `/${locale}/admin/users`, label: t("admin") }]
