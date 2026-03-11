@@ -69,6 +69,9 @@ enum ActivityType {
   MilestoneChange
   DecisionCreated
   DocumentUpload
+  DocumentVersionUpload
+  DocumentRestore
+  DocumentDelete
 }
 
 enum MilestoneType {
@@ -123,8 +126,9 @@ model User {
   teamDeals       DealMember[]
   comments        TaskComment[]
   activityEntries ActivityEntry[]
-  documents       Document[]
-  auditLogs       AuditLog[]
+  documents        Document[]
+  documentVersions DocumentVersion[] @relation("DocumentVersions")
+  auditLogs        AuditLog[]
   timeEntries  TimeEntry[]       @relation("TimeEntries")
   billingRates DealBillingRate[] @relation("BillingRates")
 }
@@ -368,21 +372,45 @@ model DealContact {
 }
 
 model Document {
-  id        String   @id @default(cuid())
-  name      String
-  filePath  String
-  createdAt DateTime @default(now())
+  id             String   @id @default(cuid())
+  name           String
+  fileType       String   @default("")
+  fileSize       Int      @default(0)
+  storagePath    String   @map("filePath")
+  currentVersion Int      @default(1)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
 
   dealId       String
-  deal         Deal   @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  deal         Deal        @relation(fields: [dealId], references: [id], onDelete: Cascade)
   workstreamId String?
   workstream   Workstream? @relation(fields: [workstreamId], references: [id], onDelete: SetNull)
   taskId       String?
-  task         Task?  @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  task         Task?       @relation(fields: [taskId], references: [id], onDelete: SetNull)
   uploadedById String
-  uploadedBy   User   @relation(fields: [uploadedById], references: [id])
+  uploadedBy   User        @relation(fields: [uploadedById], references: [id])
+
+  versions DocumentVersion[]
 
   @@index([dealId])
+}
+
+model DocumentVersion {
+  id            String   @id @default(cuid())
+  versionNumber Int
+  name          String
+  fileType      String
+  fileSize      Int
+  storagePath   String
+  note          String?
+  createdAt     DateTime @default(now())
+
+  documentId   String
+  document     Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  uploadedById String
+  uploadedBy   User     @relation("DocumentVersions", fields: [uploadedById], references: [id])
+
+  @@index([documentId])
 }
 
 model TimeEntry {
