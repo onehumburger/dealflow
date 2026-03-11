@@ -20,6 +20,7 @@ interface TaskRowProps {
     assignee: { name: string } | null;
   };
   hideOverdue?: boolean;
+  hideCheckbox?: boolean;
 }
 
 function formatRelativeDate(
@@ -41,7 +42,7 @@ function formatRelativeDate(
   }).format(date);
 }
 
-export function TaskRow({ task, hideOverdue }: TaskRowProps) {
+export function TaskRow({ task, hideOverdue, hideCheckbox }: TaskRowProps) {
   const locale = useLocale();
   const t = useTranslations("task");
   const [isPending, startTransition] = useTransition();
@@ -76,30 +77,32 @@ export function TaskRow({ task, hideOverdue }: TaskRowProps) {
         justCompleted && "bg-emerald-50 opacity-60"
       )}
     >
-      {/* Checkbox */}
-      <button
-        type="button"
-        onClick={handleToggle}
-        disabled={isPending}
-        className={cn(
-          "flex size-4 shrink-0 items-center justify-center rounded border transition-colors",
-          isDone || justCompleted
-            ? "border-emerald-600 bg-emerald-600 text-white"
-            : "border-input hover:border-emerald-400"
-        )}
-      >
-        {(isDone || justCompleted) && (
-          <svg className="size-3" viewBox="0 0 12 12" fill="none">
-            <path
-              d="M2.5 6L5 8.5L9.5 3.5"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        )}
-      </button>
+      {/* Checkbox — hidden on My Tasks page to prevent accidental completion */}
+      {!hideCheckbox && (
+        <button
+          type="button"
+          onClick={handleToggle}
+          disabled={isPending}
+          className={cn(
+            "flex size-4 shrink-0 items-center justify-center rounded border transition-colors",
+            isDone || justCompleted
+              ? "border-emerald-600 bg-emerald-600 text-white"
+              : "border-input hover:border-emerald-400"
+          )}
+        >
+          {(isDone || justCompleted) && (
+            <svg className="size-3" viewBox="0 0 12 12" fill="none">
+              <path
+                d="M2.5 6L5 8.5L9.5 3.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
+        </button>
+      )}
 
       {/* Timer button */}
       <span className="inline-flex shrink-0">
