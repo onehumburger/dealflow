@@ -211,6 +211,7 @@ export async function getTaskDetail(taskId: string) {
           dealId: true,
           deal: {
             select: {
+              name: true,
               members: {
                 include: { user: { select: { id: true, name: true } } },
               },
