@@ -108,6 +108,8 @@ model User {
   activityEntries ActivityEntry[]
   documents       Document[]
   auditLogs       AuditLog[]
+  timeEntries  TimeEntry[]       @relation("TimeEntries")
+  billingRates DealBillingRate[] @relation("BillingRates")
 }
 
 model Deal {
@@ -133,6 +135,8 @@ model Deal {
   decisions       Decision[]
   dealContacts    DealContact[]
   documents       Document[]
+  timeEntries  TimeEntry[]
+  billingRates DealBillingRate[]
 
   @@index([status])
 }
@@ -215,6 +219,7 @@ model Task {
 
   linkedDecisions  DecisionTaskLink[]
   linkedMilestones MilestoneTask[]
+  timeEntries TimeEntry[]
 
   @@index([workstreamId])
   @@index([assigneeId])
@@ -355,6 +360,42 @@ model Document {
   uploadedBy   User   @relation(fields: [uploadedById], references: [id])
 
   @@index([dealId])
+}
+
+model TimeEntry {
+  id              String   @id @default(cuid())
+  description     String?
+  startedAt       DateTime?
+  stoppedAt       DateTime?
+  durationMinutes Int
+  isManual        Boolean  @default(false)
+  isBillable      Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  taskId String
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation("TimeEntries", fields: [userId], references: [id])
+  dealId String
+  deal   Deal   @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@index([userId])
+  @@index([dealId, userId])
+}
+
+model DealBillingRate {
+  id          String  @id @default(cuid())
+  ratePerHour Decimal @db.Decimal(10, 2)
+  currency    String  @default("CNY")
+
+  dealId String
+  deal   Deal   @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation("BillingRates", fields: [userId], references: [id])
+
+  @@unique([dealId, userId])
 }
 
 model AuditLog {
