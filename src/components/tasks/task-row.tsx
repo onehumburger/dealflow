@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { updateTaskStatus } from "@/actions/tasks";
 import { useTaskPanel } from "@/hooks/use-task-panel";
 import type { TaskPriority, TaskStatus } from "@/generated/prisma/client";
+import { TimerButton } from "@/components/timer/timer-button";
 
 interface TaskRowProps {
   task: {
@@ -64,7 +65,7 @@ export function TaskRow({ task }: TaskRowProps) {
   return (
     <div
       className={cn(
-        "flex items-center gap-3 rounded-md px-2 py-1.5 hover:bg-muted/50",
+        "group/row flex items-center gap-3 rounded-md px-2 py-1.5 hover:bg-muted/50",
         isPending && "opacity-50"
       )}
     >
@@ -92,6 +93,11 @@ export function TaskRow({ task }: TaskRowProps) {
           </svg>
         )}
       </button>
+
+      {/* Timer button - appears on hover */}
+      <span className="hidden group-hover/row:inline-flex shrink-0">
+        <TimerButton taskId={task.id} size="sm" />
+      </span>
 
       {/* Title — clickable to open panel */}
       <button

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import { LocaleSwitcher } from "./locale-switcher";
 import { LogoutButton } from "./logout-button";
+import { TimerBar } from "@/components/timer/timer-bar";
 
 export async function AppShell({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -69,6 +70,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
       </header>
 
       <main>{children}</main>
+      <TimerBar />
     </div>
   );
 }
