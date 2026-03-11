@@ -27,6 +27,23 @@ enum DealStatus {
   Completed
 }
 
+enum DealPhase {
+  Intake
+  DueDiligence
+  Negotiation
+  Signing
+  Closing
+  PostClosing
+}
+
+enum DealSource {
+  FAReferral
+  DirectClient
+  PartnerReferral
+  Repeat
+  Other
+}
+
 enum TaskStatus {
   ToDo
   InProgress
@@ -123,6 +140,12 @@ model Deal {
   jurisdictions String[]
   status        DealStatus @default(Active)
   summary       String?
+  phase         DealPhase   @default(Intake)
+  dealValue     Decimal?    @db.Decimal(18, 2)
+  valueCurrency String      @default("USD")
+  keyTerms      String?
+  source        DealSource?
+  sourceNote    String?
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 
