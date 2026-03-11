@@ -269,6 +269,9 @@
     "noEntries": "No time entries",
     "billable": "Billable",
     "manual": "Manual",
+    "pause": "Pause",
+    "resume": "Resume",
+    "paused": "Paused",
     "deleteConfirm": "Delete this time entry?"
   },
   "billing": {

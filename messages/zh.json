@@ -269,6 +269,9 @@
     "noEntries": "暂无计时记录",
     "billable": "可计费",
     "manual": "手动",
+    "pause": "暂停",
+    "resume": "继续",
+    "paused": "已暂停",
     "deleteConfirm": "确认删除此计时记录？"
   },
   "billing": {

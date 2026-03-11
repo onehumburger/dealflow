@@ -62,7 +62,7 @@ export async function startTimer(taskId: string) {
 
 // ---------- stopTimer ----------
 
-export async function stopTimer(entryId: string, description?: string) {
+export async function stopTimer(entryId: string, description?: string, clientDurationMinutes?: number) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
 
@@ -74,19 +74,26 @@ export async function stopTimer(entryId: string, description?: string) {
   if (entry.userId !== session.user.id) throw new Error("Forbidden");
 
   const now = new Date();
-  const durationMs = now.getTime() - (entry.startedAt?.getTime() ?? now.getTime());
+  // Use client-calculated duration if provided (accounts for pauses), else calculate from startedAt
+  let durationMinutes: number;
+  if (clientDurationMinutes !== undefined && clientDurationMinutes > 0) {
+    durationMinutes = clientDurationMinutes;
+  } else {
+    const durationMs = now.getTime() - (entry.startedAt?.getTime() ?? now.getTime());
+    durationMinutes = Math.max(1, Math.round(durationMs / 60000));
+  }
 
   await prisma.timeEntry.update({
     where: { id: entryId },
     data: {
       stoppedAt: now,
-      durationMinutes: Math.max(1, Math.round(durationMs / 60000)),
+      durationMinutes,
       description: description?.trim() || null,
     },
   });
 
   await logAudit(session.user.id, "stop_timer", "TimeEntry", entryId, {
-    durationMinutes: { from: 0, to: Math.max(1, Math.round(durationMs / 60000)) },
+    durationMinutes: { from: 0, to: durationMinutes },
   });
   await revalidateDeal(entry.dealId);
 }

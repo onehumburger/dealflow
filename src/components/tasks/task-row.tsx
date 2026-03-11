@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -47,6 +47,7 @@ export function TaskRow({ task, hideOverdue }: TaskRowProps) {
   const [isPending, startTransition] = useTransition();
   const openPanel = useTaskPanel((s) => s.open);
 
+  const [justCompleted, setJustCompleted] = useState(false);
   const isDone = task.status === "Done";
   const isOverdue =
     !hideOverdue && task.dueDate && !isDone && task.dueDate < new Date();
@@ -54,6 +55,10 @@ export function TaskRow({ task, hideOverdue }: TaskRowProps) {
   function handleToggle(e: React.MouseEvent) {
     e.stopPropagation();
     const newStatus = isDone ? "ToDo" : "Done";
+    if (!isDone) {
+      // Show completion animation briefly before the server revalidates
+      setJustCompleted(true);
+    }
     startTransition(async () => {
       await updateTaskStatus(task.id, newStatus as TaskStatus);
     });
@@ -66,8 +71,9 @@ export function TaskRow({ task, hideOverdue }: TaskRowProps) {
   return (
     <div
       className={cn(
-        "group/row flex items-center gap-3 rounded-md px-2 py-1.5 hover:bg-muted/50",
-        isPending && "opacity-50"
+        "group/row flex items-center gap-3 rounded-md px-2 py-1.5 hover:bg-muted/50 transition-all duration-300",
+        isPending && !justCompleted && "opacity-50",
+        justCompleted && "bg-emerald-50 opacity-60"
       )}
     >
       {/* Checkbox */}
@@ -77,12 +83,12 @@ export function TaskRow({ task, hideOverdue }: TaskRowProps) {
         disabled={isPending}
         className={cn(
           "flex size-4 shrink-0 items-center justify-center rounded border transition-colors",
-          isDone
+          isDone || justCompleted
             ? "border-emerald-600 bg-emerald-600 text-white"
             : "border-input hover:border-emerald-400"
         )}
       >
-        {isDone && (
+        {(isDone || justCompleted) && (
           <svg className="size-3" viewBox="0 0 12 12" fill="none">
             <path
               d="M2.5 6L5 8.5L9.5 3.5"
@@ -106,7 +112,7 @@ export function TaskRow({ task, hideOverdue }: TaskRowProps) {
         onClick={handleTitleClick}
         className={cn(
           "flex-1 truncate text-left text-sm hover:underline",
-          isDone && "text-muted-foreground line-through"
+          (isDone || justCompleted) && "text-muted-foreground line-through"
         )}
       >
         {task.title}

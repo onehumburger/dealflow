@@ -20,6 +20,7 @@ export function TimerButton({ taskId, size = "sm", className }: TimerButtonProps
   const activeTaskId = useTimer((s) => s.taskId);
   const start = useTimer((s) => s.start);
   const stop = useTimer((s) => s.stop);
+  const triggerStop = useTimer((s) => s.triggerStop);
 
   const isRunningOnThisTask = activeTaskId === taskId;
   const isRunningOnOther = activeEntryId !== null && !isRunningOnThisTask;
@@ -28,11 +29,8 @@ export function TimerButton({ taskId, size = "sm", className }: TimerButtonProps
     e.stopPropagation();
 
     if (isRunningOnThisTask) {
-      // Stop timer
-      startTransition(async () => {
-        await stopTimer(activeEntryId!);
-        stop();
-      });
+      // Signal the timer bar to show description input instead of stopping directly
+      triggerStop();
       return;
     }
 
