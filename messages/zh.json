@@ -272,6 +272,7 @@
     "pause": "暂停",
     "resume": "继续",
     "paused": "已暂停",
+    "submit": "提交",
     "deleteConfirm": "确认删除此计时记录？"
   },
   "billing": {

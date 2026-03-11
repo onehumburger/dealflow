@@ -140,7 +140,7 @@ export function TimerBar() {
                 }}
               />
               <Button size="xs" onClick={handleSave} disabled={isPending}>
-                {t("stopTimer")}
+                {t("submit")}
               </Button>
             </div>
           ) : (

@@ -272,6 +272,7 @@
     "pause": "Pause",
     "resume": "Resume",
     "paused": "Paused",
+    "submit": "Submit",
     "deleteConfirm": "Delete this time entry?"
   },
   "billing": {
