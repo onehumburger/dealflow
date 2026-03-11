@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { createDeal, updateDeal } from "@/actions/deals";
+import type { DealPhase, DealSource } from "@/generated/prisma/client";
 
 interface User {
   id: string;
@@ -38,11 +39,20 @@ interface DealFormProps {
     dealLeadId?: string;
     memberIds?: string[];
     summary?: string;
+    phase?: string;
+    dealValue?: number | null;
+    valueCurrency?: string;
+    keyTerms?: string;
+    source?: string;
+    sourceNote?: string;
   };
 }
 
 const DEAL_TYPES = ["Auction", "Negotiated", "JV"] as const;
 const OUR_ROLES = ["BuySide", "SellSide", "LeadParty", "ParticipatingParty"] as const;
+const DEAL_PHASES: DealPhase[] = ["Intake", "DueDiligence", "Negotiation", "Signing", "Closing", "PostClosing"];
+const DEAL_SOURCES: DealSource[] = ["FAReferral", "DirectClient", "PartnerReferral", "Repeat", "Other"];
+const CURRENCIES = ["USD", "CNY", "EUR", "HKD", "SGD", "VND"] as const;
 
 export function DealForm({
   users,
@@ -61,6 +71,9 @@ export function DealForm({
   const [selectedMembers, setSelectedMembers] = useState<string[]>(
     defaultValues?.memberIds || []
   );
+  const [phase, setPhase] = useState(defaultValues?.phase || "Intake");
+  const [valueCurrency, setValueCurrency] = useState(defaultValues?.valueCurrency || "USD");
+  const [source, setSource] = useState(defaultValues?.source || "");
 
   // Auto-match template when dealType + ourRole change
   useEffect(() => {
@@ -99,6 +112,12 @@ export function DealForm({
           jurisdictions,
           summary: (formData.get("summary") as string) || null,
           dealLeadId: formData.get("dealLeadId") as string,
+          phase: phase as DealPhase,
+          dealValue: formData.get("dealValue") ? parseFloat(formData.get("dealValue") as string) : null,
+          valueCurrency,
+          keyTerms: (formData.get("keyTerms") as string) || null,
+          source: (source as DealSource) || null,
+          sourceNote: (formData.get("sourceNote") as string) || null,
         });
       });
     } else {
@@ -119,6 +138,23 @@ export function DealForm({
     SellSide: t("sellSide"),
     LeadParty: t("leadParty"),
     ParticipatingParty: t("participatingParty"),
+  };
+
+  const phaseLabels: Record<string, string> = {
+    Intake: t("intake"),
+    DueDiligence: t("dueDiligence"),
+    Negotiation: t("negotiation"),
+    Signing: t("signing"),
+    Closing: t("closing"),
+    PostClosing: t("postClosing"),
+  };
+
+  const sourceLabels: Record<string, string> = {
+    FAReferral: t("faReferral"),
+    DirectClient: t("directClient"),
+    PartnerReferral: t("partnerReferral"),
+    Repeat: t("repeat"),
+    Other: t("otherSource"),
   };
 
   return (
@@ -240,6 +276,95 @@ export function DealForm({
               placeholder="PRC, HK, US"
               defaultValue={defaultValues?.jurisdictions?.join(", ")}
             />
+          </div>
+
+          {/* Phase + Currency (side by side) */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="phase">{t("phase")}</Label>
+              <select
+                id="phase"
+                name="phase"
+                value={phase}
+                onChange={(e) => setPhase(e.target.value)}
+                className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              >
+                {DEAL_PHASES.map((p) => (
+                  <option key={p} value={p}>
+                    {phaseLabels[p]}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="valueCurrency">{t("valueCurrency")}</Label>
+              <select
+                id="valueCurrency"
+                name="valueCurrency"
+                value={valueCurrency}
+                onChange={(e) => setValueCurrency(e.target.value)}
+                className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              >
+                {CURRENCIES.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Deal Value */}
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="dealValue">{t("dealValue")}</Label>
+            <Input
+              id="dealValue"
+              name="dealValue"
+              type="number"
+              step="0.01"
+              defaultValue={defaultValues?.dealValue ?? undefined}
+            />
+          </div>
+
+          {/* Key Terms */}
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="keyTerms">{t("keyTerms")}</Label>
+            <Textarea
+              id="keyTerms"
+              name="keyTerms"
+              defaultValue={defaultValues?.keyTerms}
+            />
+          </div>
+
+          {/* Source + Source Note */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="source">{t("source")}</Label>
+              <select
+                id="source"
+                name="source"
+                value={source}
+                onChange={(e) => setSource(e.target.value)}
+                className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              >
+                <option value="">{"\u2014"}</option>
+                {DEAL_SOURCES.map((s) => (
+                  <option key={s} value={s}>
+                    {sourceLabels[s]}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {source && (
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="sourceNote">{t("sourceNote")}</Label>
+                <Input
+                  id="sourceNote"
+                  name="sourceNote"
+                  defaultValue={defaultValues?.sourceNote}
+                />
+              </div>
+            )}
           </div>
 
           {/* Deal Lead */}
