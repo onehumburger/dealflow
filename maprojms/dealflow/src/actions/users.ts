@@ -1,20 +1,12 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { getLocale } from "next-intl/server";
 import { logAudit } from "@/lib/audit";
 import bcrypt from "bcryptjs";
 import type { UserRole } from "@/generated/prisma/client";
-
-async function assertAdmin() {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthorized");
-  const role = (session.user as unknown as { role: string }).role;
-  if (role !== "Admin") throw new Error("Forbidden");
-  return session.user.id;
-}
+import { assertAdmin } from "@/actions/_helpers";
 
 export async function getUsers() {
   await assertAdmin();
@@ -39,7 +31,6 @@ export async function createUser(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const role = formData.get("role") as string;
-  const userLocale = formData.get("locale") as string;
 
   if (!name || !email || !password) {
     throw new Error("Missing required fields");
@@ -48,11 +39,6 @@ export async function createUser(formData: FormData) {
   const validRoles = ["Admin", "Member"];
   if (!validRoles.includes(role)) {
     throw new Error("Invalid role");
-  }
-
-  const validLocales = ["zh", "en"];
-  if (!validLocales.includes(userLocale)) {
-    throw new Error("Invalid locale");
   }
 
   // Check for existing email
@@ -69,7 +55,6 @@ export async function createUser(formData: FormData) {
       email,
       passwordHash,
       role: role as UserRole,
-      locale: userLocale,
     },
   });
 
@@ -115,6 +100,20 @@ export async function updateUser(
   });
 
   await logAudit(adminId, "update_user", "User", userId);
+
+  revalidatePath(`/${locale}/admin/users`);
+}
+
+export async function deleteUser(userId: string) {
+  const adminId = await assertAdmin();
+  const locale = await getLocale();
+
+  // Prevent self-deletion
+  if (userId === adminId) throw new Error("Cannot delete yourself");
+
+  await prisma.user.delete({ where: { id: userId } });
+
+  await logAudit(adminId, "delete_user", "User", userId);
 
   revalidatePath(`/${locale}/admin/users`);
 }

@@ -9,15 +9,18 @@
     "search": "搜索",
     "filter": "筛选",
     "loading": "加载中...",
-    "noResults": "暂无数据"
+    "noResults": "暂无数据",
+    "confirmDiscard": "确认取消并丢弃此计时记录？",
+    "confirmDelete": "确认删除？此操作不可撤销。"
   },
   "nav": {
     "dashboard": "工作台",
     "deals": "项目",
     "myTasks": "我的任务",
     "contacts": "通讯录",
-    "admin": "管理",
-    "calendar": "日历"
+    "admin": "用户管理",
+    "calendar": "日历",
+    "documents": "文档管理"
   },
   "auth": {
     "login": "登录",
@@ -39,6 +42,7 @@
     "dealLead": "项目负责人",
     "teamMembers": "团队成员",
     "summary": "项目概述",
+    "summaryPlaceholder": "点击添加项目概述...",
     "status": "状态",
     "active": "进行中",
     "onHold": "暂停",
@@ -52,7 +56,24 @@
     "participatingParty": "参与方",
     "template": "模板",
     "selectTemplate": "选择模板",
-    "backToDeals": "项目"
+    "backToDeals": "项目",
+    "phase": "阶段",
+    "intake": "立项",
+    "dueDiligence": "尽调",
+    "negotiation": "谈判",
+    "signing": "签约",
+    "closing": "交割",
+    "postClosing": "结项",
+    "dealValue": "交易金额",
+    "valueCurrency": "币种",
+    "keyTerms": "核心条款",
+    "source": "项目来源",
+    "sourceNote": "来源备注",
+    "faReferral": "FA引荐",
+    "directClient": "客户直接委托",
+    "partnerReferral": "合伙人转介",
+    "repeat": "老客户新项目",
+    "otherSource": "其他"
   },
   "task": {
     "status": "状态",
@@ -78,7 +99,8 @@
     "allStatuses": "全部状态",
     "allAssignees": "全部成员",
     "overdue": "逾期",
-    "noTasks": "暂无分配给您的任务"
+    "noTasks": "暂无分配给您的任务",
+    "viewAll": "查看全部"
   },
   "milestone": {
     "addMilestone": "添加里程碑",
@@ -115,10 +137,15 @@
     "milestoneChange": "里程碑",
     "decisionCreated": "决策",
     "documentUpload": "文件",
+    "documentVersionUpload": "新版本",
+    "documentRestore": "版本恢复",
+    "documentDelete": "文件删除",
     "type": "类型",
     "workstream": "工作流",
     "allWorkstreams": "全部工作流",
-    "contentPlaceholder": "写一条记录..."
+    "contentPlaceholder": "写一条记录...",
+    "hideTaskUpdates": "隐藏任务更新",
+    "showTaskUpdates": "显示任务更新"
   },
   "decision": {
     "decisions": "决策记录",
@@ -176,7 +203,7 @@
     "linkedToDeals": "关联{count}个项目"
   },
   "document": {
-    "documents": "文件管理",
+    "documents": "文档管理",
     "fileName": "文件名",
     "workstream": "工作流",
     "task": "任务",
@@ -184,15 +211,40 @@
     "date": "日期",
     "upload": "上传",
     "selectFile": "选择文件",
-    "deleteConfirm": "确认删除此文件？",
+    "deleteConfirm": "确认删除此文件？所有版本将被永久删除。",
     "noDocuments": "暂无文件",
-    "download": "下载"
+    "download": "下载",
+    "preview": "预览",
+    "versionHistory": "版本历史",
+    "uploadNewVersion": "上传新版本",
+    "downloadAll": "下载全部",
+    "downloadDocs": "下载文档",
+    "currentVersion": "当前版本",
+    "restoreVersion": "恢复此版本",
+    "restoreConfirm": "确认恢复到版本 {version}？这将创建一个新版本。",
+    "versionNote": "版本说明（可选）",
+    "generalDocuments": "通用文档",
+    "allDeals": "全部项目",
+    "allWorkstreams": "全部工作流",
+    "allTypes": "全部类型",
+    "dateRange": "日期范围",
+    "uploader": "上传人",
+    "sortByDate": "按日期",
+    "sortByName": "按名称",
+    "sortBySize": "按大小",
+    "fileExists": "文件 \"{name}\" 已存在",
+    "uploadAsNewVersion": "上传为新版本 (v{version})",
+    "uploadAsSeparate": "上传为独立文档",
+    "details": "详情",
+    "documentsTab": "文档",
+    "activity": "评论"
   },
   "dashboard": {
     "myTasks": "我的任务",
     "upcomingMilestones": "即将到来的里程碑",
     "activeDeals": "进行中的项目",
-    "recentActivity": "最近动态"
+    "recentActivity": "最近动态",
+    "allDeals": "全部项目"
   },
   "search": {
     "placeholder": "搜索项目、任务、联系人...",
@@ -217,7 +269,8 @@
     "resetPassword": "重置密码",
     "newPassword": "新密码",
     "newPasswordPlaceholder": "至少6个字符",
-    "passwordPlaceholder": "至少6个字符"
+    "passwordPlaceholder": "至少6个字符",
+    "deleteUserConfirm": "确定要删除此用户吗？该操作不可撤销。"
   },
   "calendar": {
     "calendar": "日历",
@@ -234,6 +287,59 @@
     "activity": "动态",
     "overdue": "已逾期",
     "done": "已完成"
+  },
+  "timer": {
+    "startTimer": "开始计时",
+    "stopTimer": "停止",
+    "switchTimer": "停止当前计时并开始新的?",
+    "logTime": "手动录入",
+    "duration": "时长",
+    "hours": "小时",
+    "date": "日期",
+    "description": "描述",
+    "totalTime": "总计",
+    "timeEntries": "计时",
+    "running": "计时中",
+    "noEntries": "暂无计时记录",
+    "billable": "可计费",
+    "manual": "手动",
+    "pause": "暂停",
+    "resume": "继续",
+    "paused": "已暂停",
+    "submit": "提交",
+    "skip": "跳过",
+    "deleteConfirm": "确认删除此计时记录？"
+  },
+  "billing": {
+    "billing": "计时管理",
+    "rate": "费率",
+    "ratePerHour": "时薪",
+    "billable": "可计费",
+    "nonBillable": "不可计费",
+    "totalHours": "总时长",
+    "billableHours": "可计费时长",
+    "totalAmount": "总金额",
+    "exportExcel": "导出Excel",
+    "editRate": "编辑费率",
+    "setRate": "设置费率",
+    "byWorkstream": "按工作流",
+    "byMember": "按成员",
+    "dateRange": "日期范围",
+    "allDeals": "全部项目",
+    "allMembers": "全部成员",
+    "billableOnly": "仅可计费",
+    "summary": "汇总",
+    "deal": "项目",
+    "member": "成员",
+    "task": "任务",
+    "workstream": "工作流",
+    "amount": "金额",
+    "currency": "CNY",
+    "noRates": "未设置费率",
+    "rateUpdated": "费率已更新",
+    "perHour": "/时",
+    "allWorkstreams": "全部工作流",
+    "precision": "小数位数"
   },
   "error": {
     "title": "出现错误",

@@ -68,11 +68,11 @@ export function TaskComments({ taskId, comments, onRefresh }: TaskCommentsProps)
             <div className="flex-1 min-w-0">
               <div className="flex items-baseline gap-2">
                 <span className="text-xs font-medium">{c.author.name}</span>
-                <span className="text-[10px] text-muted-foreground">
+                <span className="text-xs text-muted-foreground">
                   {formatTime(c.createdAt)}
                 </span>
               </div>
-              <p className="text-xs text-foreground whitespace-pre-wrap mt-0.5">
+              <p className="text-sm text-foreground whitespace-pre-wrap mt-0.5">
                 {c.content}
               </p>
             </div>

@@ -22,7 +22,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { UserForm } from "./user-form";
-import { resetPassword } from "@/actions/users";
+import { resetPassword, deleteUser } from "@/actions/users";
 import type { UserRole } from "@/generated/prisma/client";
 
 export interface UserItem {
@@ -30,7 +30,6 @@ export interface UserItem {
   name: string;
   email: string;
   role: UserRole;
-  locale: string;
   createdAt: Date;
 }
 
@@ -54,6 +53,13 @@ export function UserList({ users }: UserListProps) {
     });
   }
 
+  function handleDelete(userId: string) {
+    if (!confirm(t("deleteUserConfirm"))) return;
+    startTransition(async () => {
+      await deleteUser(userId);
+    });
+  }
+
   if (users.length === 0) {
     return (
       <p className="py-8 text-center text-sm text-muted-foreground">
@@ -70,7 +76,6 @@ export function UserList({ users }: UserListProps) {
             <TableHead>{t("name")}</TableHead>
             <TableHead>{t("email")}</TableHead>
             <TableHead>{t("role")}</TableHead>
-            <TableHead>{t("locale")}</TableHead>
             <TableHead />
           </TableRow>
         </TableHeader>
@@ -84,7 +89,6 @@ export function UserList({ users }: UserListProps) {
                   {user.role === "Admin" ? t("admin") : t("member")}
                 </Badge>
               </TableCell>
-              <TableCell>{user.locale === "zh" ? "中文" : "English"}</TableCell>
               <TableCell>
                 <div className="flex items-center gap-1">
                   <UserForm
@@ -103,6 +107,13 @@ export function UserList({ users }: UserListProps) {
                     }}
                   >
                     {t("resetPassword")}
+                  </button>
+                  <button
+                    className="rounded px-1.5 py-0.5 text-xs text-red-500 hover:bg-red-50"
+                    onClick={() => handleDelete(user.id)}
+                    disabled={isPending}
+                  >
+                    {tCommon("delete")}
                   </button>
                 </div>
               </TableCell>

@@ -45,7 +45,7 @@ export function WorkstreamForm({ dealId, workstream, trigger }: WorkstreamFormPr
 
   return (
     <Dialog>
-      <DialogTrigger render={<span />}>
+      <DialogTrigger nativeButton={false} render={<span />}>
         {trigger}
       </DialogTrigger>
       <DialogContent>

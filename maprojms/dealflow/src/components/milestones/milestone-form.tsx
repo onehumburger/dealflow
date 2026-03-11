@@ -94,7 +94,7 @@ export function MilestoneForm({ dealId, milestone, trigger }: MilestoneFormProps
 
   return (
     <Popover>
-      <PopoverTrigger render={<span />}>
+      <PopoverTrigger nativeButton={false} render={<span />}>
         {trigger}
       </PopoverTrigger>
       <PopoverContent align="start" className="w-80">

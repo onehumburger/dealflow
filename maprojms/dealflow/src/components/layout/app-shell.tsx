@@ -4,12 +4,14 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import { LocaleSwitcher } from "./locale-switcher";
 import { LogoutButton } from "./logout-button";
+import { TimerBar } from "@/components/timer/timer-bar";
 
 export async function AppShell({ children }: { children: React.ReactNode }) {
   const session = await auth();
   const locale = await getLocale();
   const t = await getTranslations("nav");
   const tCommon = await getTranslations("common");
+  const tBilling = await getTranslations("billing");
 
   if (!session) {
     return <>{children}</>;
@@ -21,6 +23,9 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
     { href: `/${locale}/dashboard`, label: t("dashboard") },
     { href: `/${locale}/deals`, label: t("deals") },
     { href: `/${locale}/tasks`, label: t("myTasks") },
+    { href: `/${locale}/calendar`, label: t("calendar") },
+    { href: `/${locale}/billing`, label: tBilling("billing") },
+    { href: `/${locale}/documents`, label: t("documents") },
     { href: `/${locale}/contacts`, label: t("contacts") },
     ...(role === "Admin"
       ? [{ href: `/${locale}/admin/users`, label: t("admin") }]
@@ -68,6 +73,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
       </header>
 
       <main>{children}</main>
+      <TimerBar />
     </div>
   );
 }

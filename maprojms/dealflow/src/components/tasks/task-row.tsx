@@ -1,12 +1,13 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { updateTaskStatus } from "@/actions/tasks";
 import { useTaskPanel } from "@/hooks/use-task-panel";
 import type { TaskPriority, TaskStatus } from "@/generated/prisma/client";
+import { TimerButton } from "@/components/timer/timer-button";
 
 interface TaskRowProps {
   task: {
@@ -15,8 +16,11 @@ interface TaskRowProps {
     status: TaskStatus;
     priority: TaskPriority;
     dueDate: Date | null;
+    completedAt: Date | null;
     assignee: { name: string } | null;
   };
+  hideOverdue?: boolean;
+  hideCheckbox?: boolean;
 }
 
 function formatRelativeDate(
@@ -38,19 +42,24 @@ function formatRelativeDate(
   }).format(date);
 }
 
-export function TaskRow({ task }: TaskRowProps) {
+export function TaskRow({ task, hideOverdue, hideCheckbox }: TaskRowProps) {
   const locale = useLocale();
   const t = useTranslations("task");
   const [isPending, startTransition] = useTransition();
   const openPanel = useTaskPanel((s) => s.open);
 
+  const [justCompleted, setJustCompleted] = useState(false);
   const isDone = task.status === "Done";
   const isOverdue =
-    task.dueDate && !isDone && task.dueDate < new Date();
+    !hideOverdue && task.dueDate && !isDone && task.dueDate < new Date();
 
   function handleToggle(e: React.MouseEvent) {
     e.stopPropagation();
     const newStatus = isDone ? "ToDo" : "Done";
+    if (!isDone) {
+      // Show completion animation briefly before the server revalidates
+      setJustCompleted(true);
+    }
     startTransition(async () => {
       await updateTaskStatus(task.id, newStatus as TaskStatus);
     });
@@ -63,34 +72,42 @@ export function TaskRow({ task }: TaskRowProps) {
   return (
     <div
       className={cn(
-        "flex items-center gap-3 rounded-md px-2 py-1.5 hover:bg-muted/50",
-        isPending && "opacity-50"
+        "group/row flex items-center gap-3 rounded-md px-2 py-1.5 hover:bg-muted/50 transition-all duration-300",
+        isPending && !justCompleted && "opacity-50",
+        justCompleted && "bg-emerald-50 opacity-60"
       )}
     >
-      {/* Checkbox */}
-      <button
-        type="button"
-        onClick={handleToggle}
-        disabled={isPending}
-        className={cn(
-          "flex size-4 shrink-0 items-center justify-center rounded border transition-colors",
-          isDone
-            ? "border-emerald-600 bg-emerald-600 text-white"
-            : "border-input hover:border-emerald-400"
-        )}
-      >
-        {isDone && (
-          <svg className="size-3" viewBox="0 0 12 12" fill="none">
-            <path
-              d="M2.5 6L5 8.5L9.5 3.5"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        )}
-      </button>
+      {/* Checkbox — hidden on My Tasks page to prevent accidental completion */}
+      {!hideCheckbox && (
+        <button
+          type="button"
+          onClick={handleToggle}
+          disabled={isPending}
+          className={cn(
+            "flex size-4 shrink-0 items-center justify-center rounded border transition-colors",
+            isDone || justCompleted
+              ? "border-emerald-600 bg-emerald-600 text-white"
+              : "border-input hover:border-emerald-400"
+          )}
+        >
+          {(isDone || justCompleted) && (
+            <svg className="size-3" viewBox="0 0 12 12" fill="none">
+              <path
+                d="M2.5 6L5 8.5L9.5 3.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
+        </button>
+      )}
+
+      {/* Timer button */}
+      <span className="inline-flex shrink-0">
+        <TimerButton taskId={task.id} size="sm" />
+      </span>
 
       {/* Title — clickable to open panel */}
       <button
@@ -98,7 +115,7 @@ export function TaskRow({ task }: TaskRowProps) {
         onClick={handleTitleClick}
         className={cn(
           "flex-1 truncate text-left text-sm hover:underline",
-          isDone && "text-muted-foreground line-through"
+          (isDone || justCompleted) && "text-muted-foreground line-through"
         )}
       >
         {task.title}
@@ -109,8 +126,15 @@ export function TaskRow({ task }: TaskRowProps) {
         <span className="size-2 shrink-0 rounded-full bg-red-500" title="High" />
       )}
 
-      {/* Due date */}
-      {task.dueDate && (
+      {/* Date: completed date for done tasks, due date otherwise */}
+      {isDone && task.completedAt ? (
+        <span className="shrink-0 text-xs text-emerald-600">
+          {new Intl.DateTimeFormat(locale, {
+            month: "short",
+            day: "numeric",
+          }).format(new Date(task.completedAt))}
+        </span>
+      ) : task.dueDate && !isDone ? (
         <span
           className={cn(
             "shrink-0 text-xs",
@@ -119,7 +143,7 @@ export function TaskRow({ task }: TaskRowProps) {
         >
           {formatRelativeDate(task.dueDate, locale, t)}
         </span>
-      )}
+      ) : null}
 
       {/* Assignee */}
       {task.assignee && (

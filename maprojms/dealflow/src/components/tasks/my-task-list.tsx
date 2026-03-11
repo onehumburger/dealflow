@@ -13,6 +13,7 @@ interface TaskData {
   status: TaskStatus;
   priority: TaskPriority;
   dueDate: Date | null;
+  completedAt: Date | null;
   assignee: { name: string } | null;
   workstreamName: string;
 }
@@ -58,7 +59,7 @@ export function MyTaskList({ dealGroups, locale }: MyTaskListProps) {
             </div>
             <div className="px-2 py-1">
               {group.tasks.map((task) => (
-                <TaskRow key={task.id} task={task} />
+                <TaskRow key={task.id} task={task} hideCheckbox />
               ))}
             </div>
           </div>

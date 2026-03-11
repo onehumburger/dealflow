@@ -79,7 +79,7 @@ export function DealContactLinker({
       />
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger render={<span />}>
+        <DialogTrigger nativeButton={false} render={<span />}>
           <button className="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90">
             + {t("linkExisting")}
           </button>

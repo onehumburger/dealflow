@@ -73,6 +73,8 @@ export default async function DealDetailPage({
   const tDecision = await getTranslations("decision");
   const tContact = await getTranslations("contact");
   const tDocument = await getTranslations("document");
+  const tCalendar = await getTranslations("calendar");
+  const tTimer = await getTranslations("timer");
 
   // Serialize dates for client components
   const workstreamsData = deal.workstreams.map((ws) => ({
@@ -84,6 +86,7 @@ export default async function DealDetailPage({
       status: t.status,
       priority: t.priority,
       dueDate: t.dueDate ? new Date(t.dueDate) : null,
+      completedAt: t.completedAt ? new Date(t.completedAt) : null,
       assigneeId: t.assigneeId,
       assignee: t.assignee,
     })),
@@ -110,6 +113,11 @@ export default async function DealDetailPage({
     isDone: m.isDone,
   }));
 
+  // Permission: can current user create/delete tasks?
+  const userRole = (session.user as unknown as { role: string }).role;
+  const canManageTasks =
+    userRole === "Admin" || deal.dealLeadId === session.user.id;
+
   // Workstream options for ActivityForm
   const workstreamOptions = deal.workstreams.map((ws) => ({
     id: ws.id,
@@ -123,11 +131,19 @@ export default async function DealDetailPage({
         deal={{
           id: deal.id,
           name: deal.name,
+          codeName: deal.codeName,
           status: deal.status,
           clientName: deal.clientName,
           targetCompany: deal.targetCompany,
+          jurisdictions: deal.jurisdictions,
           summary: deal.summary,
           dealLead: deal.dealLead,
+          phase: deal.phase,
+          dealValue: deal.dealValue ? Number(deal.dealValue) : null,
+          valueCurrency: deal.valueCurrency,
+          keyTerms: deal.keyTerms,
+          source: deal.source,
+          sourceNote: deal.sourceNote,
         }}
       />
 
@@ -145,7 +161,7 @@ export default async function DealDetailPage({
       <div className="flex gap-6">
         {/* Workstreams (left) */}
         <div className="flex-1 min-w-0">
-          <WorkstreamList workstreams={workstreamsData} dealId={dealId} />
+          <WorkstreamList workstreams={workstreamsData} dealId={dealId} dealStatus={deal.status} canManageTasks={canManageTasks} />
         </div>
 
         {/* Activity Feed (right) */}
@@ -180,10 +196,22 @@ export default async function DealDetailPage({
         >
           {tDocument("documents")} ({deal._count.documents})
         </Link>
+        <Link
+          href={`/${locale}/deals/${dealId}/calendar`}
+          className="rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted"
+        >
+          {tCalendar("calendar")}
+        </Link>
+        <Link
+          href={`/${locale}/deals/${dealId}/time`}
+          className="rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted"
+        >
+          {tTimer("timeEntries")}
+        </Link>
       </div>
 
       {/* Task slide-over panel */}
-      <TaskPanel />
+      <TaskPanel canManageTasks={canManageTasks} />
     </div>
   );
 }

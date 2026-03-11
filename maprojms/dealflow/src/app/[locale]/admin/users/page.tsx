@@ -27,7 +27,6 @@ export default async function AdminUsersPage() {
       name: true,
       email: true,
       role: true,
-      locale: true,
       createdAt: true,
     },
   });

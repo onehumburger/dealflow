@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +23,7 @@ interface MyTasksWidgetProps {
     high: string;
     overdue: string;
     noTasks: string;
+    allDeals: string;
   };
 }
 
@@ -48,18 +52,59 @@ function isOverdue(date: Date): boolean {
 }
 
 export function MyTasksWidget({ tasks, locale, translations }: MyTasksWidgetProps) {
+  const [selectedDeal, setSelectedDeal] = useState<string | null>(null);
+
+  const deals = Array.from(
+    new Map(tasks.map((t) => [t.dealId, t.dealName]))
+  );
+
+  const filteredTasks = selectedDeal
+    ? tasks.filter((t) => t.dealId === selectedDeal)
+    : tasks;
+
   return (
     <div className="rounded-lg border bg-card">
       <div className="border-b px-4 py-3">
-        <h3 className="text-sm font-semibold">{translations.myTasks}</h3>
+        <h3 className="text-base font-semibold">{translations.myTasks}</h3>
+        {deals.length > 1 && (
+          <div className="mt-1.5 flex flex-wrap gap-1">
+            <button
+              type="button"
+              onClick={() => setSelectedDeal(null)}
+              className={cn(
+                "rounded-full px-2 py-0.5 text-xs transition-colors",
+                selectedDeal === null
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              )}
+            >
+              {translations.allDeals}
+            </button>
+            {deals.map(([id, name]) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => setSelectedDeal(id)}
+                className={cn(
+                  "rounded-full px-2 py-0.5 text-xs transition-colors",
+                  selectedDeal === id
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80"
+                )}
+              >
+                {name}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
       <div className="divide-y">
-        {tasks.length === 0 ? (
+        {filteredTasks.length === 0 ? (
           <p className="px-4 py-6 text-center text-sm text-muted-foreground">
             {translations.noTasks}
           </p>
         ) : (
-          tasks.map((task) => (
+          filteredTasks.map((task) => (
             <Link
               key={task.id}
               href={`/${locale}/deals/${task.dealId}`}

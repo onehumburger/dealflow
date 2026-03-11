@@ -4,8 +4,9 @@ import { prisma } from "@/lib/prisma";
 import { getLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
-import { DocumentList } from "@/components/documents/document-list";
 import { DocumentUpload } from "@/components/documents/document-upload";
+import { DealDocumentsContent } from "./deal-documents-content";
+import type { DocumentItem } from "@/components/documents/document-hub";
 
 export default async function DocumentsPage({
   params,
@@ -40,8 +41,10 @@ export default async function DocumentsPage({
       documents: {
         orderBy: { createdAt: "desc" },
         include: {
-          workstream: { select: { name: true } },
-          uploadedBy: { select: { name: true } },
+          deal: { select: { id: true, name: true } },
+          workstream: { select: { id: true, name: true } },
+          task: { select: { id: true, title: true } },
+          uploadedBy: { select: { id: true, name: true } },
         },
       },
     },
@@ -51,17 +54,26 @@ export default async function DocumentsPage({
     notFound();
   }
 
-  const isMember = deal.members.some((m: { userId: string }) => m.userId === session.user?.id);
+  const isMember = deal.members.some(
+    (m: { userId: string }) => m.userId === session.user?.id
+  );
   if (!isMember) notFound();
 
   const t = await getTranslations("document");
 
-  const documentsData = deal.documents.map((d) => ({
+  // Serialize documents to DocumentItem[] with ISO date strings
+  const documentsData: DocumentItem[] = deal.documents.map((d) => ({
     id: d.id,
     name: d.name,
+    fileType: d.fileType,
+    fileSize: d.fileSize,
+    currentVersion: d.currentVersion,
+    createdAt: d.createdAt.toISOString(),
+    updatedAt: d.updatedAt.toISOString(),
+    deal: d.deal,
     workstream: d.workstream,
+    task: d.task,
     uploadedBy: d.uploadedBy,
-    createdAt: new Date(d.createdAt),
   }));
 
   const workstreamOptions = deal.workstreams.map((ws) => ({
@@ -72,6 +84,13 @@ export default async function DocumentsPage({
   const allTasks = deal.workstreams.flatMap((ws) =>
     ws.tasks.map((t) => ({ id: t.id, title: t.title }))
   );
+
+  // Build workstream ordering map for grouping
+  const workstreamOrder = deal.workstreams.map((ws) => ({
+    id: ws.id,
+    name: ws.name,
+    tasks: ws.tasks.map((t) => ({ id: t.id, title: t.title })),
+  }));
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
@@ -93,8 +112,12 @@ export default async function DocumentsPage({
         tasks={allTasks}
       />
 
-      <div className="mt-4">
-        <DocumentList documents={documentsData} />
+      <div className="mt-6">
+        <DealDocumentsContent
+          dealId={dealId}
+          documents={documentsData}
+          workstreams={workstreamOrder}
+        />
       </div>
     </div>
   );

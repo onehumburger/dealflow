@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
-import { Trash2, Unlink } from "lucide-react";
+import { ChevronDown, ChevronRight, Trash2, Unlink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,6 +28,7 @@ export interface ContactItem {
   timezone: string | null;
   notes: string | null;
   roleInDeal?: string | null;
+  dealLinks?: { dealId: string; dealName: string; roleInDeal: string | null }[];
 }
 
 interface ContactListProps {
@@ -98,7 +99,16 @@ export function ContactList({
       <TableBody>
         {contacts.map((c) => (
           <TableRow key={c.id}>
-            <TableCell className="font-medium">{c.name}</TableCell>
+            <TableCell className="font-medium">
+              <span className="flex items-center gap-1.5">
+                {c.name}
+                {c.dealLinks && c.dealLinks.length > 1 && (
+                  <Badge variant="outline" className="text-xs px-1 py-0">
+                    {t("linkedToDeals", { count: c.dealLinks.length })}
+                  </Badge>
+                )}
+              </span>
+            </TableCell>
             <TableCell>{c.organization ?? "\u2014"}</TableCell>
             <TableCell>
               <Badge variant="outline">{roleLabel(c.role)}</Badge>
@@ -157,5 +167,99 @@ export function ContactList({
         ))}
       </TableBody>
     </Table>
+  );
+}
+
+// --- Grouped view for global contacts page ---
+
+interface DealGroup {
+  dealName: string;
+  contacts: (ContactItem & {
+    dealLinks: { dealId: string; dealName: string; roleInDeal: string | null }[];
+  })[];
+}
+
+interface GroupedContactListProps {
+  groups: [string, DealGroup][];
+  unlinked: (ContactItem & {
+    dealLinks: { dealId: string; dealName: string; roleInDeal: string | null }[];
+  })[];
+}
+
+export function GroupedContactList({ groups, unlinked }: GroupedContactListProps) {
+  const t = useTranslations("contact");
+  const tCommon = useTranslations("common");
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+
+  function toggleCollapse(key: string) {
+    setCollapsed((prev) => ({ ...prev, [key]: !prev[key] }));
+  }
+
+  if (groups.length === 0 && unlinked.length === 0) {
+    return (
+      <p className="py-8 text-center text-sm text-muted-foreground">
+        {tCommon("noResults")}
+      </p>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      {groups.map(([dealId, group]) => (
+        <div key={dealId} className="rounded-lg border bg-card">
+          <button
+            type="button"
+            className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-muted/50"
+            onClick={() => toggleCollapse(dealId)}
+          >
+            <div className="flex items-center gap-2">
+              {collapsed[dealId] ? (
+                <ChevronRight className="size-4 text-muted-foreground" />
+              ) : (
+                <ChevronDown className="size-4 text-muted-foreground" />
+              )}
+              <span className="text-sm font-semibold">{group.dealName}</span>
+            </div>
+            <span className="text-xs text-muted-foreground">
+              {group.contacts.length}
+            </span>
+          </button>
+          {!collapsed[dealId] && (
+            <div className="border-t">
+              <ContactList contacts={group.contacts} showDelete />
+            </div>
+          )}
+        </div>
+      ))}
+
+      {unlinked.length > 0 && (
+        <div className="rounded-lg border bg-card">
+          <button
+            type="button"
+            className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-muted/50"
+            onClick={() => toggleCollapse("__unlinked")}
+          >
+            <div className="flex items-center gap-2">
+              {collapsed["__unlinked"] ? (
+                <ChevronRight className="size-4 text-muted-foreground" />
+              ) : (
+                <ChevronDown className="size-4 text-muted-foreground" />
+              )}
+              <span className="text-sm font-semibold text-muted-foreground">
+                {t("unlinkedContacts")}
+              </span>
+            </div>
+            <span className="text-xs text-muted-foreground">
+              {unlinked.length}
+            </span>
+          </button>
+          {!collapsed["__unlinked"] && (
+            <div className="border-t">
+              <ContactList contacts={unlinked} showDelete />
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

@@ -96,7 +96,7 @@ export function DecisionDetail({
 
   return (
     <Sheet open onOpenChange={(open) => !open && onClose()}>
-      <SheetContent side="right" className="overflow-y-auto sm:max-w-lg">
+      <SheetContent side="right" className="overflow-y-auto data-[side=right]:sm:max-w-lg">
         <SheetHeader>
           <SheetTitle>{decision.title}</SheetTitle>
         </SheetHeader>

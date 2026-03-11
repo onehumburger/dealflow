@@ -53,7 +53,10 @@ export default async function DealsPage() {
 
       <div className="mt-6">
         <DealList
-          deals={deals}
+          deals={deals.map((d) => ({
+            ...d,
+            dealValue: d.dealValue ? Number(d.dealValue) : null,
+          }))}
           locale={locale}
           translations={{
             name: t("name"),
@@ -63,6 +66,8 @@ export default async function DealsPage() {
             status: t("status"),
             dealLead: t("dealLead"),
             tasks: tTask("tasks"),
+            phase: t("phase"),
+            dealValue: t("dealValue"),
           }}
         />
       </div>

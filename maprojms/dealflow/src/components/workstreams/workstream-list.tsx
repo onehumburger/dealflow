@@ -12,6 +12,7 @@ interface WorkstreamTask {
   status: TaskStatus;
   priority: TaskPriority;
   dueDate: Date | null;
+  completedAt: Date | null;
   assigneeId: string | null;
   assignee: { name: string } | null;
 }
@@ -25,9 +26,11 @@ interface WorkstreamData {
 interface WorkstreamListProps {
   workstreams: WorkstreamData[];
   dealId: string;
+  dealStatus?: string;
+  canManageTasks?: boolean;
 }
 
-export function WorkstreamList({ workstreams, dealId }: WorkstreamListProps) {
+export function WorkstreamList({ workstreams, dealId, dealStatus, canManageTasks }: WorkstreamListProps) {
   const tWs = useTranslations("workstream");
   const statusFilter = useTaskFilters((s) => s.statusFilter);
   const assigneeFilter = useTaskFilters((s) => s.assigneeFilter);
@@ -46,7 +49,7 @@ export function WorkstreamList({ workstreams, dealId }: WorkstreamListProps) {
   return (
     <div className="flex flex-col gap-3">
       {filteredWorkstreams.map((ws) => (
-        <WorkstreamSection key={ws.id} workstream={ws} dealId={dealId} />
+        <WorkstreamSection key={ws.id} workstream={ws} dealId={dealId} dealStatus={dealStatus} canManageTasks={canManageTasks} />
       ))}
 
       {/* Add Workstream dialog button */}

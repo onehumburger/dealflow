@@ -28,6 +28,9 @@ interface RecentActivityWidgetProps {
     milestoneChange: string;
     decisionCreated: string;
     documentUpload: string;
+    documentVersionUpload: string;
+    documentRestore: string;
+    documentDelete: string;
   };
 }
 
@@ -40,6 +43,9 @@ const typeStyles: Record<ActivityType, string> = {
   MilestoneChange: "bg-emerald-100 text-emerald-700",
   DecisionCreated: "bg-rose-100 text-rose-700",
   DocumentUpload: "bg-sky-100 text-sky-700",
+  DocumentVersionUpload: "bg-sky-100 text-sky-700",
+  DocumentRestore: "bg-teal-100 text-teal-700",
+  DocumentDelete: "bg-red-100 text-red-700",
 };
 
 const typeToKey: Record<ActivityType, keyof RecentActivityWidgetProps["activityTranslations"]> = {
@@ -51,6 +57,9 @@ const typeToKey: Record<ActivityType, keyof RecentActivityWidgetProps["activityT
   MilestoneChange: "milestoneChange",
   DecisionCreated: "decisionCreated",
   DocumentUpload: "documentUpload",
+  DocumentVersionUpload: "documentVersionUpload",
+  DocumentRestore: "documentRestore",
+  DocumentDelete: "documentDelete",
 };
 
 function formatTimestamp(date: Date, locale: string): string {
@@ -72,7 +81,7 @@ export function RecentActivityWidget({
   return (
     <div className="rounded-lg border bg-card">
       <div className="border-b px-4 py-3">
-        <h3 className="text-sm font-semibold">{translations.recentActivity}</h3>
+        <h3 className="text-base font-semibold">{translations.recentActivity}</h3>
       </div>
       <div className="divide-y max-h-[400px] overflow-y-auto">
         {entries.length === 0 ? (
@@ -88,7 +97,7 @@ export function RecentActivityWidget({
             >
               <span
                 className={cn(
-                  "mt-0.5 inline-flex h-5 shrink-0 items-center rounded px-1.5 text-[10px] font-medium uppercase",
+                  "mt-0.5 inline-flex h-5 shrink-0 items-center rounded px-1.5 text-xs font-medium uppercase",
                   typeStyles[entry.type] || "bg-gray-100 text-gray-600"
                 )}
               >
