@@ -74,6 +74,7 @@ export default async function DealDetailPage({
   const tContact = await getTranslations("contact");
   const tDocument = await getTranslations("document");
   const tCalendar = await getTranslations("calendar");
+  const tTimer = await getTranslations("timer");
 
   // Serialize dates for client components
   const workstreamsData = deal.workstreams.map((ws) => ({
@@ -187,6 +188,12 @@ export default async function DealDetailPage({
           className="rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted"
         >
           {tCalendar("calendar")}
+        </Link>
+        <Link
+          href={`/${locale}/deals/${dealId}/time`}
+          className="rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted"
+        >
+          {tTimer("timeEntries")}
         </Link>
       </div>
 
