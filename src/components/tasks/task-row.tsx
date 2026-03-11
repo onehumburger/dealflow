@@ -94,8 +94,8 @@ export function TaskRow({ task }: TaskRowProps) {
         )}
       </button>
 
-      {/* Timer button - appears on hover */}
-      <span className="hidden group-hover/row:inline-flex shrink-0">
+      {/* Timer button */}
+      <span className="inline-flex shrink-0">
         <TimerButton taskId={task.id} size="sm" />
       </span>
 

@@ -316,7 +316,7 @@ export function TaskPanel() {
                   taskId={task.id}
                   onDone={() => taskId && loadTask(taskId)}
                 />
-                <TimerButton taskId={task.id} size="md" />
+                <TimerButton taskId={task.id} size="lg" />
               </div>
             </div>
 
