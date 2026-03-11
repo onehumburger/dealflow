@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 import { getLocale } from "next-intl/server";
 import { logAudit } from "@/lib/audit";
 import { assertDealMember } from "@/actions/_helpers";
-import type { DealType, DealRole, DealStatus, MilestoneType } from "@/generated/prisma/client";
+import type { DealType, DealRole, DealStatus, DealPhase, DealSource, MilestoneType } from "@/generated/prisma/client";
 
 interface TemplateDefinition {
   milestones: { name: string; type: string }[];
@@ -38,6 +38,14 @@ export async function createDeal(formData: FormData) {
     ? memberIdsRaw.split(",").filter(Boolean)
     : [];
   const summary = (formData.get("summary") as string) || null;
+  const phase = (formData.get("phase") as string) || "Intake";
+  const dealValueRaw = formData.get("dealValue") as string;
+  const dealValue = dealValueRaw ? parseFloat(dealValueRaw) : null;
+  const valueCurrency = (formData.get("valueCurrency") as string) || "USD";
+  const keyTerms = (formData.get("keyTerms") as string) || null;
+  const sourceRaw = (formData.get("source") as string) || null;
+  const source = sourceRaw as DealSource | null;
+  const sourceNote = (formData.get("sourceNote") as string) || null;
   const templateId = (formData.get("templateId") as string) || null;
 
   const validDealTypes = ["Auction", "Negotiated", "JV"];
@@ -51,6 +59,16 @@ export async function createDeal(formData: FormData) {
   }
   if (!validDealRoles.includes(ourRole)) {
     throw new Error("Invalid deal role");
+  }
+
+  const validPhases = ["Intake", "DueDiligence", "Negotiation", "Signing", "Closing", "PostClosing"];
+  const validSources = ["FAReferral", "DirectClient", "PartnerReferral", "Repeat", "Other"];
+
+  if (!validPhases.includes(phase)) {
+    throw new Error("Invalid deal phase");
+  }
+  if (sourceRaw && !validSources.includes(sourceRaw)) {
+    throw new Error("Invalid deal source");
   }
 
   // Fetch template definition if provided
@@ -75,6 +93,12 @@ export async function createDeal(formData: FormData) {
       targetCompany,
       jurisdictions,
       summary,
+      phase: phase as DealPhase,
+      dealValue: dealValue !== null && !isNaN(dealValue) ? dealValue : null,
+      valueCurrency,
+      keyTerms,
+      source,
+      sourceNote,
       dealLeadId,
       ...(definition
         ? {
@@ -139,6 +163,12 @@ export async function updateDeal(
     summary?: string | null;
     status?: DealStatus;
     dealLeadId?: string;
+    phase?: DealPhase;
+    dealValue?: number | null;
+    valueCurrency?: string;
+    keyTerms?: string | null;
+    source?: DealSource | null;
+    sourceNote?: string | null;
   }
 ) {
   const session = await auth();
