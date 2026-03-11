@@ -32,6 +32,10 @@ import {
 import { TaskComments } from "./task-comments";
 import { TaskDependencies } from "./task-dependencies";
 import { TaskSubtasks } from "./task-subtasks";
+import { TimerButton } from "@/components/timer/timer-button";
+import { TimeEntryList } from "@/components/time/time-entry-list";
+import { ManualTimeForm } from "@/components/time/manual-time-form";
+import { getTaskTimeEntries } from "@/actions/time-entries";
 import type { TaskStatus, TaskPriority } from "@/generated/prisma/client";
 
 type TaskData = Awaited<ReturnType<typeof getTaskDetail>>;
@@ -39,6 +43,7 @@ type TaskData = Awaited<ReturnType<typeof getTaskDetail>>;
 export function TaskPanel() {
   const t = useTranslations("task");
   const tCommon = useTranslations("common");
+  const tTimer = useTranslations("timer");
 
   const taskId = useTaskPanel((s) => s.taskId);
   const close = useTaskPanel((s) => s.close);
@@ -55,6 +60,7 @@ export function TaskPanel() {
   const [priority, setPriority] = useState<TaskPriority>("Normal");
   const [assigneeId, setAssigneeId] = useState<string | null>(null);
   const [dueDate, setDueDate] = useState("");
+  const [timeEntries, setTimeEntries] = useState<Awaited<ReturnType<typeof getTaskTimeEntries>>>([]);
 
   const loadTask = useCallback(async (id: string) => {
     setLoading(true);
@@ -71,6 +77,9 @@ export function TaskPanel() {
           ? new Date(data.dueDate).toISOString().split("T")[0]
           : ""
       );
+      // Load time entries
+      const entries = await getTaskTimeEntries(id);
+      setTimeEntries(entries);
     } finally {
       setLoading(false);
     }
@@ -292,6 +301,24 @@ export function TaskPanel() {
               dealId={task.workstream.dealId}
               onRefresh={() => taskId && loadTask(taskId)}
             />
+
+            {/* Time Entries */}
+            <div>
+              <Label className="mb-1.5 text-xs text-muted-foreground">
+                {tTimer("timeEntries")}
+              </Label>
+              <TimeEntryList
+                entries={timeEntries}
+                onRefresh={() => taskId && loadTask(taskId)}
+              />
+              <div className="mt-2 flex items-center gap-2">
+                <ManualTimeForm
+                  taskId={task.id}
+                  onDone={() => taskId && loadTask(taskId)}
+                />
+                <TimerButton taskId={task.id} size="md" />
+              </div>
+            </div>
 
             {/* Comments */}
             <TaskComments
