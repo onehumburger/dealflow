@@ -19,12 +19,12 @@ interface CalendarState {
 export const useCalendar = create<CalendarState>((set) => {
   const now = new Date();
   return {
-  year: now.getFullYear(),
-  month: now.getMonth() + 1,
-  showMilestones: true,
-  showTasks: true,
-  showActivity: false,
-  selectedDealIds: null,
+    year: now.getFullYear(),
+    month: now.getMonth() + 1,
+    showMilestones: true,
+    showTasks: true,
+    showActivity: false,
+    selectedDealIds: null,
   prevMonth: () =>
     set((s) => {
       if (s.month === 1) return { year: s.year - 1, month: 12 };

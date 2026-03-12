@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition, useRef } from "react";
+import { useTransition, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,7 +10,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { createActivityEntry } from "@/actions/activity";
 import type { ActivityType } from "@/generated/prisma/client";
@@ -33,20 +32,35 @@ const MANUAL_ACTIVITY_TYPES: ActivityType[] = [
   "ClientInstruction",
 ];
 
+const typeToKey: Record<string, string> = {
+  Note: "note",
+  Call: "call",
+  Meeting: "meeting",
+  ClientInstruction: "clientInstruction",
+};
+
 export function ActivityForm({ dealId, workstreams, onClose }: ActivityFormProps) {
   const t = useTranslations("activity");
   const tCommon = useTranslations("common");
   const [isPending, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
+  const [selectedType, setSelectedType] = useState<ActivityType>("Note");
+  const [selectedWsId, setSelectedWsId] = useState("");
 
   function handleSubmit(formData: FormData) {
     formData.set("dealId", dealId);
+    formData.set("type", selectedType);
+    formData.set("workstreamId", selectedWsId);
     startTransition(async () => {
       await createActivityEntry(formData);
       formRef.current?.reset();
       onClose();
     });
   }
+
+  const selectedWsName = selectedWsId
+    ? workstreams.find((ws) => ws.id === selectedWsId)?.name
+    : null;
 
   return (
     <form ref={formRef} action={handleSubmit} className="flex flex-col gap-2.5 border-b pb-3 mb-2">
@@ -55,14 +69,16 @@ export function ActivityForm({ dealId, workstreams, onClose }: ActivityFormProps
           <Label htmlFor="activity-type" className="sr-only">
             {t("type")}
           </Label>
-          <Select name="type" defaultValue="Note">
+          <Select value={selectedType} onValueChange={(v) => setSelectedType(v as ActivityType)}>
             <SelectTrigger className="w-full">
-              <SelectValue />
+              <span className="flex flex-1 text-left truncate">
+                {t(typeToKey[selectedType] as Parameters<typeof t>[0])}
+              </span>
             </SelectTrigger>
             <SelectContent>
               {MANUAL_ACTIVITY_TYPES.map((at) => (
                 <SelectItem key={at} value={at}>
-                  {t(at === "ClientInstruction" ? "clientInstruction" : at.toLowerCase() as Parameters<typeof t>[0])}
+                  {t(typeToKey[at] as Parameters<typeof t>[0])}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -74,9 +90,11 @@ export function ActivityForm({ dealId, workstreams, onClose }: ActivityFormProps
             <Label htmlFor="activity-ws" className="sr-only">
               {t("workstream")}
             </Label>
-            <Select name="workstreamId" defaultValue="">
+            <Select value={selectedWsId} onValueChange={(v) => setSelectedWsId(v ?? "")}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder={t("allWorkstreams")} />
+                <span className="flex flex-1 text-left truncate text-muted-foreground">
+                  {selectedWsName ?? t("allWorkstreams")}
+                </span>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="">

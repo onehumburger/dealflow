@@ -125,6 +125,7 @@ export function BillingPageClient({
           users={users}
           rates={rates}
           onRatesChange={setRates}
+          filterDealId={dealId || undefined}
         />
       )}
 

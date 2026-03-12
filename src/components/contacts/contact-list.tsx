@@ -272,10 +272,10 @@ interface GroupedContactListProps {
 export function GroupedContactList({ groups, unlinked }: GroupedContactListProps) {
   const t = useTranslations("contact");
   const tCommon = useTranslations("common");
-  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   function toggleCollapse(key: string) {
-    setCollapsed((prev) => ({ ...prev, [key]: !prev[key] }));
+    setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
   }
 
   if (groups.length === 0 && unlinked.length === 0) {
@@ -296,10 +296,10 @@ export function GroupedContactList({ groups, unlinked }: GroupedContactListProps
             onClick={() => toggleCollapse(dealId)}
           >
             <div className="flex items-center gap-2">
-              {collapsed[dealId] ? (
-                <ChevronRight className="size-4 text-muted-foreground" />
-              ) : (
+              {expanded[dealId] ? (
                 <ChevronDown className="size-4 text-muted-foreground" />
+              ) : (
+                <ChevronRight className="size-4 text-muted-foreground" />
               )}
               <span className="text-sm font-semibold">{group.dealName}</span>
             </div>
@@ -307,7 +307,7 @@ export function GroupedContactList({ groups, unlinked }: GroupedContactListProps
               {group.contacts.length}
             </span>
           </button>
-          {!collapsed[dealId] && (
+          {expanded[dealId] && (
             <div className="border-t">
               <ContactList contacts={group.contacts} showDelete />
             </div>
@@ -323,10 +323,10 @@ export function GroupedContactList({ groups, unlinked }: GroupedContactListProps
             onClick={() => toggleCollapse("__unlinked")}
           >
             <div className="flex items-center gap-2">
-              {collapsed["__unlinked"] ? (
-                <ChevronRight className="size-4 text-muted-foreground" />
-              ) : (
+              {expanded["__unlinked"] ? (
                 <ChevronDown className="size-4 text-muted-foreground" />
+              ) : (
+                <ChevronRight className="size-4 text-muted-foreground" />
               )}
               <span className="text-sm font-semibold text-muted-foreground">
                 {t("unlinkedContacts")}
@@ -336,7 +336,7 @@ export function GroupedContactList({ groups, unlinked }: GroupedContactListProps
               {unlinked.length}
             </span>
           </button>
-          {!collapsed["__unlinked"] && (
+          {expanded["__unlinked"] && (
             <div className="border-t">
               <ContactList contacts={unlinked} showDelete />
             </div>

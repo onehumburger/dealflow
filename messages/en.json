@@ -128,10 +128,10 @@
     "deleteConfirm": "Delete this workstream and all its tasks?"
   },
   "activity": {
-    "addNote": "Add Note",
+    "addNote": "Add Activity Note",
     "note": "Note",
-    "call": "Call",
-    "meeting": "Meeting",
+    "call": "Phone Call",
+    "meeting": "In-Person Meeting",
     "clientInstruction": "Client Instruction",
     "taskUpdate": "Task Update",
     "milestoneChange": "Milestone",
@@ -145,7 +145,10 @@
     "allWorkstreams": "All Workstreams",
     "contentPlaceholder": "Write a note...",
     "hideTaskUpdates": "Hide task updates",
-    "showTaskUpdates": "Show task updates"
+    "showTaskUpdates": "Show task updates",
+    "editEntry": "Edit",
+    "deleteEntry": "Delete",
+    "deleteEntryConfirm": "Delete this activity entry?"
   },
   "decision": {
     "decisions": "Decisions",
@@ -220,8 +223,6 @@
     "downloadAll": "Download All",
     "downloadDocs": "Download Documents",
     "currentVersion": "Current Version",
-    "restoreVersion": "Restore This Version",
-    "restoreConfirm": "Restore to version {version}? This will create a new version.",
     "versionNote": "Version note (optional)",
     "generalDocuments": "General Documents",
     "allDeals": "All Deals",

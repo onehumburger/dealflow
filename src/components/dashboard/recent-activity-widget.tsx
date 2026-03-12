@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { ActivityType } from "@/generated/prisma/client";
@@ -18,6 +21,8 @@ interface RecentActivityWidgetProps {
   translations: {
     recentActivity: string;
     noResults: string;
+    showTaskUpdates: string;
+    hideTaskUpdates: string;
   };
   activityTranslations: {
     note: string;
@@ -78,18 +83,30 @@ export function RecentActivityWidget({
   translations,
   activityTranslations,
 }: RecentActivityWidgetProps) {
+  const [hideTaskUpdates, setHideTaskUpdates] = useState(true);
+
+  const filtered = hideTaskUpdates
+    ? entries.filter((e) => e.type !== "TaskUpdate")
+    : entries;
+
   return (
     <div className="rounded-lg border bg-card">
-      <div className="border-b px-4 py-3">
+      <div className="flex items-center justify-between border-b px-4 py-3">
         <h3 className="text-base font-semibold">{translations.recentActivity}</h3>
+        <button
+          onClick={() => setHideTaskUpdates(!hideTaskUpdates)}
+          className="rounded-md border border-dashed px-2 py-1 text-xs text-muted-foreground hover:bg-muted/50"
+        >
+          {hideTaskUpdates ? translations.showTaskUpdates : translations.hideTaskUpdates}
+        </button>
       </div>
       <div className="divide-y max-h-[400px] overflow-y-auto">
-        {entries.length === 0 ? (
+        {filtered.length === 0 ? (
           <p className="px-4 py-6 text-center text-sm text-muted-foreground">
             {translations.noResults}
           </p>
         ) : (
-          entries.map((entry) => (
+          filtered.map((entry) => (
             <Link
               key={entry.id}
               href={`/${locale}/deals/${entry.dealId}`}
@@ -97,7 +114,7 @@ export function RecentActivityWidget({
             >
               <span
                 className={cn(
-                  "mt-0.5 inline-flex h-5 shrink-0 items-center rounded px-1.5 text-xs font-medium uppercase",
+                  "mt-0.5 inline-flex h-5 shrink-0 items-center rounded px-1.5 text-xs font-medium",
                   typeStyles[entry.type] || "bg-gray-100 text-gray-600"
                 )}
               >

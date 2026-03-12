@@ -216,6 +216,8 @@ export default async function DashboardPage() {
           translations={{
             recentActivity: tDashboard("recentActivity"),
             noResults: tCommon("noResults"),
+            showTaskUpdates: tActivity("showTaskUpdates"),
+            hideTaskUpdates: tActivity("hideTaskUpdates"),
           }}
           activityTranslations={{
             note: tActivity("note"),

@@ -72,38 +72,38 @@ async function main() {
     data: [
       {
         type: "Note",
-        content: "管理层面谈完成（3月25-26日Stuttgart现场）。CEO Dr. Müller确认退休后6个月过渡期。CTO Dr. Hoffmann表示愿意留任。关键客户Bosch和Continental的合同续约前景良好。",
+        content: "管理层面谈完成（2月25-26日Stuttgart现场）。CEO Dr. Müller确认退休后6个月过渡期。CTO Dr. Hoffmann表示愿意留任。关键客户Bosch和Continental的合同续约前景良好。",
         dealId: alpha.id,
         authorId: zhangLin.id,
-        createdAt: new Date("2026-03-26"),
+        createdAt: new Date("2026-02-27"),
       },
       {
         type: "Note",
         content: "知识产权尽调完成。37项专利权属清晰，无质押。前员工专利纠纷（案号7 O 158/25）经德国律师评估，预计最大风险敞口€250K，建议在SPA中设special indemnity。员工发明人补偿义务已全部清偿。",
         dealId: alpha.id,
         authorId: wangHao.id,
-        createdAt: new Date("2026-03-28"),
+        createdAt: new Date("2026-03-03"),
       },
       {
         type: "Note",
         content: "环境尽调完成。ERM出具Phase II环境报告：Stuttgart工厂土壤重金属含量在限值范围内，无需修复。但建议交割后定期监测。历史电镀车间区域已于2010年封闭处理，无额外义务。",
         dealId: alpha.id,
         authorId: chenYu.id,
-        createdAt: new Date("2026-04-02"),
+        createdAt: new Date("2026-03-06"),
       },
       {
         type: "Meeting",
         content: "尽调总结内部会议。全部工作组尽调报告已收齐。主要发现：(1) IP纠纷风险可控；(2) 环境无重大问题；(3) 3份客户合同含变更控制条款需通知；(4) 劳动合同整体合规，works council需提前沟通。开始编制Key Issue List。",
         dealId: alpha.id,
         authorId: zhangLin.id,
-        createdAt: new Date("2026-04-05"),
+        createdAt: new Date("2026-03-10"),
       },
       {
         type: "ClientInstruction",
         content: "客户指示：环境问题既然可控，不再要求价格调整。IP纠纷用special indemnity处理即可。请尽快完成Key Issue List，安排董事会汇报。",
         dealId: alpha.id,
         authorId: liWei.id,
-        createdAt: new Date("2026-04-06"),
+        createdAt: new Date("2026-03-11"),
       },
     ],
   });
@@ -603,8 +603,8 @@ async function main() {
     { type: "Call" as const, content: "与DLA Piper Dr. Kovács电话。确认匈牙利尽调范围和时间表。特别关注：(1) 政府补贴条件合规；(2) 2024年新外商投资审查规定；(3) works council沟通要求。", date: "2026-03-05", author: yangFei.id },
     { type: "Meeting" as const, content: "竞标策略讨论会。与客户及CICC确认NBO策略：报价区间€58-63M，强调产业协同和就业承诺。CICC将准备估值报告。", date: "2026-03-10", author: liWei.id },
     { type: "ClientInstruction" as const, content: "客户指示：NBO报价不超过€65M。如能入围Phase 2再做深入评估。政府补贴退还风险需提前评估清楚。", date: "2026-03-10", author: liWei.id },
-    { type: "Note" as const, content: "初步发现：目标公司与母公司间存在多项关联交易（管理费、技术许可费、共享服务），需在SPA中要求独立运营安排或TSA。", date: "2026-03-15", author: heXin.id },
-    { type: "Call" as const, content: "与Rothschild Philippe Martin电话。确认Phase 1时间线不变，NBO截止4月15日。目前约5-6家潜在买方进入VDR。", date: "2026-03-18", author: liWei.id },
+    { type: "Note" as const, content: "初步发现：目标公司与母公司间存在多项关联交易（管理费、技术许可费、共享服务），需在SPA中要求独立运营安排或TSA。", date: "2026-03-11", author: heXin.id },
+    { type: "Call" as const, content: "与Rothschild Philippe Martin电话。确认Phase 1时间线不变，NBO截止4月15日。目前约5-6家潜在买方进入VDR。", date: "2026-03-12", author: liWei.id },
   ];
 
   for (const act of betaActivities) {
@@ -638,7 +638,7 @@ async function main() {
         content: "目标公司与Duval SA的Technical License Agreement（2022年签署，期限至2028年）中含变更控制条款：控制权变更需卖方书面同意，否则可终止。这是关键谈判点。",
         taskId: taskBetaDdIp.id,
         authorId: wangHao.id,
-        createdAt: new Date("2026-03-14"),
+        createdAt: new Date("2026-03-10"),
       },
       {
         content: "CICC初步估值：基于目标公司FY2025 EBITDA €8.2M，可比交易EV/EBITDA中位数7.5x，隐含EV约€61.5M。考虑匈牙利低税率溢价和政府补贴风险折价后，建议NBO中心价€60M。",
@@ -666,25 +666,25 @@ async function main() {
       // 李伟 — 合伙人
       { description: "项目启动、委托协议签署、团队组建", durationMinutes: 90, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: beta.id }, title: "签署委托协议" } }))!.id, userId: liWei.id, dealId: beta.id, createdAt: new Date("2026-02-15") },
       { description: "竞标策略讨论会 — 与客户及CICC确认报价策略", durationMinutes: 180, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: beta.id }, title: { contains: "竞标策略" } } }))!.id, userId: liWei.id, dealId: beta.id, createdAt: new Date("2026-03-10") },
-      { description: "与Rothschild电话 — 确认竞标时间线和买方数量", durationMinutes: 45, isManual: true, isBillable: true, taskId: taskBetaValuation.id, userId: liWei.id, dealId: beta.id, createdAt: new Date("2026-03-18") },
-      { description: "NBO估值分析讨论及报价策略审阅", durationMinutes: 120, isManual: true, isBillable: true, taskId: taskBetaValuation.id, userId: liWei.id, dealId: beta.id, createdAt: new Date("2026-04-01") },
+      { description: "与Rothschild电话 — 确认竞标时间线和买方数量", durationMinutes: 45, isManual: true, isBillable: true, taskId: taskBetaValuation.id, userId: liWei.id, dealId: beta.id, createdAt: new Date("2026-03-11") },
+      { description: "NBO估值分析讨论及报价策略审阅", durationMinutes: 120, isManual: true, isBillable: true, taskId: taskBetaValuation.id, userId: liWei.id, dealId: beta.id, createdAt: new Date("2026-03-12") },
 
       // 何欣 — Phase 1尽调主力
       { description: "NDA签署协调及VDR访问权限获取", durationMinutes: 60, isManual: true, isBillable: true, taskId: taskBetaNda.id, userId: heXin.id, dealId: beta.id, createdAt: new Date("2026-02-20") },
       { description: "VDR文件索引、按工作组分配审阅任务", durationMinutes: 120, isManual: true, isBillable: true, taskId: taskBetaVdr.id, userId: heXin.id, dealId: beta.id, createdAt: new Date("2026-03-02") },
       { description: "法律尽调 — 公司章程及股东决议审阅", durationMinutes: 180, isManual: true, isBillable: true, taskId: taskBetaDdLegal.id, userId: heXin.id, dealId: beta.id, createdAt: new Date("2026-03-08") },
-      { description: "法律尽调 — 重大合同审阅（15份，进行中）", durationMinutes: 360, isManual: true, isBillable: true, taskId: taskBetaDdLegal.id, userId: heXin.id, dealId: beta.id, createdAt: new Date("2026-03-15") },
-      { description: "NBO函件主体框架起草", durationMinutes: 180, isManual: true, isBillable: true, taskId: taskBetaNboLetter.id, userId: heXin.id, dealId: beta.id, createdAt: new Date("2026-03-25") },
-      { description: "关联交易梳理及独立运营安排分析", durationMinutes: 120, isManual: true, isBillable: true, taskId: taskBetaDdLegal.id, userId: heXin.id, dealId: beta.id, createdAt: new Date("2026-03-20") },
+      { description: "法律尽调 — 重大合同审阅（15份，进行中）", durationMinutes: 360, isManual: true, isBillable: true, taskId: taskBetaDdLegal.id, userId: heXin.id, dealId: beta.id, createdAt: new Date("2026-03-10") },
+      { description: "NBO函件主体框架起草", durationMinutes: 180, isManual: true, isBillable: true, taskId: taskBetaNboLetter.id, userId: heXin.id, dealId: beta.id, createdAt: new Date("2026-03-12") },
+      { description: "关联交易梳理及独立运营安排分析", durationMinutes: 120, isManual: true, isBillable: true, taskId: taskBetaDdLegal.id, userId: heXin.id, dealId: beta.id, createdAt: new Date("2026-03-11") },
 
       // 杨飞 — 匈牙利当地律所协调
       { description: "与DLA Piper Budapest对接，确认尽调范围和匈牙利法律事项", durationMinutes: 120, isManual: true, isBillable: true, taskId: taskBetaDdHungary.id, userId: yangFei.id, dealId: beta.id, createdAt: new Date("2026-03-05") },
       { description: "匈牙利外商投资审查规定研究", durationMinutes: 240, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: beta.id }, title: { contains: "匈牙利外商投资" } } }))!.id, userId: yangFei.id, dealId: beta.id, createdAt: new Date("2026-03-12") },
-      { description: "DLA Piper匈牙利尽调中期报告审阅", durationMinutes: 180, isManual: true, isBillable: true, taskId: taskBetaDdHungary.id, userId: yangFei.id, dealId: beta.id, createdAt: new Date("2026-03-20") },
+      { description: "DLA Piper匈牙利尽调中期报告审阅", durationMinutes: 180, isManual: true, isBillable: true, taskId: taskBetaDdHungary.id, userId: yangFei.id, dealId: beta.id, createdAt: new Date("2026-03-11") },
 
       // 王浩 — 交易结构
       { description: "交易结构方案比较（直接收购 vs 香港SPV），考虑中匈税收协定", durationMinutes: 240, isManual: true, isBillable: true, taskId: taskBetaStructure.id, userId: wangHao.id, dealId: beta.id, createdAt: new Date("2026-03-10") },
-      { description: "知识产权及技术许可审阅 — Duval SA技术许可协议分析", durationMinutes: 180, isManual: true, isBillable: true, taskId: taskBetaDdIp.id, userId: wangHao.id, dealId: beta.id, createdAt: new Date("2026-03-14") },
+      { description: "知识产权及技术许可审阅 — Duval SA技术许可协议分析", durationMinutes: 180, isManual: true, isBillable: true, taskId: taskBetaDdIp.id, userId: wangHao.id, dealId: beta.id, createdAt: new Date("2026-03-10") },
 
       // 陈宇 — 监管
       { description: "各法域审批清单梳理（PRC ODI、匈牙利FDI、欧盟反垄断）", durationMinutes: 180, isManual: true, isBillable: true, taskId: (await prisma.task.findFirst({ where: { workstream: { dealId: beta.id }, title: "梳理各法域所需审批" } }))!.id, userId: chenYu.id, dealId: beta.id, createdAt: new Date("2026-03-12") },

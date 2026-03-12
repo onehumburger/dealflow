@@ -54,7 +54,10 @@ export default async function DealDetailPage({
       },
       activityEntries: {
         orderBy: { createdAt: "desc" },
-        include: { author: { select: { name: true } } },
+        include: {
+          author: { select: { id: true, name: true } },
+          workstream: { select: { name: true } },
+        },
       },
       _count: {
         select: {
@@ -102,7 +105,9 @@ export default async function DealDetailPage({
     type: e.type,
     content: e.content,
     createdAt: new Date(e.createdAt),
-    author: e.author,
+    authorId: e.author.id,
+    author: { name: e.author.name },
+    workstreamName: e.workstream?.name ?? null,
   }));
 
   const milestonesData = deal.milestones.map((m) => ({
@@ -170,6 +175,8 @@ export default async function DealDetailPage({
             entries={activityData}
             dealId={dealId}
             workstreams={workstreamOptions}
+            currentUserId={session.user.id}
+            isAdmin={userRole === "Admin"}
           />
         </div>
       </div>

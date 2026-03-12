@@ -13,7 +13,9 @@ interface ActivityItem {
   type: ActivityType;
   content: string;
   createdAt: Date;
+  authorId: string;
   author: { name: string };
+  workstreamName: string | null;
 }
 
 interface WorkstreamOption {
@@ -25,9 +27,17 @@ interface ActivityFeedProps {
   entries: ActivityItem[];
   dealId: string;
   workstreams: WorkstreamOption[];
+  currentUserId: string;
+  isAdmin: boolean;
 }
 
-export function ActivityFeed({ entries, dealId, workstreams }: ActivityFeedProps) {
+export function ActivityFeed({
+  entries,
+  dealId,
+  workstreams,
+  currentUserId,
+  isAdmin,
+}: ActivityFeedProps) {
   const t = useTranslations("activity");
   const [collapsed, setCollapsed] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -55,11 +65,7 @@ export function ActivityFeed({ entries, dealId, workstreams }: ActivityFeedProps
           <div className="flex items-center gap-2">
             <button
               onClick={() => setHideTaskUpdates(!hideTaskUpdates)}
-              className={`rounded-md border px-2 py-1 text-xs transition-colors ${
-                hideTaskUpdates
-                  ? "border-primary bg-primary/10 text-primary"
-                  : "border-dashed text-muted-foreground hover:bg-muted/50"
-              }`}
+              className="rounded-md border border-dashed px-2 py-1 text-xs text-muted-foreground hover:bg-muted/50"
             >
               {hideTaskUpdates ? t("showTaskUpdates") : t("hideTaskUpdates")}
             </button>
@@ -89,7 +95,12 @@ export function ActivityFeed({ entries, dealId, workstreams }: ActivityFeedProps
               </p>
             )}
             {filtered.map((entry) => (
-              <ActivityEntryItem key={entry.id} entry={entry} />
+              <ActivityEntryItem
+                key={entry.id}
+                entry={entry}
+                currentUserId={currentUserId}
+                isAdmin={isAdmin}
+              />
             ))}
           </div>
         </>

@@ -58,3 +58,80 @@ export async function createActivityEntry(formData: FormData) {
   await revalidateDeal(dealId);
   return entry;
 }
+
+// ---------- updateActivityEntry ----------
+
+export async function updateActivityEntry(
+  entryId: string,
+  data: { content?: string; type?: ActivityType }
+) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  const entry = await prisma.activityEntry.findUnique({
+    where: { id: entryId },
+    select: { authorId: true, dealId: true, type: true },
+  });
+  if (!entry) throw new Error("Entry not found");
+
+  await assertDealMember(entry.dealId, session.user.id);
+
+  // Only author or admin can edit
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { role: true },
+  });
+  if (entry.authorId !== session.user.id && user?.role !== "Admin") {
+    throw new Error("Permission denied");
+  }
+
+  // Only allow editing manual activity types
+  if (!MANUAL_ACTIVITY_TYPES.includes(entry.type)) {
+    throw new Error("Cannot edit system-generated entries");
+  }
+
+  if (data.type && !MANUAL_ACTIVITY_TYPES.includes(data.type)) {
+    throw new Error("Invalid activity type");
+  }
+
+  await prisma.activityEntry.update({
+    where: { id: entryId },
+    data: {
+      ...(data.content !== undefined && { content: data.content.trim() }),
+      ...(data.type !== undefined && { type: data.type }),
+    },
+  });
+
+  await revalidateDeal(entry.dealId);
+}
+
+// ---------- deleteActivityEntry ----------
+
+export async function deleteActivityEntry(entryId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  const entry = await prisma.activityEntry.findUnique({
+    where: { id: entryId },
+    select: { authorId: true, dealId: true, type: true },
+  });
+  if (!entry) throw new Error("Entry not found");
+
+  await assertDealMember(entry.dealId, session.user.id);
+
+  // Only author or admin can delete
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { role: true },
+  });
+  if (entry.authorId !== session.user.id && user?.role !== "Admin") {
+    throw new Error("Permission denied");
+  }
+
+  if (!MANUAL_ACTIVITY_TYPES.includes(entry.type)) {
+    throw new Error("Cannot delete system-generated entries");
+  }
+
+  await prisma.activityEntry.delete({ where: { id: entryId } });
+  await revalidateDeal(entry.dealId);
+}

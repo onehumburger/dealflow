@@ -26,12 +26,15 @@ interface BillingRateEditorProps {
   users: UserOption[];
   rates: RateData[];
   onRatesChange: (rates: RateData[]) => void;
+  filterDealId?: string;
 }
 
-export function BillingRateEditor({ deals, users, rates, onRatesChange }: BillingRateEditorProps) {
+export function BillingRateEditor({ deals, users, rates, onRatesChange, filterDealId }: BillingRateEditorProps) {
   const tBilling = useTranslations("billing");
   const tCommon = useTranslations("common");
   const [isPending, startTransition] = useTransition();
+
+  const displayedRates = filterDealId ? rates.filter((r) => r.deal.id === filterDealId) : rates;
 
   const [editingRate, setEditingRate] = useState<{ dealId: string; userId: string; value: string } | null>(null);
   const [newDealId, setNewDealId] = useState("");
@@ -62,11 +65,11 @@ export function BillingRateEditor({ deals, users, rates, onRatesChange }: Billin
     <div className="rounded-lg border p-3">
       <span className="text-sm font-medium">{tBilling("rate")}</span>
 
-      {rates.length === 0 ? (
+      {displayedRates.length === 0 ? (
         <p className="mt-1 text-sm text-muted-foreground">{tBilling("noRates")}</p>
       ) : (
         <div className="mt-2 flex flex-wrap gap-2">
-          {rates.map((r) => (
+          {displayedRates.map((r) => (
             <div key={r.id} className="flex items-center gap-1.5 rounded border px-2 py-1 text-sm">
               <span className="font-medium">{r.deal.name}</span>
               <span className="text-muted-foreground">:</span>

@@ -128,10 +128,10 @@
     "deleteConfirm": "确认删除此工作流及其所有任务吗？"
   },
   "activity": {
-    "addNote": "添加记录",
+    "addNote": "添加动态记录",
     "note": "笔记",
-    "call": "电话",
-    "meeting": "会议",
+    "call": "电话会议",
+    "meeting": "线下会议",
     "clientInstruction": "客户指示",
     "taskUpdate": "任务更新",
     "milestoneChange": "里程碑",
@@ -145,7 +145,10 @@
     "allWorkstreams": "全部工作流",
     "contentPlaceholder": "写一条记录...",
     "hideTaskUpdates": "隐藏任务更新",
-    "showTaskUpdates": "显示任务更新"
+    "showTaskUpdates": "显示任务更新",
+    "editEntry": "编辑",
+    "deleteEntry": "删除",
+    "deleteEntryConfirm": "确认删除此动态记录？"
   },
   "decision": {
     "decisions": "决策记录",
@@ -220,8 +223,6 @@
     "downloadAll": "下载全部",
     "downloadDocs": "下载文档",
     "currentVersion": "当前版本",
-    "restoreVersion": "恢复此版本",
-    "restoreConfirm": "确认恢复到版本 {version}？这将创建一个新版本。",
     "versionNote": "版本说明（可选）",
     "generalDocuments": "通用文档",
     "allDeals": "全部项目",
